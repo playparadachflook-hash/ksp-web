@@ -180,7 +180,7 @@ CREATE TABLE `contact` (
 -- 1. ผู้ใช้งานเริ่มต้น (admin / 1234)
 INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `role`)
 VALUES
-  (1, 'admin', '1234', 'ผู้ดูแลระบบหลัก (กลุ่มงานสุขภาพดิจิทัล)', 'Super Admin');
+  (1, 'admin', '1212312121flook', 'ผู้ดูแลระบบหลัก (กลุ่มงานสุขภาพดิจิทัล)', 'Super Admin');
 
 -- 2. ข้อมูลสไลด์ประกาศเริ่มต้น
 INSERT INTO `slides` (`id`, `category`, `title`, `image`, `link`, `display_order`)

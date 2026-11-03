@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
@@ -27,7 +27,7 @@
           <p class="login-subtitle">โรงพยาบาลโคกศรีสุพรรณ (กลุ่มงานสุขภาพดิจิทัล)</p>
         </div>
 
-        <form class="login-form" id="ksp-login-form">
+        <form class="login-form" id="ksp-login-form" autocomplete="off">
           <div class="login-error" id="login-error-box"></div>
 
           <div class="login-field">
@@ -36,9 +36,10 @@
               type="text"
               id="login-username"
               class="login-input"
-              value="admin"
-              placeholder="กรอกชื่อผู้ใช้งาน"
+              placeholder="กรอกชื่อผู้ใช้งาน เช่น admin"
+              autocomplete="username"
               required
+              autofocus
             />
           </div>
 
@@ -48,13 +49,13 @@
               type="password"
               id="login-password"
               class="login-input"
-              value="1234"
               placeholder="กรอกรหัสผ่าน"
+              autocomplete="current-password"
               required
             />
           </div>
 
-          <button type="submit" class="login-submit-btn">เข้าสู่ระบบจัดการเว็บไซต์</button>
+          <button type="submit" class="login-submit-btn" id="login-submit-btn">เข้าสู่ระบบจัดการเว็บไซต์</button>
         </form>
 
         <div class="login-hint-box">
@@ -65,6 +66,28 @@
     </section>
   </main>
 
+  <!-- Modal ป๊อปอัปแสดงข้อความยินดีต้อนรับผู้ใช้งาน -->
+  <div class="welcome-modal-backdrop" id="welcome-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="welcome-modal-card">
+      <div class="welcome-icon-box">
+        <svg class="welcome-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <span class="welcome-badge">ยืนยันตัวตนสำเร็จ</span>
+      <h2 class="welcome-title">ยินดีต้อนรับ</h2>
+      <div class="welcome-username" id="welcome-user-name">คุณผู้ดูแลระบบ</div>
+      <p class="welcome-desc">เข้าสู่ระบบจัดการเว็บไซต์หลังบ้าน โรงพยาบาลโคกศรีสุพรรณ</p>
+
+      <div class="welcome-progress-bar">
+        <div class="welcome-progress-fill" id="welcome-progress-fill"></div>
+      </div>
+      <div class="welcome-countdown" id="welcome-countdown">กำลังนำท่านเข้าสู่แดชบอร์ดใน 2 วินาที...</div>
+
+      <button type="button" class="welcome-btn" id="welcome-redirect-btn">เข้าสู่แดชบอร์ดทันที &rarr;</button>
+    </div>
+  </div>
+
   <!-- ดึง Footer Bar ตัวเดียวกันจาก /js/footer.js -->
   <div id="footer-placeholder"></div>
 
@@ -73,5 +96,3 @@
   <script src="/js/footer.js"></script>
 </body>
 </html>
-
-

@@ -1,8 +1,15 @@
 /**
- * server.js - Node.js Server สำหรับโปรแกรมเว็บไซต์โรงพยาบาลโคกศรีสุพรรณ
- * - เสิร์ฟไฟล์เว็บ Static files (HTML, CSS, JS, Assets)
- * - มี API /api/git-status และ /api/git-update สำหรับตรวจสอบและกดอัปเดตจาก GitHub
- * - ควบคุมพอร์ตไม่ให้ชนกับระบบอื่น (ค่าเริ่มต้น PORT 3088)
+ * ==============================================================================
+ * server.js - Node.js Backend Server สำหรับโรงพยาบาลโคกศรีสุพรรณ
+ * ==============================================================================
+ * ความสามารถของระบบ:
+ * 1. เสิร์ฟไฟล์หน้าเว็บ Static (HTML, CSS, JS, Images, Documents)
+ * 2. ระบบฐานข้อมูล CMS (JSON Database) จัดเก็บที่ data/cms_data.json
+ * 3. ระบบยืนยันตัวตน Login ตรวจสอบจาก data/users.json
+ * 4. รองรับ API เดิม (/api/cms และ /api/cms.php) โดยไม่ต้องติดตั้ง PHP หรือ MySQL!
+ * 5. ระบบตรวจจับและอัปเดตโค้ดจาก GitHub อัตโนมัติ (/api/git-status, /api/git-update)
+ * 6. กำหนดพอร์ต 3088 ไม่ชนกับระบบอื่นในเซิร์ฟเวอร์
+ * ==============================================================================
  */
 
 const http = require('http');
@@ -12,7 +19,31 @@ const { exec } = require('child_process');
 
 const PORT = parseInt(process.env.PORT, 10) || 3088;
 const ROOT_DIR = __dirname;
+const DATA_DIR = path.join(ROOT_DIR, 'data');
+const CMS_FILE = path.join(DATA_DIR, 'cms_data.json');
+const USERS_FILE = path.join(DATA_DIR, 'users.json');
 
+// สร้างโฟลเดอร์ data อัตโนมัติถ้ายังไม่มี
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+if (!fs.existsSync(CMS_FILE)) {
+  fs.writeFileSync(CMS_FILE, JSON.stringify({}, null, 2), 'utf-8');
+}
+if (!fs.existsSync(USERS_FILE)) {
+  const defaultUsers = [
+    {
+      id: 1,
+      username: 'admin',
+      password: '1234',
+      full_name: 'ผู้ดูแลระบบหลัก (กลุ่มงานสุขภาพดิจิทัล)',
+      role: 'Super Admin'
+    }
+  ];
+  fs.writeFileSync(USERS_FILE, JSON.stringify(defaultUsers, null, 2), 'utf-8');
+}
+
+// ชนิดไฟล์ที่รองรับสำหรับเว็บเบราว์เซอร์
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -34,6 +65,7 @@ const MIME_TYPES = {
   '.ttf': 'font/ttf'
 };
 
+// ฟังก์ชันรันคำสั่ง Terminal (Git)
 function runCommand(cmd) {
   return new Promise((resolve, reject) => {
     exec(cmd, { cwd: ROOT_DIR, timeout: 30000 }, (error, stdout, stderr) => {
@@ -46,8 +78,59 @@ function runCommand(cmd) {
   });
 }
 
+// ฟังก์ชันแปลง Body ของ HTTP Request เป็น JSON
+function parseJsonBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+      // ป้องกัน Request ขนาดใหญ่เกิน 20MB
+      if (body.length > 20 * 1024 * 1024) {
+        reject(new Error('Payload too large'));
+      }
+    });
+    req.on('end', () => {
+      if (!body.trim()) {
+        resolve({});
+        return;
+      }
+      try {
+        resolve(JSON.parse(body));
+      } catch (err) {
+        reject(new Error('รูปแบบ JSON ไม่ถูกต้อง: ' + err.message));
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
+// อ่านข้อมูล CMS จากไฟล์ JSON
+function getCmsData() {
+  try {
+    const raw = fs.readFileSync(CMS_FILE, 'utf-8');
+    return JSON.parse(raw);
+  } catch (err) {
+    return {};
+  }
+}
+
+// บันทึกข้อมูล CMS ลงไฟล์ JSON
+function saveCmsData(data) {
+  fs.writeFileSync(CMS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+// อ่านรายชื่อผู้ใช้งานระบบ
+function getUsers() {
+  try {
+    const raw = fs.readFileSync(USERS_FILE, 'utf-8');
+    return JSON.parse(raw);
+  } catch (err) {
+    return [];
+  }
+}
+
 const server = http.createServer(async (req, res) => {
-  // CORS Headers
+  // CORS Headers รองรับการเรียกจากทุกหน้าเว็บ
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -60,15 +143,111 @@ const server = http.createServer(async (req, res) => {
 
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = decodeURIComponent(parsedUrl.pathname);
+  const action = parsedUrl.searchParams.get('action') || 'get_all';
 
+  // --------------------------------------------------------------------------
   // 1. API Health check
+  // --------------------------------------------------------------------------
   if (pathname === '/api/ping') {
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ status: 'ok', port: PORT, uptime: Math.floor(process.uptime()) }));
+    res.end(JSON.stringify({
+      status: 'ok',
+      engine: 'Node.js',
+      port: PORT,
+      uptime: Math.floor(process.uptime())
+    }));
     return;
   }
 
-  // 2. API Check Git status (ตรวจสอบว่า GitHub มีอัปเดตใหม่หรือไม่)
+  // --------------------------------------------------------------------------
+  // 2. API CMS Backend (รองรับทั้ง /api/cms และ /api/cms.php)
+  // --------------------------------------------------------------------------
+  if (pathname === '/api/cms' || pathname === '/api/cms.php') {
+    // 2.1 เข้าสู่ระบบ (POST: ?action=login)
+    if (action === 'login' && req.method === 'POST') {
+      try {
+        const payload = await parseJsonBody(req);
+        const username = (payload.username || '').trim();
+        const password = (payload.password || '').trim();
+
+        const users = getUsers();
+        const matched = users.find(u => u.username === username && u.password === password);
+
+        if (matched) {
+          res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({
+            status: 'ok',
+            user: {
+              id: matched.id,
+              username: matched.username,
+              full_name: matched.full_name,
+              role: matched.role
+            }
+          }));
+        } else {
+          res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({
+            status: 'error',
+            message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'
+          }));
+        }
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ status: 'error', message: err.message }));
+      }
+      return;
+    }
+
+    // 2.2 ดึงข้อมูลทุกส่วน (GET: ?action=get_all)
+    if (action === 'get_all' && req.method === 'GET') {
+      const cmsData = getCmsData();
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({
+        status: 'ok',
+        engine: 'Node.js JSON Database',
+        data: cmsData
+      }));
+      return;
+    }
+
+    // 2.3 บันทึกข้อมูลแต่ละส่วน (POST: ?action=save_section)
+    if (action === 'save_section' && req.method === 'POST') {
+      try {
+        const payload = await parseJsonBody(req);
+        const sectionKey = (payload.section_key || '').trim();
+        const sectionName = (payload.section_name || sectionKey).trim();
+        const sectionData = payload.section_data;
+
+        if (!sectionKey || sectionData === undefined) {
+          res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({ status: 'error', message: 'ข้อมูลไม่ครบถ้วน' }));
+          return;
+        }
+
+        const cmsData = getCmsData();
+        cmsData[sectionKey] = sectionData;
+        saveCmsData(cmsData);
+
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({
+          status: 'ok',
+          message: `บันทึกข้อมูลส่วน ${sectionName} เรียบร้อยแล้ว (Node.js JSON Storage)`
+        }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ status: 'error', message: err.message }));
+      }
+      return;
+    }
+
+    res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ status: 'error', message: 'ไม่พบคำสั่ง CMS action ที่ระบุ' }));
+    return;
+  }
+
+  // --------------------------------------------------------------------------
+  // 3. API Check Git status (ตรวจสอบว่า GitHub มีอัปเดตใหม่หรือไม่)
+  // --------------------------------------------------------------------------
   if (pathname === '/api/git-status' && req.method === 'GET') {
     try {
       const localCommitFull = await runCommand('git rev-parse HEAD');
@@ -112,7 +291,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 3. API Trigger Git Update (กดดึงอัปเดตจาก GitHub และรีสตาร์ทเซิร์ฟเวอร์อัตโนมัติ)
+  // --------------------------------------------------------------------------
+  // 4. API Trigger Git Update (กดดึงอัปเดตจาก GitHub และรีสตาร์ทเซิร์ฟเวอร์อัตโนมัติ)
+  // --------------------------------------------------------------------------
   if (pathname === '/api/git-update' && req.method === 'POST') {
     try {
       console.log('[Git Update] Fetching origin main and updating files...');
@@ -130,7 +311,7 @@ const server = http.createServer(async (req, res) => {
         output: updateOut
       }));
 
-      // Exit process หลังจากส่ง response แล้ว เพื่อให้ PM2 รีสตาร์ท process ใหม่ทันที
+      // Exit process เพื่อให้ PM2 รีสตาร์ท Node.js ใหม่พร้อมโค้ดล่าสุด
       setTimeout(() => {
         console.log('[Git Update] Reloading process via PM2...');
         process.exit(0);
@@ -143,7 +324,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 4. Static file server
+  // --------------------------------------------------------------------------
+  // 5. Static file server (เสิร์ฟไฟล์หน้าเว็บ)
+  // --------------------------------------------------------------------------
   let safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
   if (safePath === '/' || safePath === '\\') {
     safePath = '/index.html';
@@ -174,7 +357,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`=======================================================`);
-  console.log(` KSP Web Hospital Server running on port: ${PORT}`);
+  console.log(` KSP Web Hospital (Node.js Server) running on port: ${PORT}`);
   console.log(` Local:   http://localhost:${PORT}`);
   console.log(` Network: http://192.168.2.202:${PORT}`);
   console.log(`=======================================================`);

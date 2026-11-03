@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "password": "1234",
+    "full_name": "ผู้ดูแลระบบหลัก (กลุ่มงานสุขภาพดิจิทัล)",
+    "role": "Super Admin"
+  }
+]

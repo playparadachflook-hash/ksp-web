@@ -8,7 +8,8 @@ SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 SET foreign_key_checks = 0;
 
-CREATE DATABASE IF NOT EXISTS `Web_Ksp`
+DROP DATABASE IF EXISTS `Web_Ksp`;
+CREATE DATABASE `Web_Ksp`
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 

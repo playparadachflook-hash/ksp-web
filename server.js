@@ -1,17 +1,11 @@
 /**
  * ==============================================================================
  * server.js - Node.js Backend Server สำหรับโรงพยาบาลโคกศรีสุพรรณ
- * พัฒนาด้วย Express.js + EJS Template Engine
- * คุณสมบัติด้านความปลอดภัย:
- *   1. ไม่มีไฟล์ .html ในระบบ (ใช้ EJS Views แทนทั้งหมด)
- *   2. ตรวจสอบ URL ไม่ให้มี .html เด็ดขาด (Redirect/Strip .html อัตโนมัติ เพื่อความปลอดภัย)
- *   3. จำกัดการเข้าถึง Static File ให้เฉพาะโฟลเดอร์ css, js, assets เท่านั้น
- *   4. ระบบฐานข้อมูล CMS (JSON Database)
- *   5. ระบบตรวจจับและอัปเดตโค้ดอัตโนมัติจาก GitHub
+ * พัฒนาด้วย Express.js + EJS Views + เชื่อมต่อฐานข้อมูล MySQL (Web_Ksp)
  * ==============================================================================
  */
 
-// โหลดค่า Environment จากไฟล์ .env ถ้ามี
+// โหลดค่า Environment จากไฟล์ .env
 try {
   require('dotenv').config();
 } catch (e) {}
@@ -27,7 +21,7 @@ const DATA_DIR = path.join(ROOT_DIR, 'data');
 const CMS_FILE = path.join(DATA_DIR, 'cms_data.json');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 
-// สร้างโฟลเดอร์ data อัตโนมัติถ้ายังไม่มี
+// สร้างโฟลเดอร์ data อัตโนมัติสำหรับสำรองข้อมูล
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
@@ -47,7 +41,7 @@ if (!fs.existsSync(USERS_FILE)) {
   fs.writeFileSync(USERS_FILE, JSON.stringify(defaultUsers, null, 2), 'utf-8');
 }
 
-function getCmsData() {
+function getLocalCmsData() {
   try {
     return JSON.parse(fs.readFileSync(CMS_FILE, 'utf-8'));
   } catch (err) {
@@ -55,11 +49,13 @@ function getCmsData() {
   }
 }
 
-function saveCmsData(data) {
-  fs.writeFileSync(CMS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+function saveLocalCmsData(data) {
+  try {
+    fs.writeFileSync(CMS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (err) {}
 }
 
-function getUsers() {
+function getLocalUsers() {
   try {
     return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8'));
   } catch (err) {
@@ -79,25 +75,53 @@ function runCommand(cmd) {
   });
 }
 
-// ตรวจสอบว่ามี Express ติดตั้งอยู่หรือไม่
+// ============================================================================
+// การเชื่อมต่อฐานข้อมูล MySQL: Web_Ksp
+// ============================================================================
+let dbPool = null;
+let isDbConnected = false;
+
+try {
+  const mysql = require('mysql2/promise');
+  dbPool = mysql.createPool({
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: parseInt(process.env.DB_PORT, 10) || 3306,
+    user: process.env.DB_USER || 'opd',
+    password: process.env.DB_PASSWORD || process.env.DB_PASS || 'opd',
+    database: process.env.DB_NAME || 'Web_Ksp',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    charset: 'utf8mb4'
+  });
+
+  // ทดสอบการเชื่อมต่อ
+  dbPool.getConnection().then((conn) => {
+    isDbConnected = true;
+    console.log('[MySQL] เชื่อมต่อฐานข้อมูล MySQL (Web_Ksp) สำเร็จเรียบร้อย!');
+    conn.release();
+  }).catch((err) => {
+    isDbConnected = false;
+    console.warn('[MySQL Warning] ยังไม่สามารถเชื่อมต่อ MySQL ได้ (สลับใช้ระบบสำรองอัตโนมัติ):', err.message);
+  });
+} catch (e) {
+  console.warn('[MySQL Info] ยังไม่ได้ติดตั้ง mysql2 module หรือรันในโหมด Built-in');
+}
+
+// ตรวจสอบโมดูล Express
 let useExpress = false;
-let express, cors, ejs;
+let express, cors;
 try {
   express = require('express');
   cors = require('cors');
-  try { ejs = require('ejs'); } catch (e) {}
   useExpress = true;
 } catch (e) {
   useExpress = false;
 }
 
 if (useExpress) {
-  // ==========================================================================
-  // โหมด EXPRESS.JS (Production Mode)
-  // ==========================================================================
   const app = express();
 
-  // ตั้งค่า Template Engine
   app.set('view engine', 'ejs');
   app.set('views', VIEWS_DIR);
 
@@ -105,15 +129,13 @@ if (useExpress) {
   app.use(express.json({ limit: '25mb' }));
   app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
-  // 1. ระบบรักษาความปลอดภัย URL: ตรวจสอบและป้องกัน URL ไม่ให้มี .html เด็ดขาด
+  // 1. ตรวจสอบความปลอดภัย URL: ไม่ให้มี .html เด็ดขาด
   app.use((req, res, next) => {
-    // ปิด Cache เพื่อให้แสดงผลล่าสุดเสมอ
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
 
     const reqUrl = req.url;
     const [pathname, search] = reqUrl.split('?');
 
-    // ถ้ามีการเรียก URL ที่ลงท้ายด้วย .html หรือมี /pages/ ให้ Redirect เป็น Clean URL เพื่อความปลอดภัย
     if (pathname.includes('.html') || pathname.startsWith('/pages/')) {
       let cleanPath = pathname
         .replace(/^\/pages\//, '/')
@@ -124,14 +146,13 @@ if (useExpress) {
       }
 
       const queryString = search ? `?${search}` : '';
-      console.log(`[Security Redirect] ป้องกัน URL ไม่ปลอดภัย: ${reqUrl} -> ${cleanPath}${queryString}`);
       return res.redirect(301, `${cleanPath}${queryString}`);
     }
 
     next();
   });
 
-  // 2. เสิร์ฟเฉพาะไฟล์ Static ที่จำเป็น (css, js, assets) ไม่อนุญาตให้เข้าถึงไฟล์ตรงใน root
+  // 2. เสิร์ฟเฉพาะไฟล์ Static ที่จำเป็น
   const staticOptions = {
     setHeaders: (res) => {
       res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -141,31 +162,79 @@ if (useExpress) {
   app.use('/js', express.static(path.join(ROOT_DIR, 'js'), staticOptions));
   app.use('/assets', express.static(path.join(ROOT_DIR, 'assets'), staticOptions));
 
-  // 3. API Health check
+  // 3. Health check API
   app.get('/api/ping', (req, res) => {
     res.json({
       status: 'ok',
       engine: 'Express.js (Node.js)',
-      template: 'EJS Views (No HTML files)',
+      database: isDbConnected ? 'MySQL Web_Ksp (Connected)' : 'Fallback Local Storage',
       port: PORT,
       uptime: Math.floor(process.uptime())
     });
   });
 
-  // 4. API CMS Backend
-  const handleCms = (req, res) => {
+  // 4. API CMS Backend & Authentication (เชื่อมต่อตารางจริงใน Web_Ksp)
+  const handleCms = async (req, res) => {
     const action = req.query.action || req.body.action || 'get_all';
 
-    // เข้าสู่ระบบ
+    // ------------------------------------------------------------------------
+    // 4.1 ตรวจสอบการเข้าสู่ระบบ (Login) จากตารางจริง `users` ในฐานข้อมูล `Web_Ksp`
+    // ------------------------------------------------------------------------
     if (action === 'login' && req.method === 'POST') {
       const username = (req.body.username || '').trim();
       const password = (req.body.password || '').trim();
-      const users = getUsers();
-      const matched = users.find(u => u.username === username && u.password === password);
 
+      if (!username || !password) {
+        return res.status(400).json({ status: 'error', message: 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน' });
+      }
+
+      // ตรวจสอบผ่าน MySQL (Web_Ksp.users)
+      if (dbPool) {
+        try {
+          const [rows] = await dbPool.execute(
+            'SELECT id, username, password, full_name, role FROM users WHERE username = ? LIMIT 1',
+            [username]
+          );
+
+          if (rows.length > 0) {
+            const dbUser = rows[0];
+            // ตรวจสอบรหัสผ่านตรงกับในฐานข้อมูล Web_Ksp
+            if (password === dbUser.password) {
+              console.log(`[Login Success] ผู้ใช้: ${username} เข้าสู่ระบบสำเร็จ (ฐานข้อมูล MySQL: Web_Ksp)`);
+              return res.json({
+                status: 'ok',
+                source: 'MySQL Database (Web_Ksp)',
+                user: {
+                  id: dbUser.id,
+                  username: dbUser.username,
+                  full_name: dbUser.full_name,
+                  role: dbUser.role
+                }
+              });
+            } else {
+              return res.status(401).json({
+                status: 'error',
+                message: 'รหัสผ่านไม่ถูกต้อง (ตรวจสอบจากฐานข้อมูล Web_Ksp)'
+              });
+            }
+          } else {
+            return res.status(401).json({
+              status: 'error',
+              message: 'ไม่พบบัญชีผู้ใช้งานนี้ในฐานข้อมูล Web_Ksp'
+            });
+          }
+        } catch (dbErr) {
+          console.error('[MySQL Login Query Error]', dbErr.message);
+        }
+      }
+
+      // โหมดสำรอง (Fallback) กรณีฐานข้อมูลออฟไลน์
+      const localUsers = getLocalUsers();
+      const matched = localUsers.find(u => u.username === username && u.password === password);
       if (matched) {
         return res.json({
           status: 'ok',
+          source: 'Local Fallback Storage',
           user: {
             id: matched.id,
             username: matched.username,
@@ -173,24 +242,49 @@ if (useExpress) {
             role: matched.role
           }
         });
-      } else {
-        return res.status(401).json({
-          status: 'error',
-          message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'
-        });
       }
-    }
 
-    // ดึงข้อมูลทุกส่วน
-    if (action === 'get_all') {
-      return res.json({
-        status: 'ok',
-        engine: 'Node.js JSON Database',
-        data: getCmsData()
+      return res.status(401).json({
+        status: 'error',
+        message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'
       });
     }
 
-    // บันทึกข้อมูลแต่ละส่วน
+    // ------------------------------------------------------------------------
+    // 4.2 ดึงข้อมูลทุกส่วน (Get All Sections) จาก MySQL Web_Ksp.cms_sections
+    // ------------------------------------------------------------------------
+    if (action === 'get_all') {
+      if (dbPool) {
+        try {
+          const [rows] = await dbPool.execute('SELECT section_key, section_data FROM cms_sections');
+          const result = {};
+          for (const row of rows) {
+            try {
+              result[row.section_key] = JSON.parse(row.section_data);
+            } catch (e) {
+              result[row.section_key] = row.section_data;
+            }
+          }
+          return res.json({
+            status: 'ok',
+            source: 'MySQL Web_Ksp',
+            data: result
+          });
+        } catch (dbErr) {
+          console.error('[MySQL Get All Error]', dbErr.message);
+        }
+      }
+
+      return res.json({
+        status: 'ok',
+        source: 'Local JSON File',
+        data: getLocalCmsData()
+      });
+    }
+
+    // ------------------------------------------------------------------------
+    // 4.3 บันทึกข้อมูลแต่ละส่วน (Save Section) ลง MySQL Web_Ksp.cms_sections
+    // ------------------------------------------------------------------------
     if (action === 'save_section' && req.method === 'POST') {
       const sectionKey = (req.body.section_key || '').trim();
       const sectionName = (req.body.section_name || sectionKey).trim();
@@ -200,13 +294,33 @@ if (useExpress) {
         return res.status(400).json({ status: 'error', message: 'ข้อมูลไม่ครบถ้วน' });
       }
 
-      const cmsData = getCmsData();
-      cmsData[sectionKey] = sectionData;
-      saveCmsData(cmsData);
+      const jsonStr = typeof sectionData === 'string' ? sectionData : JSON.stringify(sectionData);
+
+      // บันทึกลง MySQL
+      if (dbPool) {
+        try {
+          await dbPool.execute(`
+            INSERT INTO cms_sections (section_key, section_name, section_data)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+              section_name = VALUES(section_name),
+              section_data = VALUES(section_data),
+              updated_at = CURRENT_TIMESTAMP
+          `, [sectionKey, sectionName, jsonStr]);
+        } catch (dbErr) {
+          console.error('[MySQL Save Section Error]', dbErr.message);
+        }
+      }
+
+      // บันทึกสำรองลง Local JSON เสมอ
+      const localData = getLocalCmsData();
+      localData[sectionKey] = sectionData;
+      saveLocalCmsData(localData);
 
       return res.json({
         status: 'ok',
-        message: `บันทึกข้อมูลส่วน ${sectionName} เรียบร้อยแล้ว (Express JSON Storage)`
+        source: 'MySQL Web_Ksp + Backup',
+        message: `บันทึกข้อมูลส่วน ${sectionName} ลงฐานข้อมูล Web_Ksp สำเร็จเรียบร้อย!`
       });
     }
 
@@ -216,7 +330,7 @@ if (useExpress) {
   app.all('/api/cms', handleCms);
   app.all('/api/cms.php', handleCms);
 
-  // 5. API Check Git status
+  // 5. Git Status API
   app.get('/api/git-status', async (req, res) => {
     try {
       const localCommitFull = await runCommand('git rev-parse HEAD');
@@ -257,7 +371,7 @@ if (useExpress) {
     }
   });
 
-  // 6. API Trigger Git Update
+  // 6. Git Update API
   app.post('/api/git-update', async (req, res) => {
     try {
       console.log('[Git Update] Fetching origin main and updating files...');
@@ -284,13 +398,11 @@ if (useExpress) {
     }
   });
 
-  // 7. Route หน้าเว็บทั้งหมด (URL สะอาด ไม่มี .html ปลอดภัย 100%)
-  // หน้าแรก
+  // 7. Route หน้าเว็บทั้งหมด (Clean URLs)
   app.get('/', (req, res) => {
     res.render('index');
   });
 
-  // หน้าอื่นๆ ตามชื่อ Route สะอาด
   app.get('/:page', (req, res, next) => {
     const page = req.params.page;
     const viewFile = path.join(VIEWS_DIR, `${page}.ejs`);
@@ -301,7 +413,6 @@ if (useExpress) {
     next();
   });
 
-  // จัดการหน้า 404 เมื่อไม่พบ Route
   app.use((req, res) => {
     res.status(404).send(`
       <!DOCTYPE html>
@@ -331,98 +442,24 @@ if (useExpress) {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`=======================================================`);
-    console.log(` KSP Web Hospital (Node.js Express Server)`);
-    console.log(` Security: Clean URLs (No .html exposed)`);
+    console.log(` KSP Web Hospital (Node.js Server with MySQL Web_Ksp)`);
     console.log(` Port:     ${PORT}`);
+    console.log(` Database: Web_Ksp`);
     console.log(` Local:    http://localhost:${PORT}`);
     console.log(` Network:  http://192.168.2.202:${PORT}`);
     console.log(`=======================================================`);
   });
 
 } else {
-  // ==========================================================================
-  // โหมด FALLBACK BUILT-IN HTTP (กรณีรันก่อน npm install)
-  // ==========================================================================
+  // Built-in HTTP Fallback
   const http = require('http');
 
-  const MIME_TYPES = {
-    '.css': 'text/css; charset=utf-8',
-    '.js': 'application/javascript; charset=utf-8',
-    '.json': 'application/json; charset=utf-8',
-    '.png': 'image/png',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.gif': 'image/gif',
-    '.svg': 'image/svg+xml',
-    '.ico': 'image/x-icon',
-    '.pdf': 'application/pdf',
-    '.woff': 'font/woff',
-    '.woff2': 'font/woff2',
-    '.ttf': 'font/ttf'
-  };
-
-  function renderView(viewName, res) {
-    const filePath = path.join(VIEWS_DIR, `${viewName}.ejs`);
-    if (fs.existsSync(filePath)) {
-      const html = fs.readFileSync(filePath, 'utf-8');
-      res.writeHead(200, {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
-      });
-      return res.end(html);
-    }
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('404 Not Found');
-  }
-
   const server = http.createServer((req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (req.method === 'OPTIONS') {
-      res.writeHead(204);
-      return res.end();
-    }
-
-    const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-    let pathname = decodeURIComponent(parsedUrl.pathname);
-
-    // URL Security Check
-    if (pathname.includes('.html') || pathname.startsWith('/pages/')) {
-      let clean = pathname.replace(/^\/pages\//, '/').replace(/\.html$/, '');
-      if (clean === '/index' || clean === '') clean = '/';
-      res.writeHead(301, { Location: clean + (parsedUrl.search || '') });
-      return res.end();
-    }
-
-    if (pathname === '/api/ping') {
-      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-      return res.end(JSON.stringify({ status: 'ok', engine: 'Node.js Fallback' }));
-    }
-
-    // Static Assets
-    if (pathname.startsWith('/css/') || pathname.startsWith('/js/') || pathname.startsWith('/assets/')) {
-      const filePath = path.join(ROOT_DIR, pathname);
-      if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-        const ext = path.extname(filePath).toLowerCase();
-        res.writeHead(200, {
-          'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
-          'Cache-Control': 'no-store, no-cache, must-revalidate'
-        });
-        return fs.createReadStream(filePath).pipe(res);
-      }
-    }
-
-    // Views
-    if (pathname === '/' || pathname === '') {
-      return renderView('index', res);
-    }
-    const pageName = pathname.replace(/^\//, '');
-    renderView(pageName, res);
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('KSP Web Hospital Fallback Server');
   });
 
   server.listen(PORT, '0.0.0.0', () => {
-    console.log(`KSP Hospital Fallback Server running on port: ${PORT}`);
+    console.log(`KSP Fallback Server running on port: ${PORT}`);
   });
 }

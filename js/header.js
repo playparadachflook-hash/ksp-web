@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    js/header.js - Single Source of Truth สำหรับ Header Bar
    URL สะอาด ปลอดภัย ไม่มี .html (Node.js Routing)
    ========================================================================== */
@@ -42,25 +42,25 @@ function renderSharedHeader() {
         </form>
 
         <!-- 2.2 เบอร์โทรปกติ -->
-        <a href="tel:026259000" class="quick-call-item is-normal" title="โทรติดต่อโรงพยาบาล">
+        <a href="tel:042766054" class="quick-call-item is-normal" title="โทรติดต่อโรงพยาบาลโคกศรีสุพรรณ">
           <svg class="quick-call-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 01.99.77l.73 3.65a1 1 0 01-.29.93l-1.57 1.57a12.07 12.07 0 01-5.52-5.52l1.57-1.57a1 1 0 01.93-.29l3.65.73a1 1 0 01.77.99z" />
           </svg>
           <div class="quick-call-texts">
             <span class="quick-call-label">โทร</span>
-            <span class="quick-call-number">02 625 9000</span>
+            <span class="quick-call-number">042-766054</span>
           </div>
         </a>
 
         <!-- 2.3 เบอร์ฉุกเฉิน 24 ชม. -->
-        <a href="tel:026340990" class="quick-call-item is-emergency" title="โทรสายด่วนฉุกเฉิน 24 ชั่วโมง">
+        <a href="tel:042766054,101" class="quick-call-item is-emergency" title="โทรสายด่วนฉุกเฉิน 24 ชั่วโมง">
           <svg class="quick-call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M12 2v4M4.93 4.93l2.83 2.83M2 12h4M4.93 19.07l2.83-2.83M12 22v-4M19.07 19.07l-2.83-2.83M22 12h-4M19.07 4.93l-2.83 2.83" />
             <circle cx="12" cy="12" r="4" fill="currentColor" />
           </svg>
           <div class="quick-call-texts">
             <span class="quick-call-label">ฉุกเฉิน</span>
-            <span class="quick-call-number">02 634 0990</span>
+            <span class="quick-call-number">042-766054 ต่อ 101</span>
           </div>
         </a>
 

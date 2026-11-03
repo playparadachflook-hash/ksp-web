@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ไฟล์: js/policy-section.js
    หน้าที่: สร้างส่วนที่ 5 — ประกาศนโยบายโรงพยาบาล
    จุดเด่น:
@@ -20,7 +20,7 @@ const DEFAULT_POLICY_ANNOUNCEMENTS = [
     fileName: '',
     fileDataUrl: '',
     imageDataUrl: '',
-    link: 'pages/policy.html'
+    link: '/policy'
   },
   {
     title: 'แนวทางการตรวจห้องปฏิบัติการอย่างสมเหตุผล',
@@ -30,7 +30,7 @@ const DEFAULT_POLICY_ANNOUNCEMENTS = [
     fileName: '',
     fileDataUrl: '',
     imageDataUrl: '',
-    link: 'pages/policy.html'
+    link: '/policy'
   },
   {
     title: 'แนวทางการตรวจห้องปฏิบัติการอย่างสมเหตุผล',
@@ -40,7 +40,7 @@ const DEFAULT_POLICY_ANNOUNCEMENTS = [
     fileName: '',
     fileDataUrl: '',
     imageDataUrl: '',
-    link: 'pages/policy.html'
+    link: '/policy'
   },
   {
     title: 'แนวทางการตรวจห้องปฏิบัติการอย่างสมเหตุผล',
@@ -50,7 +50,7 @@ const DEFAULT_POLICY_ANNOUNCEMENTS = [
     fileName: '',
     fileDataUrl: '',
     imageDataUrl: '',
-    link: 'pages/policy.html'
+    link: '/policy'
   },
   {
     title: 'แนวทางการตรวจห้องปฏิบัติการอย่างสมเหตุผล',
@@ -60,7 +60,7 @@ const DEFAULT_POLICY_ANNOUNCEMENTS = [
     fileName: '',
     fileDataUrl: '',
     imageDataUrl: '',
-    link: 'pages/policy.html'
+    link: '/policy'
   },
   {
     title: 'แนวทางการตรวจห้องปฏิบัติการอย่างสมเหตุผล',
@@ -70,7 +70,7 @@ const DEFAULT_POLICY_ANNOUNCEMENTS = [
     fileName: '',
     fileDataUrl: '',
     imageDataUrl: '',
-    link: 'pages/policy.html'
+    link: '/policy'
   }
 ];
 

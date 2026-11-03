@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ไฟล์: js/slidebar.js
    หน้าที่: ควบคุมส่วนที่ 2 — Slide Bar (แบนเนอร์ประกาศรูปภาพ, งานสิ่งพิมพ์ และบทความออนไลน์)
    พร้อมระบบ JavaScript คำนวณและปรับขนาดรูปภาพให้พอดีกับกรอบสไลด์อัตโนมัติ
@@ -16,19 +16,19 @@ const DEFAULT_SLIDE_ITEMS = [
     category: 'ประกาศคลินิกเฉพาะทาง',
     title: 'ทีมสูตินรีแพทย์ผู้ชำนาญการ ด้านสุขภาพผู้หญิง แผนกสูตินรีเวชกรรม',
     image: 'assets/images/banners/banner-1.png',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     category: 'งานสิ่งพิมพ์ประชาสัมพันธ์',
     title: 'โครงการตรวจสุขภาพประจำปี ใส่ใจสุขภาพเชิงป้องกัน โรงพยาบาลโคกศรีสุพรรณ',
     image: 'assets/images/banners/banner-2.svg',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     category: 'บทความออนไลน์',
     title: 'บทความสุขภาพออนไลน์: รู้ทันสัญญาณเตือนโรคหัวใจและความดันโลหิต',
     image: 'assets/images/banners/banner-3.svg',
-    link: 'pages/news.html'
+    link: '/news'
   }
 ];
 

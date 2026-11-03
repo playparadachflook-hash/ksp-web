@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ไฟล์: js/downloads-section.js
    หน้าที่: สร้างส่วน "ดาวน์โหลดเอกสาร" พร้อมระบบกรองหมวดหมู่
            และรองรับการดาวน์โหลดไฟล์เอกสารจริงที่อัปโหลดมาจากระบบหลังบ้าน
@@ -13,7 +13,7 @@ const DEFAULT_DOWNLOAD_ITEMS = [
     updatedDate: '15 พ.ค. 2567',
     fileName: '',
     fileDataUrl: '',
-    fileUrl: 'pages/medical-documents.html'
+    fileUrl: '/medical-documents'
   },
   {
     title: 'แบบฟอร์มหนังสือมอบอำนาจติดต่อราชการและรับเอกสารทางการแพทย์',
@@ -23,7 +23,7 @@ const DEFAULT_DOWNLOAD_ITEMS = [
     updatedDate: '15 พ.ค. 2567',
     fileName: '',
     fileDataUrl: '',
-    fileUrl: 'pages/medical-documents.html'
+    fileUrl: '/medical-documents'
   },
   {
     title: 'แบบฟอร์มแจ้งย้ายสิทธิหลักประกันสุขภาพแห่งชาติ (บัตรทอง รพ.โคกศรีสุพรรณ)',
@@ -33,7 +33,7 @@ const DEFAULT_DOWNLOAD_ITEMS = [
     updatedDate: '1 มิ.ย. 2567',
     fileName: '',
     fileDataUrl: '',
-    fileUrl: 'pages/medical-documents.html'
+    fileUrl: '/medical-documents'
   },
   {
     title: 'แผนปฏิบัติการจัดซื้อจัดจ้างและประกาศราคากลาง ประจำปีงบประมาณ 2569',
@@ -43,7 +43,7 @@ const DEFAULT_DOWNLOAD_ITEMS = [
     updatedDate: '5 มิ.ย. 2567',
     fileName: '',
     fileDataUrl: '',
-    fileUrl: 'pages/policy.html'
+    fileUrl: '/policy'
   },
   {
     title: 'คู่มือการเตรียมตัวก่อนตรวจสุขภาพประจำปีและการตรวจทางห้องปฏิบัติการ',
@@ -53,7 +53,7 @@ const DEFAULT_DOWNLOAD_ITEMS = [
     updatedDate: '10 มิ.ย. 2567',
     fileName: '',
     fileDataUrl: '',
-    fileUrl: 'pages/departments.html'
+    fileUrl: '/departments'
   },
   {
     title: 'แบบฟอร์มใบสมัครงานและเอกสารประกอบการสมัครงาน โรงพยาบาลโคกศรีสุพรรณ',
@@ -63,7 +63,7 @@ const DEFAULT_DOWNLOAD_ITEMS = [
     updatedDate: '12 มิ.ย. 2567',
     fileName: '',
     fileDataUrl: '',
-    fileUrl: 'pages/policy.html'
+    fileUrl: '/policy'
   }
 ];
 
@@ -92,7 +92,7 @@ function renderDownloadCardsMarkup(rootPath, selectedCategory) {
 
   return filtered.map(function (item) {
     // ถ้ามีการอัปโหลดไฟล์จริงมาจากระบบหลังบ้าน ให้ดาวน์โหลดไฟล์นั้นทันที
-    const hrefVal = item.fileDataUrl ? item.fileDataUrl : rootPath + (item.fileUrl || 'pages/downloads.html');
+    const hrefVal = item.fileDataUrl ? item.fileDataUrl : rootPath + (item.fileUrl || '/downloads');
     const downloadAttr = item.fileDataUrl ? `download="${item.fileName || item.title}"` : '';
 
     return `

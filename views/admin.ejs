@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/tokens.css" />
-  <link rel="stylesheet" href="../css/header.css" />
-  <link rel="stylesheet" href="../css/admin.css" />
-  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/header.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/footer.css" />
 </head>
 <body>
 
@@ -23,7 +23,7 @@
       <!-- แถบควบคุมระบบหลังบ้านด้านบน -->
       <div class="admin-topbar">
         <div class="admin-topbar-left">
-          <img src="../assets/images/logo-ksp.png" alt="Logo" class="admin-topbar-logo" />
+          <img src="/assets/images/logo-ksp.png" alt="Logo" class="admin-topbar-logo" />
           <div>
             <h1 class="admin-topbar-title">ระบบจัดการเว็บไซต์หลังบ้าน (Admin Back-Office)</h1>
             <p class="admin-topbar-sub" id="admin-welcome-user">โรงพยาบาลโคกศรีสุพรรณ — กลุ่มงานสุขภาพดิจิทัล</p>
@@ -36,7 +36,7 @@
             <span id="admin-git-status-icon">🟢</span>
             <span id="admin-git-status-text">เวอร์ชันปัจจุบัน</span>
           </button>
-          <a href="../index.html" class="admin-btn admin-btn-primary">ดูหน้าเว็บไซต์จริง &rarr;</a>
+          <a href="/" class="admin-btn admin-btn-primary">ดูหน้าเว็บไซต์จริง &rarr;</a>
           <button type="button" class="admin-btn admin-btn-outline" id="admin-reset-all-btn">คืนค่าเริ่มต้นทั้งหมด</button>
           <button type="button" class="admin-btn admin-btn-danger" id="admin-logout-btn">ออกจากระบบ</button>
         </div>
@@ -258,12 +258,12 @@
                 <div class="admin-field">
                   <label for="slide-link">ลิงก์ปลายทางเมื่อคลิกสไลด์</label>
                   <select id="slide-link">
-                    <option value="pages/departments.html">แผนกและคลินิก (pages/departments.html)</option>
-                    <option value="pages/news.html">ข่าวสารและกิจกรรม (pages/news.html)</option>
-                    <option value="pages/downloads.html">ดาวน์โหลดเอกสาร (pages/downloads.html)</option>
-                    <option value="pages/policy.html">ประกาศนโยบาย (pages/policy.html)</option>
-                    <option value="pages/contact.html">ติดต่อเรา (pages/contact.html)</option>
-                    <option value="index.html">หน้าแรก (index.html)</option>
+                    <option value="pages/departments">แผนกและคลินิก (pages/departments)</option>
+                    <option value="pages/news">ข่าวสารและกิจกรรม (pages/news)</option>
+                    <option value="pages/downloads">ดาวน์โหลดเอกสาร (pages/downloads)</option>
+                    <option value="pages/policy">ประกาศนโยบาย (pages/policy)</option>
+                    <option value="pages/contact">ติดต่อเรา (pages/contact)</option>
+                    <option value="index">หน้าแรก (index)</option>
                   </select>
                 </div>
                 <div class="admin-field is-full">
@@ -468,17 +468,19 @@
   <div id="footer-placeholder"></div>
 
   <!-- โหลดข้อมูลเริ่มต้นของแต่ละส่วนเพื่อให้ระบบหลังบ้านนำไปแสดงและแก้ไขได้ทันที -->
-  <script src="../js/header.js"></script>
-  <script src="../js/data/cms-store.js"></script>
-  <script src="../js/slidebar.js"></script>
-  <script src="../js/executive.js"></script>
-  <script src="../js/departments.js"></script>
-  <script src="../js/news-section.js"></script>
-  <script src="../js/policy-section.js"></script>
-  <script src="../js/downloads-section.js"></script>
-  <script src="../js/intranet-section.js"></script>
-  <script src="../js/contact-section.js"></script>
-  <script src="../js/admin.js"></script>
-  <script src="../js/footer.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/data/cms-store.js"></script>
+  <script src="/js/slidebar.js"></script>
+  <script src="/js/executive.js"></script>
+  <script src="/js/departments.js"></script>
+  <script src="/js/news-section.js"></script>
+  <script src="/js/policy-section.js"></script>
+  <script src="/js/downloads-section.js"></script>
+  <script src="/js/intranet-section.js"></script>
+  <script src="/js/contact-section.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/footer.js"></script>
 </body>
 </html>
+
+

@@ -1,36 +1,38 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ข่าวสาร &amp; กิจกรรม | โรงพยาบาลโคกศรีสุพรรณ</title>
+  <title>แผนกและคลินิก | โรงพยาบาลโคกศรีสุพรรณ</title>
 
   <!-- ดึงฟอนต์ภาษาไทย Prompt -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- เชื่อมต่อไฟล์ CSS ส่วนกลาง และ CSS เฉพาะส่วนข่าวสาร & กิจกรรม -->
-  <link rel="stylesheet" href="../css/tokens.css" />
-  <link rel="stylesheet" href="../css/header.css" />
-  <link rel="stylesheet" href="../css/news-section.css" />
-  <link rel="stylesheet" href="../css/footer.css" />
+  <!-- เชื่อมต่อไฟล์ CSS ส่วนกลาง และ CSS เฉพาะส่วนแผนกและคลินิก -->
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/header.css" />
+  <link rel="stylesheet" href="/css/departments.css" />
+  <link rel="stylesheet" href="/css/footer.css" />
 </head>
 <body>
 
-  <!-- แถบเมนูด้านบน (Header Bar) ดึงจาก ../js/header.js -->
+  <!-- แถบเมนูด้านบน (Header Bar) ดึงจาก /js/header.js -->
   <div id="header-placeholder"></div>
 
   <!-- พื้นที่เนื้อหาหลัก (จัดเรียงทุกส่วนต่อกันอย่างสวยงามอัตโนมัติ) -->
   <main id="page-content" style="padding-top: 40px;">
-    <div id="news-placeholder"></div>
+    <div id="departments-placeholder"></div>
   </main>
 
-  <!-- แถบส่วนท้ายเว็บไซต์ (Footer Bar) ดึงจาก ../js/footer.js -->
+  <!-- แถบส่วนท้ายเว็บไซต์ (Footer Bar) ดึงจาก /js/footer.js -->
   <div id="footer-placeholder"></div>
 
   <!-- เชื่อมต่อไฟล์ JavaScript -->
-  <script src="../js/header.js"></script>
-  <script src="../js/news-section.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/departments.js"></script>
 </body>
 </html>
+
+

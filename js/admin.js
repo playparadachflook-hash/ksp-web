@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ไฟล์: js/admin.js
    หน้าที่: ควบคุมระบบจัดการเว็บไซต์หลังบ้าน (Admin Back-Office CMS)
    รองรับ:
@@ -23,7 +23,7 @@ const DEFAULT_MEMBERS_LIST = [
 document.addEventListener('DOMContentLoaded', function () {
   // 1. ตรวจสอบสิทธิ์การเข้าสู่ระบบ
   if (localStorage.getItem('ksp_admin_logged_in') !== 'true') {
-    window.location.href = 'login.html';
+    window.location.href = '/login';
     return;
   }
 
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function () {
       localStorage.removeItem('ksp_admin_logged_in');
-      window.location.href = 'login.html';
+      window.location.href = '/login';
     });
   }
 
@@ -576,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function () {
         gallery: finalGallery,
         title: document.getElementById('news-title').value.trim(),
         excerpt: document.getElementById('news-excerpt').value.trim(),
-        link: 'pages/news.html'
+        link: '/news'
       });
 
       await window.KSP_CMS.saveSection('news', 'ข่าวสารและกิจกรรม', newsData, '../');
@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fileName: fileObj ? fileObj.name : '',
         fileDataUrl: uploadedFileUrl || '',
         imageDataUrl: pendingPolicyImageUrl || '',
-        link: 'pages/policy.html'
+        link: '/policy'
       });
 
       await window.KSP_CMS.saveSection('policies', 'ประกาศนโยบายโรงพยาบาล', policyData, '../');
@@ -758,7 +758,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updatedDate: document.getElementById('dl-date').value.trim() || '30 ต.ค. 2569',
         fileName: fObj ? fObj.name : '',
         fileDataUrl: uploadedDataUrl || '',
-        fileUrl: 'pages/downloads.html'
+        fileUrl: '/downloads'
       });
 
       await window.KSP_CMS.saveSection('downloads', 'ดาวน์โหลดเอกสาร', downloadsData, '../');
@@ -839,7 +839,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <img src="${thumbSrc}" alt="${item.title}" class="admin-list-thumb" data-view-slide="${idx}" title="คลิกเพื่อดูภาพเต็ม" />
             <div class="admin-list-text">
               <p class="admin-list-title"><span style="color:#196856;font-weight:700;">ลำดับที่ ${idx + 1}:</span> ${item.title}</p>
-              <p class="admin-list-sub">หมวดหมู่: <strong>${item.category}</strong> | ลิงก์: <code>${item.link || 'pages/departments.html'}</code></p>
+              <p class="admin-list-sub">หมวดหมู่: <strong>${item.category}</strong> | ลิงก์: <code>${item.link || '/departments'}</code></p>
             </div>
           </div>
           <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">
@@ -874,7 +874,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('slide-category').value = item.category || '';
         document.getElementById('slide-title').value = item.title || '';
         const linkSelect = document.getElementById('slide-link');
-        if (linkSelect) linkSelect.value = item.link || 'pages/departments.html';
+        if (linkSelect) linkSelect.value = item.link || '/departments';
 
         pendingSlideImgUrl = item.image;
         if (slidePreviewImg) slidePreviewImg.src = resolveAdminImgPath(item.image);
@@ -940,7 +940,7 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       const category = document.getElementById('slide-category').value.trim();
       const title = document.getElementById('slide-title').value.trim();
-      const link = (document.getElementById('slide-link') && document.getElementById('slide-link').value) || 'pages/departments.html';
+      const link = (document.getElementById('slide-link') && document.getElementById('slide-link').value) || '/departments';
       const fileInput = document.getElementById('slide-file');
       const editIdxStr = slideEditIndexInput ? slideEditIndexInput.value : '';
 
@@ -1054,7 +1054,7 @@ document.addEventListener('DOMContentLoaded', function () {
         icon: document.getElementById('dept-icon').value,
         title: document.getElementById('dept-title').value.trim(),
         description: document.getElementById('dept-desc').value.trim(),
-        link: 'pages/departments.html'
+        link: '/departments'
       });
       const res = await window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../');
       deptForm.reset();
@@ -1213,7 +1213,7 @@ document.addEventListener('DOMContentLoaded', function () {
           code: code,
           title: title,
           description: desc,
-          url: url || 'pages/internal-websites.html',
+          url: url || '/internal-websites',
           logo: pendingIntraLogoUrl || intranetData[editIdx].logo || ''
         };
         await window.KSP_CMS.saveSection('intranet', 'เว็บไซต์ภายใน', intranetData, '../');
@@ -1225,7 +1225,7 @@ document.addEventListener('DOMContentLoaded', function () {
           code: code,
           title: title,
           description: desc,
-          url: url || 'pages/internal-websites.html',
+          url: url || '/internal-websites',
           logo: pendingIntraLogoUrl || ''
         });
         await window.KSP_CMS.saveSection('intranet', 'เว็บไซต์ภายใน', intranetData, '../');

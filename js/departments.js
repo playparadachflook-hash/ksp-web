@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ไฟล์: js/departments.js
    หน้าที่: สร้างส่วนที่ 3 — แผนกและคลินิก (แสดงต่อจาก Slide Bar)
    คำแนะนำสำหรับมือใหม่:
@@ -35,49 +35,49 @@ const DEFAULT_DEPARTMENTS_LIST = [
     icon: 'heart',
     title: 'หัวใจ',
     description: 'อายุรกรรมโรคหัวใจ, ฟื้นฟูและส่งเสริมสมรรถภาพหัวใจ, รักษาหัวใจผ่านสายสวน',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     icon: 'ribbon',
     title: 'มะเร็ง',
     description: 'รังสีรักษาวัฒโนสถ, ป้องกันและตรวจค้นมะเร็งระยะแรกเริ่ม, อายุรกรรมมะเร็ง, เคมีบำบัด',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     icon: 'ribbon',
     title: 'มะเร็ง',
     description: 'รังสีรักษาวัฒโนสถ, ป้องกันและตรวจค้นมะเร็งระยะแรกเริ่ม, อายุรกรรมมะเร็ง, เคมีบำบัด',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     icon: 'ribbon',
     title: 'มะเร็ง',
     description: 'รังสีรักษาวัฒโนสถ, ป้องกันและตรวจค้นมะเร็งระยะแรกเริ่ม, อายุรกรรมมะเร็ง, เคมีบำบัด',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     icon: 'heart',
     title: 'หัวใจ',
     description: 'อายุรกรรมโรคหัวใจ, ฟื้นฟูและส่งเสริมสมรรถภาพหัวใจ, รักษาหัวใจผ่านสายสวน',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     icon: 'ribbon',
     title: 'มะเร็ง',
     description: 'รังสีรักษาวัฒโนสถ, ป้องกันและตรวจค้นมะเร็งระยะแรกเริ่ม, อายุรกรรมมะเร็ง, เคมีบำบัด',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     icon: 'ribbon',
     title: 'มะเร็ง',
     description: 'รังสีรักษาวัฒโนสถ, ป้องกันและตรวจค้นมะเร็งระยะแรกเริ่ม, อายุรกรรมมะเร็ง, เคมีบำบัด',
-    link: 'pages/departments.html'
+    link: '/departments'
   },
   {
     icon: 'ribbon',
     title: 'มะเร็ง',
     description: 'รังสีรักษาวัฒโนสถ, ป้องกันและตรวจค้นมะเร็งระยะแรกเริ่ม, อายุรกรรมมะเร็ง, เคมีบำบัด',
-    link: 'pages/departments.html'
+    link: '/departments'
   }
 ];
 
@@ -122,7 +122,7 @@ function renderDepartmentsHTML(rootPath) {
 
         <!-- ปุ่มลิงก์ ดูทั้งหมด > มุมขวาล่าง -->
         <div class="departments-footer">
-          <a href="${rootPath}pages/departments.html" class="departments-view-all">
+          <a href="${rootPath}/departments" class="departments-view-all">
             <span>ดูทั้งหมด</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="9 18 15 12 9 6"></polyline>

@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ไฟล์: js/intranet-section.js
    หน้าที่: สร้างส่วน "เว็บไซต์ภายใน" (ระบบสารสนเทศและลิงก์หน่วยงานภายในโรงพยาบาล)
    คำแนะนำสำหรับมือใหม่:
@@ -16,49 +16,49 @@ const DEFAULT_INTERNAL_WEBSITES = [
     code: 'HIS / HOSxP',
     title: 'ระบบสารสนเทศโรงพยาบาล',
     description: 'ระบบเวชระเบียนอิเล็กทรอนิกส์และการให้บริการผู้ป่วยนอก-ผู้ป่วยใน',
-    url: 'pages/internal-websites.html'
+    url: '/internal-websites'
   },
   {
     code: 'E-Office',
     title: 'ระบบงานสารบรรณอิเล็กทรอนิกส์',
     description: 'ระบบรับ-ส่งหนังสือราชการ แจ้งเวียนประกาศ และเอกสารภายในองค์กร',
-    url: 'pages/internal-websites.html'
+    url: '/internal-websites'
   },
   {
     code: 'Digital Health',
     title: 'กลุ่มงานสุขภาพดิจิทัล (IT Helpdesk)',
     description: 'ระบบแจ้งซ่อมคอมพิวเตอร์ เครือข่ายอินเทอร์เน็ต และความมั่นคงปลอดภัยไซเบอร์',
-    url: 'pages/internal-websites.html'
+    url: '/internal-websites'
   },
   {
     code: 'HR & E-Leave',
     title: 'ระบบบริหารทรัพยากรบุคคล',
     description: 'ระบบฐานข้อมูลบุคลากร ตารางปฏิบัติงาน และระบบการลาอิเล็กทรอนิกส์',
-    url: 'pages/internal-websites.html'
+    url: '/internal-websites'
   },
   {
     code: 'HDC / Data',
     title: 'คลังข้อมูลสุขภาพและตัวชี้วัด (HDC)',
     description: 'ระบบรายงานข้อมูลสถิติทางการแพทย์และตัวชี้วัดกระทรวงสาธารณสุข',
-    url: 'pages/internal-websites.html'
+    url: '/internal-websites'
   },
   {
     code: 'Back Office',
     title: 'ระบบบริหารคลังยาและพัสดุ',
     description: 'ระบบเบิก-จ่ายเวชภัณฑ์ยา พัสดุทางการแพทย์ และครุภัณฑ์โรงพยาบาล',
-    url: 'pages/internal-websites.html'
+    url: '/internal-websites'
   },
   {
     code: 'HA / Risk',
     title: 'ระบบบริหารความเสี่ยงและคุณภาพ (HA)',
     description: 'ระบบรายงานอุบัติการณ์ความเสี่ยงและเอกสารมาตรฐานคุณภาพโรงพยาบาล',
-    url: 'pages/internal-websites.html'
+    url: '/internal-websites'
   },
   {
     code: 'Smart Booking',
     title: 'ระบบจองห้องประชุมและยานพาหนะ',
     description: 'บริการจองห้องประชุมวิชาการและขออนุญาตใช้รถยนต์ส่วนกลางออนไลน์',
-    url: 'pages/internal-websites.html'
+    url: '/internal-websites'
   }
 ];
 

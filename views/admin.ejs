@@ -83,8 +83,18 @@
                   <input type="text" id="member-username" placeholder="เช่น staff01" required />
                 </div>
                 <div class="admin-field">
-                  <label for="member-password">รหัสผ่าน (Password)</label>
-                  <input type="text" id="member-password" placeholder="กำหนดรหัสผ่าน" required />
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <label for="member-password" style="margin-bottom:0;">รหัสผ่าน (Password)</label>
+                    <button type="button" id="btn-random-member-pass" title="สุ่มรหัสผ่านใหม่ที่มีอักขระพิเศษปลอดภัยสูง" style="background:none;border:none;color:#0f766e;font-size:0.8rem;font-weight:600;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:4px;">
+                      🎲 สุ่มรหัสผ่านอักขระพิเศษ
+                    </button>
+                  </div>
+                  <div style="position:relative;display:flex;align-items:center;margin-top:4px;">
+                    <input type="password" id="member-password" placeholder="•••••••••••• (สุ่มอักขระพิเศษแทนรหัสจริง)" autocomplete="new-password" required style="width:100%;padding-right:38px;" />
+                    <button type="button" id="btn-toggle-member-pass" title="สลับการมองเห็นรหัสผ่าน" style="position:absolute;right:10px;background:none;border:none;cursor:pointer;color:#64748b;font-size:1rem;line-height:1;padding:0;">
+                      👁️
+                    </button>
+                  </div>
                 </div>
                 <div class="admin-field">
                   <label for="member-fullname">ชื่อ-นามสกุล สมาชิก</label>

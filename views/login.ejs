@@ -45,22 +45,28 @@
 
           <div class="login-field">
             <label for="login-password" class="login-label">รหัสผ่าน (Password)</label>
-            <input
-              type="password"
-              id="login-password"
-              class="login-input"
-              placeholder="กรอกรหัสผ่าน"
-              autocomplete="current-password"
-              required
-            />
+            <div style="position:relative;display:flex;align-items:center;">
+              <input
+                type="password"
+                id="login-password"
+                class="login-input"
+                placeholder="•••••••••••• (อักขระพิเศษสุ่มแทนรหัสจริง)"
+                autocomplete="current-password"
+                required
+                style="width:100%;padding-right:38px;"
+              />
+              <button type="button" id="btn-toggle-login-pass" title="สลับการมองเห็นรหัสผ่าน" style="position:absolute;right:12px;background:none;border:none;cursor:pointer;color:#64748b;font-size:1.05rem;line-height:1;padding:0;">
+                👁️
+              </button>
+            </div>
           </div>
 
           <button type="submit" class="login-submit-btn" id="login-submit-btn">เข้าสู่ระบบจัดการเว็บไซต์</button>
         </form>
 
         <div class="login-hint-box">
-          <strong>ข้อมูลสำหรับทดสอบเข้าสู่ระบบ:</strong><br />
-          ชื่อผู้ใช้: <code>admin</code> &nbsp;|&nbsp; รหัสผ่าน: <code>1234</code>
+          <strong>ระบบความปลอดภัยการเข้าสู่ระบบ:</strong><br />
+          ชื่อผู้ใช้: <code>admin</code> &nbsp;|&nbsp; รหัสผ่าน: <code style="letter-spacing:2px;font-weight:700;color:#0f766e;">*#@!&$%~</code> (รหัสผ่านความปลอดภัยสูง)
         </div>
       </div>
     </section>

@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // =========================================================================
-  // เมนูที่ 1: เพิ่มสมาชิก / จัดการผู้ใช้งานระบบหลังบ้าน (รองรับ บันทึก / แก้ไข / ลบ)
+  // เมนูที่ 1: เพิ่มสมาชิก / จัดการผู้ใช้งานระบบหลังบ้าน (รองรับ บันทึก / แก้ไข / ลบ พร้อมระบบความปลอดภัยรหัสผ่าน)
   // =========================================================================
   let membersData = window.KSP_CMS.getSection('members', DEFAULT_MEMBERS_LIST);
   const membersListEl = document.getElementById('admin-members-list');
@@ -477,6 +477,92 @@ document.addEventListener('DOMContentLoaded', function () {
   const memberEditIndexInput = document.getElementById('member-edit-index');
   const memberSubmitBtn = document.getElementById('member-submit-btn');
   const memberCancelBtn = document.getElementById('member-cancel-btn');
+  const btnRandomMemberPass = document.getElementById('btn-random-member-pass');
+  const btnToggleMemberPass = document.getElementById('btn-toggle-member-pass');
+  let currentEditingMemberPassword = null;
+
+  /**
+   * สุ่มอักขระพิเศษแทนการแสดงรหัสผ่านจริงเสมอ (เช่น *#@!&$%^~*?)
+   * เพื่อความปลอดภัยสูงสุดในทุกเมนู ไม่แสดงรหัสผ่านจริงสู่หน้าจอ
+   */
+  function getRandomSpecialMask(len) {
+    const specialSymbols = ['*', '#', '@', '&', '%', '$', '!', '~', '^', '?', '•'];
+    const count = len || 10;
+    let res = '';
+    for (let i = 0; i < count; i++) {
+      res += specialSymbols[Math.floor(Math.random() * specialSymbols.length)];
+    }
+    return res;
+  }
+
+  /**
+   * สุ่มรหัสผ่านใหม่ที่มีอักขระพิเศษความปลอดภัยสูง
+   */
+  function generateStrongRandomPassword() {
+    const specials = ['@', '#', '$', '!', '%', '&', '*', '^', '~'];
+    const lowers = 'abcdefghijkmnpqrstuvwxyz';
+    const uppers = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const numbers = '23456789';
+
+    let pass = '';
+    pass += uppers[Math.floor(Math.random() * uppers.length)];
+    pass += lowers[Math.floor(Math.random() * lowers.length)];
+    pass += numbers[Math.floor(Math.random() * numbers.length)];
+    pass += specials[Math.floor(Math.random() * specials.length)];
+    pass += uppers[Math.floor(Math.random() * uppers.length)];
+    pass += lowers[Math.floor(Math.random() * lowers.length)];
+    pass += numbers[Math.floor(Math.random() * numbers.length)];
+    pass += specials[Math.floor(Math.random() * specials.length)];
+    pass += lowers[Math.floor(Math.random() * lowers.length)];
+    pass += specials[Math.floor(Math.random() * specials.length)];
+
+    return pass.split('').sort(() => Math.random() - 0.5).join('');
+  }
+
+  // ปุ่มสุ่มรหัสผ่านที่มีอักขระพิเศษ
+  if (btnRandomMemberPass) {
+    btnRandomMemberPass.addEventListener('click', function () {
+      const strongPass = generateStrongRandomPassword();
+      const passInput = document.getElementById('member-password');
+      if (passInput) {
+        passInput.value = strongPass;
+        passInput.dataset.originalMask = '';
+        passInput.type = 'text'; // แสดงรหัสผ่านที่สุ่มให้ผู้ดูแลเห็นชั่วคราว
+        if (btnToggleMemberPass) btnToggleMemberPass.textContent = '🙈';
+
+        notify({
+          type: 'info',
+          title: 'สุ่มรหัสผ่านอักขระพิเศษสำเร็จ!',
+          message: 'สร้างรหัสผ่านใหม่ที่มีอักขระพิเศษความปลอดภัยสูงเรียบร้อยแล้ว'
+        });
+
+        // หลังจาก 4 วินาที จะเปลี่ยนกลับเป็นโหมดซ่อนอัตโนมัติ
+        setTimeout(function () {
+          if (passInput.type === 'text') {
+            passInput.type = 'password';
+            if (btnToggleMemberPass) btnToggleMemberPass.textContent = '👁️';
+          }
+        }, 4000);
+      }
+    });
+  }
+
+  // ปุ่มสลับการซ่อน/แสดงรหัสผ่าน
+  if (btnToggleMemberPass) {
+    btnToggleMemberPass.addEventListener('click', function () {
+      const passInput = document.getElementById('member-password');
+      if (!passInput) return;
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        btnToggleMemberPass.textContent = '🙈';
+        btnToggleMemberPass.title = 'ซ่อนรหัสผ่าน';
+      } else {
+        passInput.type = 'password';
+        btnToggleMemberPass.textContent = '👁️';
+        btnToggleMemberPass.title = 'แสดงรหัสผ่าน';
+      }
+    });
+  }
 
   function resetMemberForm() {
     if (memberForm) {
@@ -487,6 +573,17 @@ document.addEventListener('DOMContentLoaded', function () {
     if (memberFormTitle) memberFormTitle.textContent = '+ เพิ่มสมาชิกใหม่';
     if (memberSubmitBtn) memberSubmitBtn.textContent = 'บันทึกสมาชิกใหม่';
     if (memberCancelBtn) memberCancelBtn.style.display = 'none';
+
+    currentEditingMemberPassword = null;
+    const passInput = document.getElementById('member-password');
+    if (passInput) {
+      passInput.value = '';
+      passInput.type = 'password';
+      passInput.dataset.originalMask = '';
+      passInput.setAttribute('placeholder', '•••••••••••• (สุ่มอักขระพิเศษแทนรหัสจริง)');
+      passInput.required = true;
+    }
+    if (btnToggleMemberPass) btnToggleMemberPass.textContent = '👁️';
   }
 
   if (memberCancelBtn) {
@@ -504,12 +601,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!membersListEl) return;
     membersListEl.innerHTML = membersData.map(function (member, idx) {
       const isDefaultAdmin = member.username === 'admin' && idx === 0;
+      // โชว์อักขระพิเศษแบบ Random แทนการแสดงรหัสจริงเสมอ
+      const maskedPassword = getRandomSpecialMask(member.password ? member.password.length : 10);
       return `
         <div class="admin-list-row">
           <div class="admin-list-info">
             <div class="admin-list-text">
               <p class="admin-list-title">${member.fullName} (Username: <code>${member.username}</code>)</p>
-              <p class="admin-list-sub">กลุ่มงาน/สิทธิ์: ${member.role} | รหัสผ่าน: ${member.password}</p>
+              <p class="admin-list-sub">กลุ่มงาน/สิทธิ์: <strong>${member.role}</strong> | รหัสผ่าน: <code class="admin-pass-mask" title="รหัสผ่านถูกซ่อนด้วยอักขระพิเศษแบบสุ่มเสมอ">${maskedPassword}</code></p>
             </div>
           </div>
           <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">
@@ -533,9 +632,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (memberEditIndexInput) memberEditIndexInput.value = idx;
         document.getElementById('member-username').value = member.username || '';
-        document.getElementById('member-password').value = member.password || '';
         document.getElementById('member-fullname').value = member.fullName || '';
         document.getElementById('member-role').value = member.role || 'ผู้ดูแลระบบ (Admin)';
+
+        // เก็บรหัสผ่านเดิมไว้ และใส่อักขระพิเศษแบบสุ่มลงในช่องแทนรหัสจริงเสมอ
+        currentEditingMemberPassword = member.password || '';
+        const passInput = document.getElementById('member-password');
+        if (passInput) {
+          const randomMask = getRandomSpecialMask(10);
+          passInput.value = randomMask;
+          passInput.dataset.originalMask = randomMask;
+          passInput.type = 'password';
+          passInput.setAttribute('placeholder', '•••••••••••• (สุ่มอักขระพิเศษแทนรหัสจริง — เว้นไว้หากใช้รหัสเดิม)');
+          passInput.required = false;
+        }
+        if (btnToggleMemberPass) btnToggleMemberPass.textContent = '👁️';
 
         if (memberFormTitle) memberFormTitle.textContent = `✎ แก้ไขข้อมูลสมาชิก: ${member.fullName}`;
         if (memberSubmitBtn) memberSubmitBtn.textContent = 'บันทึกการแก้ไขสมาชิก';
@@ -589,14 +700,19 @@ document.addEventListener('DOMContentLoaded', function () {
     memberForm.addEventListener('submit', async function (e) {
       e.preventDefault();
       const username = document.getElementById('member-username').value.trim();
-      const password = document.getElementById('member-password').value.trim();
+      const passInput = document.getElementById('member-password');
+      let password = passInput ? passInput.value.trim() : '';
       const fullName = document.getElementById('member-fullname').value.trim();
       const role = document.getElementById('member-role').value;
       const editIdxStr = memberEditIndexInput ? memberEditIndexInput.value : '';
 
+      // กรณีแก้ไข: หากไม่ได้เปลี่ยนรหัส หรือยังเป็นอักขระพิเศษสุ่มเดิม ให้ใช้รหัสเดิม
       if (editIdxStr !== '') {
-        // --- กรณีแก้ไขข้อมูลสมาชิกเดิม ---
         const editIdx = Number(editIdxStr);
+        if (!password || (passInput && passInput.dataset && password === passInput.dataset.originalMask)) {
+          password = currentEditingMemberPassword || membersData[editIdx].password;
+        }
+
         // ตรวจสอบ username ซ้ำกับคนอื่นที่ไม่ใช่ตัวเอง
         const duplicate = membersData.some(function (m, idx) {
           return idx !== editIdx && m.username.toLowerCase() === username.toLowerCase();
@@ -635,6 +751,11 @@ document.addEventListener('DOMContentLoaded', function () {
             message: 'ชื่อผู้ใช้งาน (Username) นี้มีอยู่ในระบบแล้ว กรุณาใช้ชื่ออื่น'
           });
           return;
+        }
+
+        // หากผู้ใช้ไม่ได้ระบุรหัสผ่าน ให้สุ่มรหัสผ่านอักขระพิเศษให้อัตโนมัติ
+        if (!password) {
+          password = generateStrongRandomPassword();
         }
 
         membersData.push({

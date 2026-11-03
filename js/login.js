@@ -19,6 +19,21 @@ document.addEventListener('DOMContentLoaded', function () {
   const passwordInput = document.getElementById('login-password');
   const submitBtn = document.getElementById('login-submit-btn');
   const errorBox = document.getElementById('login-error-box');
+  const toggleLoginPassBtn = document.getElementById('btn-toggle-login-pass');
+
+  if (toggleLoginPassBtn && passwordInput) {
+    toggleLoginPassBtn.addEventListener('click', function () {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleLoginPassBtn.textContent = '🙈';
+        toggleLoginPassBtn.title = 'ซ่อนรหัสผ่าน';
+      } else {
+        passwordInput.type = 'password';
+        toggleLoginPassBtn.textContent = '👁️';
+        toggleLoginPassBtn.title = 'แสดงรหัสผ่าน';
+      }
+    });
+  }
 
   // องค์ประกอบของ Modal ยินดีต้อนรับ
   const welcomeModal = document.getElementById('welcome-modal');

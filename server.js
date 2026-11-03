@@ -293,14 +293,25 @@ if (useExpress) {
         }
         console.log(`[MySQL Sync] ซิงค์ข้อมูลแผนก ${sectionData.length} รายการลงตาราง Web_Ksp.departments สำเร็จ!`);
       } else if (sectionKey === 'intranet' && Array.isArray(sectionData)) {
-        // --- 8. ตาราง intranet (เว็บไซต์ภายใน) ---
+        // --- 8. ตาราง intranet (เว็บไซต์ภายใน สไตล์ราชการสะดวก) ---
         await dbPool.execute('DELETE FROM intranet');
         let order = 1;
         for (const intra of sectionData) {
           await dbPool.execute(`
-            INSERT INTO intranet (title, category, description, url, display_order)
-            VALUES (?, ?, ?, ?, ?)
-          `, [intra.title || '', intra.code || 'ระบบงานภายใน', intra.description || '', intra.url || '', order++]);
+            INSERT INTO intranet (title, category, description, url, theme, icon, action_text, btn_style, logo, display_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
+            intra.title || '',
+            intra.code || 'ระบบงานภายใน',
+            intra.description || '',
+            intra.url || '',
+            intra.theme || 'white',
+            intra.icon || 'globe',
+            intra.actionText || intra.action_text || 'สมัครใช้งาน',
+            intra.btnStyle || intra.btn_style || 'green',
+            intra.logo || null,
+            order++
+          ]);
         }
         console.log(`[MySQL Sync] ซิงค์ข้อมูลเว็บไซต์ภายใน ${sectionData.length} รายการลงตาราง Web_Ksp.intranet สำเร็จ!`);
       } else if (sectionKey === 'contact' && typeof sectionData === 'object' && sectionData !== null) {
@@ -355,6 +366,13 @@ if (useExpress) {
             // ตรวจสอบรหัสผ่านตรงกับในฐานข้อมูล Web_Ksp
             if (password === dbUser.password) {
               console.log(`[Login Success] ผู้ใช้: ${username} เข้าสู่ระบบสำเร็จ (ฐานข้อมูล MySQL: Web_Ksp)`);
+              try {
+                const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+                await dbPool.execute(`
+                  INSERT INTO admin_logs (username, action_type, section_key, details, ip_address)
+                  VALUES (?, 'LOGIN', 'auth', 'เข้าสู่ระบบสำเร็จ', ?)
+                `, [username, String(clientIp)]);
+              } catch (e) {}
               return res.json({
                 status: 'ok',
                 source: 'MySQL Database (Web_Ksp)',
@@ -464,6 +482,21 @@ if (useExpress) {
 
           // 2. ซิงค์ลงตารางจริงรายตารางของระบบ (users, news, policies, downloads, slides, executive, departments, intranet, contact)
           await syncToRelationalTables(sectionKey, sectionData);
+
+          // 3. บันทึกประวัติการทำงานลงตาราง admin_logs
+          try {
+            const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+            const countInfo = Array.isArray(sectionData) ? `${sectionData.length} รายการ` : '1 รายการ';
+            await dbPool.execute(`
+              INSERT INTO admin_logs (username, action_type, section_key, details, ip_address)
+              VALUES (?, 'SAVE', ?, ?, ?)
+            `, [
+              req.body.username || 'admin',
+              sectionKey,
+              `บันทึก/แก้ไขข้อมูลส่วน "${sectionName}" (${countInfo})`,
+              String(clientIp)
+            ]);
+          } catch (logErr) {}
         } catch (dbErr) {
           console.error('[MySQL Save Section Error]', dbErr.message);
         }

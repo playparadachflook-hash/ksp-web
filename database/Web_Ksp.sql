@@ -143,17 +143,22 @@ CREATE TABLE `departments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ตารางแผนกและคลินิก';
 
 -- ============================================================================
--- เมนูที่ 8: เว็บไซต์ภายใน (Internal Websites / Intranet)
+-- เมนูที่ 8: เว็บไซต์ภายใน (Internal Websites / Intranet สไตล์ระบบราชการสะดวก)
 -- ============================================================================
 DROP TABLE IF EXISTS `intranet`;
 CREATE TABLE `intranet` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `title` VARCHAR(150) NOT NULL COMMENT 'ชื่อระบบงาน เช่น ระบบเรียกคิว Smart Queue, HOSxP',
-  `category` VARCHAR(100) DEFAULT 'งานบริการผู้ป่วย' COMMENT 'หมวดหมู่งาน',
+  `category` VARCHAR(100) DEFAULT 'งานบริการผู้ป่วย' COMMENT 'หมวดหมู่งาน/รหัสย่อระบบ',
   `description` VARCHAR(255) DEFAULT NULL COMMENT 'คำอธิบายระบบโดยย่อ',
   `url` VARCHAR(255) NOT NULL COMMENT 'URL หรือ IP ของระบบงาน',
   `port_number` INT DEFAULT NULL COMMENT 'หมายเลขพอร์ต',
-  `icon_symbol` VARCHAR(50) DEFAULT '🖥️' COMMENT 'ไอคอนประจำระบบ',
+  `icon_symbol` VARCHAR(50) DEFAULT '🖥️' COMMENT 'ไอคอนสัญลักษณ์ข้อความ',
+  `theme` VARCHAR(50) DEFAULT 'white' COMMENT 'โทนสีการ์ด เช่น white, purple, peach, sage, olive, sky ฯลฯ',
+  `icon` VARCHAR(50) DEFAULT 'globe' COMMENT 'ไอคอนสัญลักษณ์ เช่น server, mail, wall, idcard, gauge',
+  `action_text` VARCHAR(100) DEFAULT 'สมัครใช้งาน' COMMENT 'ข้อความบนปุ่มแคปซูล เช่น สมัครใช้งาน, เข้าสู่ระบบ, รอตรวจสอบสิทธิ์',
+  `btn_style` VARCHAR(50) DEFAULT 'green' COMMENT 'รูปแบบสีปุ่ม เช่น green, yellow, transparent',
+  `logo` LONGTEXT DEFAULT NULL COMMENT 'ภาพโลโก้เฉพาะ URL หรือ Base64',
   `display_order` INT DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ตารางเว็บไซต์ระบบสารสนเทศภายใน';
@@ -173,6 +178,20 @@ CREATE TABLE `contact` (
   `travel_info` TEXT DEFAULT NULL COMMENT 'ข้อมูลการเดินทาง',
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ตารางข้อมูลติดต่อโรงพยาบาล';
+
+-- ============================================================================
+-- เมนูพิเศษ: บันทึกประวัติการทำงานระบบหลังบ้าน (Admin Activity Logs)
+-- ============================================================================
+DROP TABLE IF EXISTS `admin_logs`;
+CREATE TABLE `admin_logs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(60) NOT NULL COMMENT 'ชื่อผู้ใช้งานที่ทำรายการ',
+  `action_type` VARCHAR(30) NOT NULL COMMENT 'ประเภทรายการ: SAVE, UPDATE, DELETE, LOGIN',
+  `section_key` VARCHAR(60) NOT NULL COMMENT 'ส่วนที่ทำรายการ เช่น members, news, departments, intranet',
+  `details` TEXT DEFAULT NULL COMMENT 'รายละเอียดรายการ',
+  `ip_address` VARCHAR(45) DEFAULT NULL COMMENT 'IP Address ผู้ใช้งาน',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'วันเวลาที่ทำรายการ'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ตารางประวัติการทำงานระบบหลังบ้าน';
 
 -- ============================================================================
 -- ข้อมูลเริ่มต้นของระบบหลังบ้าน (Initial Seed Data)
@@ -209,15 +228,22 @@ VALUES
   (2, 'ใบสมัครงานลูกจ้างชั่วคราวเงินบำรุง โรงพยาบาลโคกศรีสุพรรณ', 'งานบริหารทรัพยากรบุคคล', 'PDF', '320 KB', 890);
 
 -- 6. ข้อมูลระบบสารสนเทศภายในเริ่มต้น
-INSERT INTO `intranet` (`id`, `title`, `category`, `description`, `url`, `port_number`, `icon_symbol`, `display_order`)
+INSERT INTO `intranet` (`id`, `title`, `category`, `description`, `url`, `port_number`, `icon_symbol`, `theme`, `icon`, `action_text`, `btn_style`, `display_order`)
 VALUES
-  (1, 'ระบบเรียกคิวอัจฉริยะ (HOSxP Smart Queue)', 'งานบริการผู้ป่วย', 'ระบบแสดงผลและเรียกคิวผู้ป่วยอัตโนมัติ เชื่อมต่อ HOSxP เรียลไทม์', 'http://192.168.2.202:5173', 5173, '📟', 1),
-  (2, 'ระบบสารสนเทศโรงพยาบาล HOSxP Portal', 'งานบริหารและสารสนเทศ', 'ศูนย์รวมโปรแกรมและระบบงานภายในโรงพยาบาลสำหรับเจ้าหน้าที่', 'http://192.168.2.202:80', 80, '🏥', 2),
-  (3, 'ระบบตรวจสอบสิทธิและการเคลม (FDH Checker)', 'งานการเงินและการเคลม', 'ระบบตรวจสอบสิทธิการรักษาพยาบาลและการส่งเบิกค่ารักษาแบบดิจิทัล', 'http://192.168.2.202:3000', 3000, '💳', 3);
+  (1, 'ระบบสารสนเทศโรงพยาบาล (HOSxP / HIS)', 'HIS', 'ระบบเวชระเบียนอิเล็กทรอนิกส์และการให้บริการผู้ป่วยนอก-ผู้ป่วยใน', 'http://192.168.2.202:3088', 3088, '🏥', 'purple', 'server', 'เข้าใช้งานระบบ', 'green', 1),
+  (2, 'ระบบงานสารบรรณอิเล็กทรอนิกส์ (E-Office)', 'E-Office', 'ระบบรับ-ส่งหนังสือราชการ แจ้งเวียนประกาศ และเอกสารภายในองค์กร', '/internal-websites', NULL, '✉️', 'white', 'mail', 'เข้าสู่ระบบ', 'green', 2),
+  (3, 'กลุ่มงานสุขภาพดิจิทัล (IT Helpdesk)', 'Digital Health', 'ระบบแจ้งซ่อมคอมพิวเตอร์ เครือข่ายอินเทอร์เน็ต และความมั่นคงปลอดภัยไซเบอร์', '/internal-websites', NULL, '💻', 'sage', 'wall', 'แจ้งซ่อม IT', 'green', 3),
+  (4, 'ระบบเรียกคิวอัจฉริยะ (HOSxP Smart Queue)', 'Queue', 'ระบบจัดการคิวตรวจผู้ป่วย แผนกเวชระเบียนและจุดบริการผู้ป่วยนอก', 'http://192.168.2.202:5173', 5173, '📟', 'pink', 'activity', 'เปิดดูระบบคิว', 'green', 4),
+  (5, 'ระบบตรวจสอบสิทธิและการเคลม (FDH Checker)', 'FDH', 'ระบบตรวจสอบสิทธิการรักษาพยาบาลและการส่งเบิกค่ารักษาแบบดิจิทัล', 'http://192.168.2.202:3000', 3000, '💳', 'olive', 'gauge', 'รอตรวจสอบสิทธิ์', 'yellow', 5);
 
 -- 7. ข้อมูลติดต่อเริ่มต้น
 INSERT INTO `contact` (`id`, `hospital_name`, `address`, `tel_normal`, `tel_emergency`, `email`)
 VALUES
   (1, 'โรงพยาบาลโคกศรีสุพรรณ', 'อำเภอโคกศรีสุพรรณ จังหวัดสกลนคร 47280', '042-766054', '042-766054 ต่อ 101', 'ksphos@gmail.com');
+
+-- 8. ประวัติการเริ่มต้นระบบ
+INSERT INTO `admin_logs` (`username`, `action_type`, `section_key`, `details`)
+VALUES
+  ('admin', 'INIT', 'system', 'ติดตั้งและเริ่มต้นฐานข้อมูลระบบหลังบ้าน Web_Ksp สำเร็จเรียบร้อย');
 
 SET foreign_key_checks = 1;

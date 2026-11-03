@@ -2077,12 +2077,17 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // =========================================================================
-  // เมนูที่ 8: จัดการเว็บไซต์ภายใน (รองรับ บันทึก / แก้ไข / ลบ)
+  // เมนูที่ 8: จัดการเว็บไซต์ภายใน (รองรับ บันทึก / แก้ไข / ลบ ตามรูปแบบราชการสะดวก)
   // =========================================================================
   let intranetData = (function () {
     const sec = window.KSP_CMS.getSection('intranet', DEFAULT_INTERNAL_WEBSITES);
-    if (Array.isArray(sec) && sec.length >= 20 && sec[0].theme) {
-      return sec;
+    if (Array.isArray(sec) && sec.length > 0) {
+      const hasDummy = sec.some(function (item) {
+        return item.title && (item.title.includes('Anti Drugs') || item.title.includes('30 บาทรักษาทุกที่'));
+      });
+      if (!hasDummy) {
+        return sec;
+      }
     }
     return DEFAULT_INTERNAL_WEBSITES;
   })();
@@ -2160,13 +2165,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!intranetListEl) return;
     intranetListEl.innerHTML = intranetData.map(function (item, idx) {
       const logoThumb = resolveAdminIntraLogo(item.logo);
+      const themeKey = item.theme || 'white';
+      const actionText = item.actionText || 'เข้าใช้งาน';
       return `
         <div class="admin-list-row">
-          <div class="admin-list-info">
-            <img src="${logoThumb}" alt="${item.title}" class="admin-list-thumb" style="width:44px;height:44px;object-fit:contain;background:#ffffff;padding:3px;" />
+          <div class="admin-list-info" style="display:flex;align-items:center;gap:12px;">
+            ${item.logo ? `<img src="${logoThumb}" alt="${item.title}" class="admin-list-thumb" style="width:44px;height:44px;object-fit:contain;background:#ffffff;padding:3px;border-radius:10px;border:1px solid #cbd5e1;" />` : `<div style="width:44px;height:44px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:1.1rem;border:1px solid #cbd5e1;">🌐</div>`}
             <div class="admin-list-text">
-              <p class="admin-list-title">[${item.code}] ${item.title}</p>
-              <p class="admin-list-sub">${item.description} (URL: <a href="${item.url}" target="_blank" rel="noopener noreferrer" style="color:#196856;text-decoration:underline;">${item.url}</a>)</p>
+              <p class="admin-list-title"><span style="color:#196856;font-weight:700;">ลำดับที่ ${idx + 1}:</span> ${item.title} <span style="font-size:0.75rem;padding:2px 8px;border-radius:999px;background:#e0f2fe;color:#0369a1;margin-left:6px;">ธีม: ${themeKey}</span></p>
+              <p class="admin-list-sub">ปุ่ม: <strong style="color:#15803d;">[${actionText}]</strong> | URL: <a href="${item.url}" target="_blank" rel="noopener noreferrer" style="color:#196856;text-decoration:underline;">${item.url}</a></p>
             </div>
           </div>
           <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">

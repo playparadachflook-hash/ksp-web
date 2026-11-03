@@ -68,328 +68,99 @@ const INTRANET_ICONS = {
 };
 
 /**
- * รายการระบบเว็บไซต์ภายใน 32 ระบบงานตรงตามแบบระบบราชการสะดวก สสจ.สกลนคร
- * รวมทั้งระบบหลักของ รพ.โคกศรีสุพรรณ
+ * รายการระบบเว็บไซต์ภายในของโรงพยาบาลโคกศรีสุพรรณ
+ * จัดรูปแบบตามมาตรฐาน "ระบบราชการสะดวก"
  */
 const DEFAULT_INTERNAL_WEBSITES = [
-  // แถวที่ 1
   {
-    title: '30 บาทรักษาทุกที่ ด้วยบัตรประชาชนใบเดียว.',
-    code: '30 บาท',
-    theme: 'purple',
-    icon: 'globe',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://30baht.moph.go.th'
-  },
-  {
-    title: 'Anti Drugs สกลนคร',
-    code: 'Anti Drugs',
-    theme: 'white',
-    icon: 'pill',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://antidrug.skno.moph.go.th'
-  },
-  {
-    title: 'CDC',
-    code: 'CDC',
-    theme: 'pink',
-    icon: 'heart',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://cdc.moph.go.th'
-  },
-  {
-    title: 'Cyber Security',
-    code: 'Cyber Security',
-    theme: 'white',
-    icon: 'wall',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://cyber.skno.moph.go.th'
-  },
-  {
-    title: 'e-Learning',
-    code: 'e-Learning',
-    theme: 'white',
-    icon: 'grad',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://elearning.moph.go.th'
-  },
-  {
-    title: 'Health Product Survey (อสม.อย. เยี่ยมบ้าน)',
-    code: 'Health Product',
-    theme: 'white',
-    icon: 'capsule',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://survey.fda.moph.go.th'
-  },
-
-  // แถวที่ 2
-  {
-    title: 'Health Station',
-    code: 'Health Station',
-    theme: 'peach',
-    icon: 'homeheart',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://healthstation.in.th'
-  },
-  {
-    title: 'IOT',
-    code: 'IOT',
-    theme: 'white',
-    icon: 'toggle',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://iot.skno.moph.go.th'
-  },
-  {
-    title: 'KPI Cockpit',
-    code: 'KPI',
-    theme: 'sage',
-    icon: 'gauge',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://cockpit.moph.go.th'
-  },
-  {
-    title: 'MCH Net',
-    code: 'MCH',
-    theme: 'white',
-    icon: 'gender',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://mchnet.anamai.moph.go.th'
-  },
-  {
-    title: 'My Dashboard',
-    code: 'Dashboard',
-    theme: 'olive',
-    icon: 'grid',
-    actionText: 'รอตรวจสอบสิทธิ์',
-    btnStyle: 'yellow',
-    url: 'https://dashboard.skno.moph.go.th'
-  },
-  {
-    title: 'OTP Server',
-    code: 'OTP',
-    theme: 'white',
-    icon: 'lock',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://otp.skno.moph.go.th'
-  },
-
-  // แถวที่ 3
-  {
-    title: 'ProviderID Monitor',
-    code: 'ProviderID',
-    theme: 'taupe',
-    icon: 'idcard',
-    actionText: 'เข้าใช้งาน',
-    btnStyle: 'transparent',
-    url: 'https://provider.moph.go.th'
-  },
-  {
-    title: 'Road Safety+',
-    code: 'Safety+',
-    theme: 'yellow',
-    icon: 'car',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://roadsafety.moph.go.th'
-  },
-  {
-    title: 'Student69',
-    code: 'Student69',
-    theme: 'white',
-    icon: 'copy',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://student.skno.moph.go.th'
-  },
-  {
-    title: 'Walk Run Bike 11',
-    code: 'Walk Run Bike',
-    theme: 'white',
-    icon: 'activity',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://wrb11.moph.go.th'
-  },
-  {
-    title: 'คัดกรองบุหรี่ แอลกอฮอล์',
-    code: 'คัดกรอง',
-    theme: 'mint',
-    icon: 'search',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://screen.skno.moph.go.th'
-  },
-  {
-    title: 'คุ้มครองผู้บริโภคและเภสัชสาธารณสุข',
-    code: 'คุ้มครองผู้บริโภค',
-    theme: 'lavender',
-    icon: 'shieldcheck',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://consumer.skno.moph.go.th'
-  },
-
-  // แถวที่ 4
-  {
-    title: 'ตรวจร้านชำ SAKON SCAN',
-    code: 'SAKON SCAN',
-    theme: 'sky',
-    icon: 'store',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://sakonscan.skno.moph.go.th'
-  },
-  {
-    title: 'ตลาดสมุนไพรไกลกล',
-    code: 'สมุนไพร',
-    theme: 'white',
-    icon: 'snowflake',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://herbal.skno.moph.go.th'
-  },
-  {
-    title: 'ทะเบียนครุภัณฑ์',
-    code: 'ครุภัณฑ์',
-    theme: 'sage',
-    icon: 'tools',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://assets.skno.moph.go.th'
-  },
-  {
-    title: 'นักศึกษาราชภัฏสกลนคร',
-    code: 'SNRU',
-    theme: 'white',
-    icon: 'contact',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://snru.ac.th'
-  },
-  {
-    title: 'บ้านตุ้มโฮมปันสุข',
-    code: 'ปันสุข',
-    theme: 'white',
-    icon: 'homeheart',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://tumhom.skno.moph.go.th'
-  },
-  {
-    title: 'ภาพกิจกรรม',
-    code: 'ภาพงาน',
-    theme: 'white',
-    icon: 'image',
-    actionText: 'เข้าชมภาพ',
-    btnStyle: 'transparent',
-    url: '/news'
-  },
-
-  // แถวที่ 5
-  {
-    title: 'ยาเสพติด',
-    code: 'บำบัดยาเสพติด',
-    theme: 'gray',
-    icon: 'drugpack',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://drug.skno.moph.go.th'
-  },
-  {
-    title: 'ศูนย์ข้อมูลด้านจิตเวชจังหวัดสกลนคร',
-    code: 'จิตเวช',
-    theme: 'palegreen',
-    icon: 'user',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://psych.skno.moph.go.th'
-  },
-  {
-    title: 'ส่งผลงานวิชาการปี 2569',
-    code: 'วิชาการ',
-    theme: 'rose',
-    icon: 'rss',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://academic.skno.moph.go.th'
-  },
-  {
-    title: 'หมอพร้อม',
-    code: 'หมอพร้อม',
-    theme: 'white',
-    icon: 'cross',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://mohpromt.moph.go.th'
-  },
-  {
-    title: 'หมอไม่ล้า ประชาชนไม่รอฯ',
-    code: 'หมอไม่ล้า',
-    theme: 'forest',
-    icon: 'pulsebadge',
-    actionText: 'เข้าสู่ระบบ',
-    btnStyle: 'transparent',
-    url: 'https://smarthealth.moph.go.th'
-  },
-  {
-    title: 'อย.สกล Alert',
-    code: 'อย.สกล',
-    theme: 'white',
-    icon: 'megaphone',
-    actionText: 'เปิดดูประกาศ',
-    btnStyle: 'transparent',
-    url: 'https://fda.skno.moph.go.th'
-  },
-
-  // แถวที่ 6
-  {
-    title: 'อสม. Sakon Plus+',
-    code: 'อสม.Plus+',
-    theme: 'magenta',
-    icon: 'userplus',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://osm.skno.moph.go.th'
-  },
-  {
-    title: 'เรียกเก็บOP นอกCUP ในจังหวัด',
-    code: 'เรียกเก็บ OP',
-    theme: 'maroon',
-    icon: 'dollar',
-    actionText: 'สมัครใช้งาน',
-    btnStyle: 'green',
-    url: 'https://claim.skno.moph.go.th'
-  },
-
-  // ระบบงานหลักโรงพยาบาลโคกศรีสุพรรณ
-  {
-    title: 'HOSxP / HIS โคกศรีสุพรรณ',
     code: 'HIS',
-    theme: 'white',
+    title: 'ระบบสารสนเทศโรงพยาบาล (HOSxP / HIS)',
+    description: 'ระบบเวชระเบียนอิเล็กทรอนิกส์และการให้บริการผู้ป่วยนอก-ผู้ป่วยใน',
+    url: 'http://192.168.2.202:3088',
+    theme: 'purple',
     icon: 'server',
     actionText: 'เข้าใช้งานระบบ',
-    btnStyle: 'green',
-    url: 'http://192.168.2.202:3088'
+    btnStyle: 'green'
   },
   {
-    title: 'E-Office ระบบงานสารบรรณ',
     code: 'E-Office',
+    title: 'ระบบงานสารบรรณอิเล็กทรอนิกส์',
+    description: 'ระบบรับ-ส่งหนังสือราชการ แจ้งเวียนประกาศ และเอกสารภายในองค์กร',
+    url: '/internal-websites',
     theme: 'white',
     icon: 'mail',
-    actionText: 'เข้าใช้งานระบบ',
-    btnStyle: 'green',
-    url: '/internal-websites'
+    actionText: 'เข้าสู่ระบบ',
+    btnStyle: 'green'
+  },
+  {
+    code: 'Digital Health',
+    title: 'กลุ่มงานสุขภาพดิจิทัล (IT Helpdesk)',
+    description: 'ระบบแจ้งซ่อมคอมพิวเตอร์ เครือข่ายอินเทอร์เน็ต และความมั่นคงปลอดภัยไซเบอร์',
+    url: '/internal-websites',
+    theme: 'sage',
+    icon: 'wall',
+    actionText: 'แจ้งซ่อม IT',
+    btnStyle: 'green'
+  },
+  {
+    code: 'HR & E-Leave',
+    title: 'ระบบบริหารทรัพยากรบุคคล',
+    description: 'ระบบฐานข้อมูลบุคลากร ตารางปฏิบัติงาน และระบบการลาอิเล็กทรอนิกส์',
+    url: '/internal-websites',
+    theme: 'peach',
+    icon: 'idcard',
+    actionText: 'ระบบการลา',
+    btnStyle: 'green'
+  },
+  {
+    code: 'HDC / Data',
+    title: 'คลังข้อมูลสุขภาพและตัวชี้วัด (HDC)',
+    description: 'ระบบรายงานข้อมูลสถิติทางการแพทย์และตัวชี้วัดกระทรวงสาธารณสุข',
+    url: '/internal-websites',
+    theme: 'olive',
+    icon: 'gauge',
+    actionText: 'รอตรวจสอบสิทธิ์',
+    btnStyle: 'yellow'
+  },
+  {
+    code: 'Back Office',
+    title: 'ระบบบริหารคลังยาและพัสดุ',
+    description: 'ระบบเบิก-จ่ายเวชภัณฑ์ยา พัสดุทางการแพทย์ และครุภัณฑ์โรงพยาบาล',
+    url: '/internal-websites',
+    theme: 'sky',
+    icon: 'tools',
+    actionText: 'เบิกเวชภัณฑ์',
+    btnStyle: 'green'
+  },
+  {
+    code: 'HA / Risk',
+    title: 'ระบบบริหารความเสี่ยงและคุณภาพ (HA)',
+    description: 'ระบบรายงานอุบัติการณ์ความเสี่ยงและเอกสารมาตรฐานคุณภาพโรงพยาบาล',
+    url: '/internal-websites',
+    theme: 'mint',
+    icon: 'shieldcheck',
+    actionText: 'รายงานความเสี่ยง',
+    btnStyle: 'green'
+  },
+  {
+    code: 'Smart Booking',
+    title: 'ระบบจองห้องประชุมและยานพาหนะ',
+    description: 'บริการจองห้องประชุมวิชาการและขออนุญาตใช้รถยนต์ส่วนกลางออนไลน์',
+    url: '/internal-websites',
+    theme: 'yellow',
+    icon: 'car',
+    actionText: 'จองห้องประชุม',
+    btnStyle: 'green'
+  },
+  {
+    code: 'Queue',
+    title: 'ระบบเรียกคิวผู้ป่วยอัจฉริยะ (Smart Queue)',
+    description: 'ระบบจัดการคิวตรวจผู้ป่วย แผนกเวชระเบียนและจุดบริการผู้ป่วยนอก',
+    url: '/internal-websites',
+    theme: 'pink',
+    icon: 'activity',
+    actionText: 'เปิดดูระบบคิว',
+    btnStyle: 'green'
   }
 ];
 
@@ -398,9 +169,14 @@ const INTERNAL_WEBSITES = (function () {
     const saved = localStorage.getItem('ksp_cms_v1_intranet');
     if (saved) {
       const parsed = JSON.parse(saved);
-      // หากข้อมูลเดิมเป็นชุดเก่า (น้อยกว่า 20 รายการ หรือไม่มี theme) ให้อัปเกรดเป็นชุดเต็มตามแบบราชการสะดวก สสจ.สกลนคร ทันที
-      if (Array.isArray(parsed) && parsed.length >= 20 && parsed[0].theme) {
-        return parsed;
+      // หากพบข้อมูลตัวอย่างภายนอกเดิม ให้ล้างออกแล้วใช้ข้อมูลระบบงานจริงของโรงพยาบาล
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const hasDummy = parsed.some(function (item) {
+          return item.title && (item.title.includes('Anti Drugs') || item.title.includes('30 บาทรักษาทุกที่'));
+        });
+        if (!hasDummy) {
+          return parsed;
+        }
       }
     }
   } catch (e) {}
@@ -461,9 +237,9 @@ function renderIntranetSectionHTML(rootPath) {
   return `
     <section class="intranet-convenience-section" aria-labelledby="intranet-heading">
       <div class="intranet-convenience-container">
-        <!-- แถบหัวข้อตัวหนาสีเขียวตรงตามแบบราชการสะดวก สสจ.สกลนคร -->
+        <!-- แถบหัวข้อตัวหนาสีเขียวตรงตามแบบราชการสะดวก -->
         <div class="intranet-convenience-header">
-          <h2 class="intranet-convenience-title" id="intranet-heading">ระบบราชการสะดวกสำนักงานสาธารณสุขจังหวัดสกลนคร</h2>
+          <h2 class="intranet-convenience-title" id="intranet-heading">ระบบราชการสะดวก โรงพยาบาลโคกศรีสุพรรณ</h2>
         </div>
 
         <!-- ตารางการ์ด Grid 6 คอลัมน์ต่อแถว (Responsive ลงตามขนาดจอ) -->

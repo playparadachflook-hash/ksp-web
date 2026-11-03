@@ -173,6 +173,160 @@ if (useExpress) {
     });
   });
 
+  // =========================================================================
+  // ฟังก์ชันซิงค์ข้อมูลลงตารางจริงรายตารางในฐานข้อมูล MySQL: Web_Ksp
+  // รองรับการ เพิ่ม / แก้ไข / ลบ ในทุกๆ เมนูของระบบหลังบ้าน
+  // =========================================================================
+  async function syncToRelationalTables(sectionKey, sectionData) {
+    if (!dbPool) return;
+    try {
+      if (sectionKey === 'members' && Array.isArray(sectionData)) {
+        // --- 1. ตาราง users (สมาชิกและผู้ใช้งานระบบหลังบ้าน) ---
+        for (const u of sectionData) {
+          if (!u.username) continue;
+          await dbPool.execute(`
+            INSERT INTO users (username, password, full_name, role)
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+              password = VALUES(password),
+              full_name = VALUES(full_name),
+              role = VALUES(role)
+          `, [u.username, u.password || '1234', u.fullName || u.full_name || u.username, u.role || 'ผู้ดูแลระบบ']);
+        }
+        // ลบสมาชิกที่ถูกลบออกจากระบบหลังบ้าน (ยกเว้น admin บัญชีหลัก)
+        const usernames = sectionData.map(u => u.username).filter(Boolean);
+        if (usernames.length > 0) {
+          const placeholders = usernames.map(() => '?').join(',');
+          await dbPool.execute(`DELETE FROM users WHERE username NOT IN (${placeholders}) AND username != 'admin'`, usernames);
+        }
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลสมาชิก ${sectionData.length} รายการลงตาราง Web_Ksp.users สำเร็จ!`);
+      } else if (sectionKey === 'news' && Array.isArray(sectionData)) {
+        // --- 2. ตาราง news (ข่าวสาร & กิจกรรม) ---
+        await dbPool.execute('DELETE FROM news');
+        for (const n of sectionData) {
+          const galleryJson = Array.isArray(n.gallery) ? JSON.stringify(n.gallery) : null;
+          await dbPool.execute(`
+            INSERT INTO news (title, excerpt, image, gallery, link)
+            VALUES (?, ?, ?, ?, ?)
+          `, [n.title || '', n.excerpt || '', n.image || '', galleryJson, n.link || '/news']);
+        }
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลข่าวสาร ${sectionData.length} รายการลงตาราง Web_Ksp.news สำเร็จ!`);
+      } else if (sectionKey === 'policies' && Array.isArray(sectionData)) {
+        // --- 3. ตาราง policies (ประกาศนโยบายโรงพยาบาล) ---
+        await dbPool.execute('DELETE FROM policies');
+        for (const p of sectionData) {
+          await dbPool.execute(`
+            INSERT INTO policies (title, category_badge, date, views, file_name, file_data_url, image_data_url, link)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
+            p.title || '',
+            p.categoryBadge || p.category_badge || 'ประกาศนโยบายโรงพยาบาล',
+            p.date || '30 ต.ค. 2569',
+            Number(p.views) || 0,
+            p.fileName || p.file_name || null,
+            p.fileDataUrl || p.file_data_url || null,
+            p.imageDataUrl || p.image_data_url || null,
+            p.link || '/policy'
+          ]);
+        }
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลประกาศนโยบาย ${sectionData.length} รายการลงตาราง Web_Ksp.policies สำเร็จ!`);
+      } else if (sectionKey === 'downloads' && Array.isArray(sectionData)) {
+        // --- 4. ตาราง downloads (ดาวน์โหลดเอกสาร) ---
+        await dbPool.execute('DELETE FROM downloads');
+        for (const d of sectionData) {
+          await dbPool.execute(`
+            INSERT INTO downloads (title, category, file_type, file_size, file_url, file_name, file_data_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `, [
+            d.title || '',
+            d.category || 'ผู้รับบริการ',
+            d.fileType || d.file_type || 'PDF',
+            d.fileSize || d.file_size || '250 KB',
+            d.fileUrl || d.file_url || '/downloads',
+            d.fileName || d.file_name || null,
+            d.fileDataUrl || d.file_data_url || null
+          ]);
+        }
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลดาวน์โหลด ${sectionData.length} รายการลงตาราง Web_Ksp.downloads สำเร็จ!`);
+      } else if (sectionKey === 'slides' && Array.isArray(sectionData)) {
+        // --- 5. ตาราง slides (สไลด์แบนเนอร์หน้าแรก) ---
+        await dbPool.execute('DELETE FROM slides');
+        let order = 1;
+        for (const s of sectionData) {
+          await dbPool.execute(`
+            INSERT INTO slides (category, title, image, link, display_order)
+            VALUES (?, ?, ?, ?, ?)
+          `, [s.category || 'ประกาศประชาสัมพันธ์', s.title || '', s.image || '', s.link || '/departments', order++]);
+        }
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลสไลด์ ${sectionData.length} รายการลงตาราง Web_Ksp.slides สำเร็จ!`);
+      } else if (sectionKey === 'executive' && typeof sectionData === 'object' && sectionData !== null) {
+        // --- 6. ตาราง executive (ผู้บริหารและวิสัยทัศน์) ---
+        await dbPool.execute(`
+          UPDATE executive SET
+            director_name = ?,
+            rank = ?,
+            acting_title = ?,
+            role = ?,
+            vision_headline = ?,
+            vision_quote = ?,
+            photo = COALESCE(?, photo)
+          WHERE id = 1
+        `, [
+          sectionData.name || '',
+          sectionData.rank || '',
+          sectionData.actingTitle || '',
+          sectionData.role || '',
+          sectionData.visionHeadline || '',
+          sectionData.visionQuote || '',
+          sectionData.photo || null
+        ]);
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลผู้บริหารลงตาราง Web_Ksp.executive สำเร็จ!`);
+      } else if (sectionKey === 'departments' && Array.isArray(sectionData)) {
+        // --- 7. ตาราง departments (แผนกและคลินิก) ---
+        await dbPool.execute('DELETE FROM departments');
+        let order = 1;
+        for (const dept of sectionData) {
+          await dbPool.execute(`
+            INSERT INTO departments (name_th, description, icon_svg, link, display_order)
+            VALUES (?, ?, ?, ?, ?)
+          `, [dept.title || '', dept.description || '', dept.icon || 'heart', dept.link || '/departments', order++]);
+        }
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลแผนก ${sectionData.length} รายการลงตาราง Web_Ksp.departments สำเร็จ!`);
+      } else if (sectionKey === 'intranet' && Array.isArray(sectionData)) {
+        // --- 8. ตาราง intranet (เว็บไซต์ภายใน) ---
+        await dbPool.execute('DELETE FROM intranet');
+        let order = 1;
+        for (const intra of sectionData) {
+          await dbPool.execute(`
+            INSERT INTO intranet (title, category, description, url, display_order)
+            VALUES (?, ?, ?, ?, ?)
+          `, [intra.title || '', intra.code || 'ระบบงานภายใน', intra.description || '', intra.url || '', order++]);
+        }
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลเว็บไซต์ภายใน ${sectionData.length} รายการลงตาราง Web_Ksp.intranet สำเร็จ!`);
+      } else if (sectionKey === 'contact' && typeof sectionData === 'object' && sectionData !== null) {
+        // --- 9. ตาราง contact (ข้อมูลติดต่อโรงพยาบาลและแผนที่) ---
+        await dbPool.execute(`
+          UPDATE contact SET
+            hospital_name = ?,
+            address = ?,
+            tel_normal = ?,
+            email = ?,
+            map_url = ?
+          WHERE id = 1
+        `, [
+          sectionData.hospitalName || '',
+          sectionData.address || '',
+          sectionData.phone || '',
+          sectionData.email || '',
+          sectionData.googleMapsDirUrl || null
+        ]);
+        console.log(`[MySQL Sync] ซิงค์ข้อมูลติดต่อลงตาราง Web_Ksp.contact สำเร็จ!`);
+      }
+    } catch (syncErr) {
+      console.error(`[MySQL Sync Table Error (${sectionKey})]:`, syncErr.message);
+    }
+  }
+
   // 4. API CMS Backend & Authentication (เชื่อมต่อตารางจริงใน Web_Ksp)
   const handleCms = async (req, res) => {
     const action = req.query.action || req.body.action || 'get_all';
@@ -296,7 +450,7 @@ if (useExpress) {
 
       const jsonStr = typeof sectionData === 'string' ? sectionData : JSON.stringify(sectionData);
 
-      // บันทึกลง MySQL
+      // 1. บันทึกลงตารางรวม cms_sections (MySQL Web_Ksp)
       if (dbPool) {
         try {
           await dbPool.execute(`
@@ -307,6 +461,9 @@ if (useExpress) {
               section_data = VALUES(section_data),
               updated_at = CURRENT_TIMESTAMP
           `, [sectionKey, sectionName, jsonStr]);
+
+          // 2. ซิงค์ลงตารางจริงรายตารางของระบบ (users, news, policies, downloads, slides, executive, departments, intranet, contact)
+          await syncToRelationalTables(sectionKey, sectionData);
         } catch (dbErr) {
           console.error('[MySQL Save Section Error]', dbErr.message);
         }

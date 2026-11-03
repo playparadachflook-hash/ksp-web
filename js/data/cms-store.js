@@ -28,10 +28,10 @@ window.KSP_CMS = {
   },
 
   /**
-   * บันทึกข้อมูลของแต่ละส่วน (บันทึกลงทั้ง LocalStorage และส่งไปที่ PHP + MySQL ถ้ารันบนเซิร์ฟเวอร์)
+   * บันทึกข้อมูลของแต่ละส่วน (บันทึกลงฐานข้อมูล MySQL: Web_Ksp และ LocalStorage อัตโนมัติ)
    */
   saveSection: async function (sectionKey, sectionName, sectionData, rootPath) {
-    // 1. บันทึกลง LocalStorage ทันที (ข้อ 1)
+    // 1. บันทึกลง LocalStorage ทันที
     try {
       localStorage.setItem(KSP_STORAGE_PREFIX + sectionKey, JSON.stringify(sectionData));
     } catch (err) {
@@ -39,10 +39,10 @@ window.KSP_CMS = {
       throw new Error('ขนาดข้อมูลหรือรูปภาพใหญ่เกินพื้นที่จัดเก็บของเบราว์เซอร์');
     }
 
-    // 2. ถ้าเปิดผ่านเว็บเซิร์ฟเวอร์ XAMPP (http:// หรือ https://) ให้ส่งไปบันทึกลงฐานข้อมูล MySQL ด้วย (ข้อ 3)
+    // 2. ส่งข้อมูลไปบันทึกและซิงค์ลงฐานข้อมูล MySQL: Web_Ksp ผ่าน API หลังบ้าน
     if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
       try {
-        const apiUrl = (rootPath || '') + 'api/cms.php?action=save_section';
+        const apiUrl = '/api/cms?action=save_section';
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -54,10 +54,13 @@ window.KSP_CMS = {
         });
         if (response.ok) {
           const resJson = await response.json();
-          return { mode: 'mysql+local', message: resJson.message || 'บันทึกลง MySQL และ LocalStorage สำเร็จ' };
+          return {
+            mode: 'mysql+local',
+            message: resJson.message || 'บันทึกและซิงค์ลงฐานข้อมูล MySQL (Web_Ksp) สำเร็จเรียบร้อย'
+          };
         }
       } catch (networkErr) {
-        // กรณีไม่ได้เปิด XAMPP MySQL ระบบจะใช้ LocalStorage ทำงานต่อได้ปกติโดยไม่พัง
+        console.warn('[CMS API Warning] บันทึกในโหมด Local Fallback Storage:', networkErr.message);
       }
     }
 
@@ -65,6 +68,38 @@ window.KSP_CMS = {
       mode: 'local',
       message: 'บันทึกข้อมูลสำเร็จ (อัปเดตหน้าเว็บไซต์เรียบร้อย!)'
     };
+  },
+
+  /**
+   * ซิงค์ข้อมูลล่าสุดจากฐานข้อมูล MySQL (Web_Ksp) ลงสู่เบราว์เซอร์อัตโนมัติ
+   */
+  syncWithServer: async function () {
+    if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+      try {
+        const res = await fetch('/api/cms?action=get_all', { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.status === 'ok' && json.data) {
+            let hasChanges = false;
+            for (const key of Object.keys(json.data)) {
+              const val = json.data[key];
+              if (val !== undefined && val !== null) {
+                const cur = localStorage.getItem(KSP_STORAGE_PREFIX + key);
+                const next = JSON.stringify(val);
+                if (cur !== next) {
+                  localStorage.setItem(KSP_STORAGE_PREFIX + key, next);
+                  hasChanges = true;
+                }
+              }
+            }
+            return hasChanges;
+          }
+        }
+      } catch (e) {
+        console.warn('[CMS Sync] ใช้งานข้อมูลจากพื้นที่จัดเก็บในเครื่อง:', e.message);
+      }
+    }
+    return false;
   },
 
   /**
@@ -85,3 +120,8 @@ window.KSP_CMS = {
     });
   }
 };
+
+// สั่งดึงข้อมูลล่าสุดจาก MySQL (Web_Ksp) ทันทีที่โหลดสคริปต์
+try {
+  window.KSP_CMS.syncWithServer();
+} catch (e) {}

@@ -2079,7 +2079,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // =========================================================================
   // เมนูที่ 8: จัดการเว็บไซต์ภายใน (รองรับ บันทึก / แก้ไข / ลบ)
   // =========================================================================
-  let intranetData = window.KSP_CMS.getSection('intranet', DEFAULT_INTERNAL_WEBSITES);
+  let intranetData = (function () {
+    const sec = window.KSP_CMS.getSection('intranet', DEFAULT_INTERNAL_WEBSITES);
+    if (Array.isArray(sec) && sec.length >= 20 && sec[0].theme) {
+      return sec;
+    }
+    return DEFAULT_INTERNAL_WEBSITES;
+  })();
   const intranetListEl = document.getElementById('admin-intranet-list');
   const intraForm = document.getElementById('form-add-intranet');
   const intraFormTitle = document.getElementById('intra-form-title');

@@ -398,7 +398,10 @@ const INTERNAL_WEBSITES = (function () {
     const saved = localStorage.getItem('ksp_cms_v1_intranet');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      // หากข้อมูลเดิมเป็นชุดเก่า (น้อยกว่า 20 รายการ หรือไม่มี theme) ให้อัปเกรดเป็นชุดเต็มตามแบบราชการสะดวก สสจ.สกลนคร ทันที
+      if (Array.isArray(parsed) && parsed.length >= 20 && parsed[0].theme) {
+        return parsed;
+      }
     }
   } catch (e) {}
   return DEFAULT_INTERNAL_WEBSITES;

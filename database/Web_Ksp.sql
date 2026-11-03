@@ -136,6 +136,7 @@ CREATE TABLE `departments` (
   `tel_internal` VARCHAR(50) DEFAULT NULL COMMENT 'เบอร์โทรศัพท์ภายใน',
   `open_hours` VARCHAR(150) DEFAULT NULL COMMENT 'เวลาทำการ',
   `icon_svg` TEXT DEFAULT NULL COMMENT 'ไอคอนประจำแผนก',
+  `image` LONGTEXT DEFAULT NULL COMMENT 'รูปภาพคลินิก/แผนก (URL หรือ Base64)',
   `link` VARCHAR(255) DEFAULT '/departments',
   `display_order` INT DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP

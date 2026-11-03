@@ -1723,7 +1723,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // =========================================================================
-  // เมนูที่ 7: จัดการแผนกและคลินิก (รองรับ บันทึก / แก้ไข / ลบ)
+  // เมนูที่ 7: จัดการแผนกและคลินิก (รองรับ บันทึก / แก้ไข / ลบ พร้อมระบบอัปโหลดรูปภาพ)
   // =========================================================================
   let deptsData = window.KSP_CMS.getSection('departments', DEFAULT_DEPARTMENTS_LIST);
   const deptsListEl = document.getElementById('admin-depts-list');
@@ -1732,12 +1732,51 @@ document.addEventListener('DOMContentLoaded', function () {
   const deptEditIndexInput = document.getElementById('dept-edit-index');
   const deptSubmitBtn = document.getElementById('dept-submit-btn');
   const deptCancelBtn = document.getElementById('dept-cancel-btn');
+  const deptImageInput = document.getElementById('dept-image-file');
+  const deptPreviewBox = document.getElementById('dept-preview-box');
+  const deptPreviewImg = document.getElementById('dept-preview-img');
+  const deptPreviewStatus = document.getElementById('dept-preview-status');
+  let pendingDeptImgUrl = null;
+
+  // ฟัง event เมื่อเลือกไฟล์รูปภาพคลินิก
+  if (deptImageInput) {
+    deptImageInput.addEventListener('change', async function () {
+      const f = deptImageInput.files && deptImageInput.files[0];
+      if (!f) {
+        pendingDeptImgUrl = null;
+        if (deptPreviewBox) deptPreviewBox.style.display = 'none';
+        return;
+      }
+      if (deptPreviewBox) deptPreviewBox.style.display = 'block';
+      if (deptPreviewStatus) deptPreviewStatus.textContent = '⏳ กำลังประมวลผลและปรับความคมชัด HD...';
+
+      const enhancedDept = await enhanceImageFileWithJS(f, { mode: 'fit', width: 1000, sharpen: 0.22 });
+      if (enhancedDept && enhancedDept.dataUrl) {
+        pendingDeptImgUrl = enhancedDept.dataUrl;
+        if (deptPreviewImg) deptPreviewImg.src = enhancedDept.dataUrl;
+        if (deptPreviewStatus) deptPreviewStatus.textContent = `✓ พรีวิวรูปภาพคลินิก (${enhancedDept.width}×${enhancedDept.height} px) — คลิกเพื่อดูภาพเต็ม`;
+      }
+    });
+  }
+
+  // พรีวิวรูปภาพคลินิกแบบ Lightbox ขยายใหญ่เมื่อคลิกที่รูป
+  if (deptPreviewImg) {
+    deptPreviewImg.addEventListener('click', function () {
+      if (pendingDeptImgUrl) {
+        openAdminLightbox('รูปภาพประจำคลินิก/แผนก', pendingDeptImgUrl, [], 'พรีวิวภาพคลินิก');
+      }
+    });
+  }
 
   function resetDeptForm() {
     if (deptForm) {
       deptForm.reset();
       deptForm.classList.remove('is-editing');
     }
+    pendingDeptImgUrl = null;
+    if (deptImageInput) deptImageInput.value = '';
+    if (deptPreviewBox) deptPreviewBox.style.display = 'none';
+    if (deptPreviewImg) deptPreviewImg.src = '';
     if (deptEditIndexInput) deptEditIndexInput.value = '';
     if (deptFormTitle) deptFormTitle.textContent = '+ เพิ่มแผนก/คลินิกใหม่';
     if (deptSubmitBtn) deptSubmitBtn.textContent = 'บันทึกแผนกใหม่';
@@ -1758,11 +1797,13 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderAdminDepts() {
     if (!deptsListEl) return;
     deptsListEl.innerHTML = deptsData.map(function (item, idx) {
+      const thumbSrc = item.image ? resolveAdminImgPath(item.image) : '';
       return `
         <div class="admin-list-row">
-          <div class="admin-list-info">
+          <div class="admin-list-info" style="display:flex;gap:14px;align-items:center;">
+            ${thumbSrc ? `<img src="${thumbSrc}" alt="${item.title}" class="admin-list-thumb" data-view-dept="${idx}" title="คลิกเพื่อดูภาพเต็ม" style="width:72px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid #cbd5e1;" />` : `<div style="width:72px;height:52px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:0.75rem;border:1px dashed #cbd5e1;">ไม่มีรูป</div>`}
             <div class="admin-list-text">
-              <p class="admin-list-title">${item.title}</p>
+              <p class="admin-list-title"><span style="color:#196856;font-weight:700;">ลำดับที่ ${idx + 1}:</span> ${item.title}</p>
               <p class="admin-list-sub">${item.description}</p>
             </div>
           </div>
@@ -1773,6 +1814,17 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
       `;
     }).join('');
+
+    // คลิกรูป thumbnail ในรายการเพื่อดูภาพขยายใหญ่
+    deptsListEl.querySelectorAll('[data-view-dept]').forEach(function (imgEl) {
+      imgEl.addEventListener('click', function () {
+        const idx = Number(imgEl.getAttribute('data-view-dept'));
+        const item = deptsData[idx];
+        if (item && item.image) {
+          openAdminLightbox(`คลินิก/แผนก: ${item.title}`, resolveAdminImgPath(item.image), [], item.description || '');
+        }
+      });
+    });
 
     // ปุ่มแก้ไขแผนก/คลินิก
     deptsListEl.querySelectorAll('[data-edit-dept]').forEach(function (btn) {
@@ -1786,6 +1838,16 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('dept-desc').value = item.description || '';
         const iconSelect = document.getElementById('dept-icon');
         if (iconSelect) iconSelect.value = item.icon || 'heart';
+
+        // โหลดรูปภาพเดิมถ้ามี
+        pendingDeptImgUrl = item.image || null;
+        if (pendingDeptImgUrl && deptPreviewImg && deptPreviewBox) {
+          deptPreviewImg.src = resolveAdminImgPath(pendingDeptImgUrl);
+          if (deptPreviewStatus) deptPreviewStatus.textContent = '✓ ภาพปัจจุบันของคลินิกนี้ (เลือกไฟล์ใหม่หากต้องการเปลี่ยน)';
+          deptPreviewBox.style.display = 'block';
+        } else if (deptPreviewBox) {
+          deptPreviewBox.style.display = 'none';
+        }
 
         if (deptFormTitle) deptFormTitle.textContent = `✎ แก้ไขแผนก: ${item.title}`;
         if (deptSubmitBtn) deptSubmitBtn.textContent = 'บันทึกการแก้ไขแผนก';
@@ -1843,6 +1905,13 @@ document.addEventListener('DOMContentLoaded', function () {
       const icon = document.getElementById('dept-icon').value;
       const editIdxStr = deptEditIndexInput ? deptEditIndexInput.value : '';
 
+      // ดึงรูปคลินิก ถ้ามีการเลือกไฟล์ใหม่แต่ยังไม่ได้ประมวลผล
+      let finalImgUrl = pendingDeptImgUrl;
+      if (!finalImgUrl && deptImageInput && deptImageInput.files && deptImageInput.files[0]) {
+        const enhancedDept = await enhanceImageFileWithJS(deptImageInput.files[0], { mode: 'fit', width: 1000 });
+        if (enhancedDept) finalImgUrl = enhancedDept.dataUrl;
+      }
+
       if (editIdxStr !== '') {
         // --- กรณีแก้ไขแผนกเดิม ---
         const editIdx = Number(editIdxStr);
@@ -1850,6 +1919,7 @@ document.addEventListener('DOMContentLoaded', function () {
           icon: icon,
           title: title,
           description: desc,
+          image: finalImgUrl || '',
           link: '/departments'
         };
 
@@ -1868,6 +1938,7 @@ document.addEventListener('DOMContentLoaded', function () {
           icon: icon,
           title: title,
           description: desc,
+          image: finalImgUrl || '',
           link: '/departments'
         });
 

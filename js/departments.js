@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    ไฟล์: js/departments.js
    หน้าที่: สร้างส่วนที่ 3 — แผนกและคลินิก (แสดงต่อจาก Slide Bar)
    คำแนะนำสำหรับมือใหม่:
@@ -95,13 +95,26 @@ const DEPARTMENTS_LIST = (function () {
 function renderDepartmentsHTML(rootPath) {
   const cardsMarkup = DEPARTMENTS_LIST.map(function (item) {
     const svgIcon = DEPARTMENT_ICONS[item.icon] || DEPARTMENT_ICONS.heart;
+    const hasImage = Boolean(item.image && String(item.image).trim() !== '');
+    const imgUrl = hasImage ? (item.image.startsWith('data:') || item.image.startsWith('http') ? item.image : rootPath + item.image) : '';
+
     return `
-      <a href="${rootPath}${item.link}" class="department-card">
-        <div class="department-icon-box">
-          ${svgIcon}
-        </div>
-        <h3 class="department-card-title">${item.title}</h3>
-        <p class="department-card-desc">${item.description}</p>
+      <a href="${rootPath}${item.link}" class="department-card ${hasImage ? 'has-image' : ''}">
+        ${hasImage ? `
+          <div class="department-img-box">
+            <img src="${imgUrl}" alt="${item.title}" class="department-card-img" loading="lazy" />
+          </div>
+          <div class="department-card-body">
+            <h3 class="department-card-title">${item.title}</h3>
+            <p class="department-card-desc">${item.description}</p>
+          </div>
+        ` : `
+          <div class="department-icon-box">
+            ${svgIcon}
+          </div>
+          <h3 class="department-card-title">${item.title}</h3>
+          <p class="department-card-desc">${item.description}</p>
+        `}
       </a>
     `;
   }).join('');

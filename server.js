@@ -287,9 +287,9 @@ if (useExpress) {
         let order = 1;
         for (const dept of sectionData) {
           await dbPool.execute(`
-            INSERT INTO departments (name_th, description, icon_svg, link, display_order)
-            VALUES (?, ?, ?, ?, ?)
-          `, [dept.title || '', dept.description || '', dept.icon || 'heart', dept.link || '/departments', order++]);
+            INSERT INTO departments (name_th, description, icon_svg, image, link, display_order)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `, [dept.title || '', dept.description || '', dept.icon || 'heart', dept.image || null, dept.link || '/departments', order++]);
         }
         console.log(`[MySQL Sync] ซิงค์ข้อมูลแผนก ${sectionData.length} รายการลงตาราง Web_Ksp.departments สำเร็จ!`);
       } else if (sectionKey === 'intranet' && Array.isArray(sectionData)) {

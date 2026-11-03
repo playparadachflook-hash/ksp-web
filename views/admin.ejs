@@ -375,6 +375,14 @@
                   <label for="dept-desc">รายละเอียดการให้บริการ</label>
                   <input type="text" id="dept-desc" placeholder="กรอกรายละเอียดคลินิกย่อย" required />
                 </div>
+                <div class="admin-field is-full">
+                  <label for="dept-image-file">รูปภาพประจำคลินิก/แผนก (ระบบ JavaScript ปรับความคมชัด HD ให้อัตโนมัติ — เว้นว่างไว้ได้หากใช้เฉพาะไอคอน)</label>
+                  <input type="file" id="dept-image-file" accept="image/*" />
+                  <div class="admin-img-preview-box" id="dept-preview-box" style="display:none;margin-top:10px;">
+                    <div class="admin-img-preview-badge" id="dept-preview-status">✓ พรีวิวรูปภาพคลินิก (คลิกที่รูปเพื่อดูภาพขยายใหญ่)</div>
+                    <img id="dept-preview-img" src="" alt="พรีวิวรูปคลินิก" class="admin-cover-preview-thumb" style="max-height:160px;object-fit:cover;cursor:pointer;" />
+                  </div>
+                </div>
               </div>
               <div style="display:flex;gap:10px;align-items:center;">
                 <button type="submit" class="admin-btn admin-btn-primary" id="dept-submit-btn">บันทึกแผนกใหม่</button>

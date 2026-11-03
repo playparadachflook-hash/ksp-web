@@ -75,6 +75,38 @@
   outline-offset: 2px;
 }
 
+/* --- กรณีการ์ดแผนก/คลินิกที่มีรูปภาพ --- */
+.department-card.has-image {
+  padding: 0;
+  overflow: hidden;
+}
+
+.department-img-box {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  background-color: #f1f5f9;
+}
+
+.department-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.department-card:hover .department-card-img {
+  transform: scale(1.06);
+}
+
+.department-card-body {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 /* --- กล่องไอคอนสี่เหลี่ยมขอบมนสีเขียวพาสเทลสว่างด้านบนซ้ายของการ์ด --- */
 .department-icon-box {
   width: 50px;

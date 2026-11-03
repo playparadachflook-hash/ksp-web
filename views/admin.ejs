@@ -42,7 +42,10 @@
         </div>
       </div>
 
-      <!-- แถบแจ้งเตือนเมื่อกดบันทึกสำเร็จ -->
+      <!-- กล่องแจ้งเตือนทันสมัย (Toast Notification Container สำหรับ บันทึก / แก้ไข / ลบ) -->
+      <div class="admin-toast-container" id="admin-toast-container"></div>
+
+      <!-- แถบแจ้งเตือนเมื่อกดบันทึกสำเร็จ (Fallback) -->
       <div class="admin-toast" id="admin-toast"></div>
 
       <!-- โครงสร้าง 2 คอลัมน์: เมนูด้านซ้าย | ฟอร์มจัดการด้านขวา -->
@@ -69,10 +72,11 @@
                ================================================================= -->
           <div class="admin-tab-pane is-active" id="tab-members">
             <h2 class="admin-pane-title">1. เมนูเพิ่มสมาชิก / จัดการผู้ใช้งานระบบหลังบ้าน</h2>
-            <p class="admin-pane-desc">เพิ่มบัญชีสมาชิกสำหรับเจ้าหน้าที่โรงพยาบาลเพื่อใช้เข้าสู่ระบบจัดการเว็บไซต์</p>
+            <p class="admin-pane-desc">เพิ่มหรือแก้ไขบัญชีสมาชิกสำหรับเจ้าหน้าที่โรงพยาบาลเพื่อใช้เข้าสู่ระบบจัดการเว็บไซต์</p>
 
             <form class="admin-form-box" id="form-add-member">
-              <h3>+ เพิ่มสมาชิกใหม่</h3>
+              <h3 id="member-form-title">+ เพิ่มสมาชิกใหม่</h3>
+              <input type="hidden" id="member-edit-index" value="" />
               <div class="admin-form-grid">
                 <div class="admin-field">
                   <label for="member-username">ชื่อผู้ใช้งาน (Username สำหรับ Login)</label>
@@ -96,7 +100,10 @@
                   </select>
                 </div>
               </div>
-              <button type="submit" class="admin-btn admin-btn-primary">บันทึกสมาชิกใหม่</button>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button type="submit" class="admin-btn admin-btn-primary" id="member-submit-btn">บันทึกสมาชิกใหม่</button>
+                <button type="button" class="admin-btn admin-btn-outline" id="member-cancel-btn" style="display:none;">ยกเลิกการแก้ไข</button>
+              </div>
             </form>
 
             <div class="admin-items-list" id="admin-members-list"></div>
@@ -110,7 +117,8 @@
             <p class="admin-pane-desc">ทุกครั้งที่เพิ่มภาพปกและภาพงาน ระบบ JavaScript จะปรับขนาดและเพิ่มความคมชัด (HD Sharpening) ให้อัตโนมัติ พร้อมคลิกดูภาพขยายใหญ่ได้ทันที</p>
 
             <form class="admin-form-box" id="form-add-news">
-              <h3>+ เพิ่มข่าวสาร/กิจกรรมใหม่</h3>
+              <h3 id="news-form-title">+ เพิ่มข่าวสาร/กิจกรรมใหม่</h3>
+              <input type="hidden" id="news-edit-index" value="" />
               <div class="admin-form-grid">
                 <div class="admin-field is-full">
                   <label for="news-title">หัวข้อข่าวสาร / ชื่อกิจกรรม</label>
@@ -139,7 +147,10 @@
                   <textarea id="news-excerpt" rows="3" placeholder="กรอกรายละเอียดเนื้อหาข่าวสารและกิจกรรม" required></textarea>
                 </div>
               </div>
-              <button type="submit" class="admin-btn admin-btn-primary">บันทึกข่าวสารพร้อมอัลบั้มภาพงาน</button>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button type="submit" class="admin-btn admin-btn-primary" id="news-submit-btn">บันทึกข่าวสารพร้อมอัลบั้มภาพงาน</button>
+                <button type="button" class="admin-btn admin-btn-outline" id="news-cancel-btn" style="display:none;">ยกเลิกการแก้ไข</button>
+              </div>
             </form>
 
             <div class="admin-items-list" id="admin-news-list"></div>
@@ -153,7 +164,8 @@
             <p class="admin-pane-desc">แนบไฟล์เอกสาร (PDF/Word) หรือรูปภาพประกาศ เพื่อให้ผู้ชมกดเข้าดูและดาวน์โหลดเอกสารหรือรูปภาพจากหน้าเว็บได้ทันที</p>
 
             <form class="admin-form-box" id="form-add-policy">
-              <h3>+ เพิ่มประกาศนโยบายใหม่</h3>
+              <h3 id="policy-form-title">+ เพิ่มประกาศนโยบายใหม่</h3>
+              <input type="hidden" id="policy-edit-index" value="" />
               <div class="admin-form-grid">
                 <div class="admin-field is-full">
                   <label for="policy-title">หัวข้อประกาศนโยบายโรงพยาบาล</label>
@@ -184,7 +196,10 @@
                   <input type="number" id="policy-views" value="0" min="0" required />
                 </div>
               </div>
-              <button type="submit" class="admin-btn admin-btn-primary">บันทึกประกาศนโยบายใหม่</button>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button type="submit" class="admin-btn admin-btn-primary" id="policy-submit-btn">บันทึกประกาศนโยบายใหม่</button>
+                <button type="button" class="admin-btn admin-btn-outline" id="policy-cancel-btn" style="display:none;">ยกเลิกการแก้ไข</button>
+              </div>
             </form>
 
             <div class="admin-items-list" id="admin-policy-list"></div>
@@ -198,7 +213,8 @@
             <p class="admin-pane-desc">อัปโหลดไฟล์เอกสารเพื่อให้ประชาชนหรือเจ้าหน้าที่กดดาวน์โหลดจากหน้าเว็บไซต์ได้โดยตรง</p>
 
             <form class="admin-form-box" id="form-add-download">
-              <h3>+ ลงไฟล์เอกสารดาวน์โหลดใหม่</h3>
+              <h3 id="dl-form-title">+ ลงไฟล์เอกสารดาวน์โหลดใหม่</h3>
+              <input type="hidden" id="dl-edit-index" value="" />
               <div class="admin-form-grid">
                 <div class="admin-field is-full">
                   <label for="dl-title">ชื่อเอกสาร / แบบฟอร์ม</label>
@@ -234,7 +250,10 @@
                   <input type="text" id="dl-date" value="30 ต.ค. 2569" required />
                 </div>
               </div>
-              <button type="submit" class="admin-btn admin-btn-primary">บันทึกและอัปโหลดเอกสาร</button>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button type="submit" class="admin-btn admin-btn-primary" id="dl-submit-btn">บันทึกและอัปโหลดเอกสาร</button>
+                <button type="button" class="admin-btn admin-btn-outline" id="dl-cancel-btn" style="display:none;">ยกเลิกการแก้ไข</button>
+              </div>
             </form>
 
             <div class="admin-items-list" id="admin-downloads-list"></div>
@@ -338,7 +357,8 @@
             <p class="admin-pane-desc">เพิ่มหรือลบการ์ดแผนกและคลินิกเฉพาะทาง</p>
 
             <form class="admin-form-box" id="form-add-dept">
-              <h3>+ เพิ่มแผนก/คลินิกใหม่</h3>
+              <h3 id="dept-form-title">+ เพิ่มแผนก/คลินิกใหม่</h3>
+              <input type="hidden" id="dept-edit-index" value="" />
               <div class="admin-form-grid">
                 <div class="admin-field">
                   <label for="dept-title">ชื่อแผนก/คลินิก</label>
@@ -356,7 +376,10 @@
                   <input type="text" id="dept-desc" placeholder="กรอกรายละเอียดคลินิกย่อย" required />
                 </div>
               </div>
-              <button type="submit" class="admin-btn admin-btn-primary">บันทึกแผนกใหม่</button>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button type="submit" class="admin-btn admin-btn-primary" id="dept-submit-btn">บันทึกแผนกใหม่</button>
+                <button type="button" class="admin-btn admin-btn-outline" id="dept-cancel-btn" style="display:none;">ยกเลิกการแก้ไข</button>
+              </div>
             </form>
 
             <div class="admin-items-list" id="admin-depts-list"></div>
@@ -457,6 +480,19 @@
           <div class="ksp-modal-body" id="admin-lightbox-body" style="text-align:center;"></div>
           <div class="ksp-modal-footer" id="admin-lightbox-footer">
             <button type="button" class="ksp-modal-ok-btn" id="admin-lightbox-ok">ปิดหน้าต่าง</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- กล่องยืนยันการลบข้อมูล (Delete Confirmation Modal สวยงาม) -->
+      <div class="admin-confirm-backdrop" id="admin-confirm-backdrop" style="display:none;" role="dialog" aria-modal="true">
+        <div class="admin-confirm-dialog">
+          <div class="admin-confirm-icon-wrap" id="admin-confirm-icon-wrap">🗑️</div>
+          <h3 class="admin-confirm-title" id="admin-confirm-title">ยืนยันการลบข้อมูล</h3>
+          <p class="admin-confirm-text" id="admin-confirm-desc">คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?</p>
+          <div class="admin-confirm-actions">
+            <button type="button" class="admin-btn admin-btn-outline" id="admin-confirm-cancel">ยกเลิก</button>
+            <button type="button" class="admin-btn admin-btn-danger" id="admin-confirm-ok">ยืนยันการลบ</button>
           </div>
         </div>
       </div>

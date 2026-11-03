@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    ไฟล์: js/admin.js
    หน้าที่: ควบคุมระบบจัดการเว็บไซต์หลังบ้าน (Admin Back-Office CMS)
    รองรับ:
@@ -33,14 +33,159 @@ document.addEventListener('DOMContentLoaded', function () {
     welcomeEl.textContent = 'ผู้เข้าใช้งานปัจจุบัน: ' + currentUser;
   }
 
+  // =========================================================================
+  // ระบบแจ้งเตือนอัจฉริยะ (Smart Toast Notifications & Confirmation Dialogs)
+  // รองรับการแจ้งเตือนเมื่อ บันทึก / แก้ไข / ลบ ทุกส่วนของระบบหลังบ้าน
+  // =========================================================================
+  const toastContainer = document.getElementById('admin-toast-container');
   const toastEl = document.getElementById('admin-toast');
+
+  /**
+   * แสดง Toast Notification สำหรับ บันทึก / แก้ไข / ลบ
+   * @param {Object} options
+   * @param {'success'|'info'|'warning'|'danger'} [options.type='success'] - ประเภทการแจ้งเตือน
+   * @param {string} options.title - หัวข้อแจ้งเตือน
+   * @param {string} options.message - ข้อความรายละเอียด
+   * @param {number} [options.duration=4000] - ระยะเวลาแสดงผล (ms)
+   */
+  function notify({ type = 'success', title = '', message = '', duration = 4000 }) {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' น.';
+
+    // ไอคอนตามประเภทการแจ้งเตือน
+    let iconSvg = '';
+    if (type === 'success') {
+      iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    } else if (type === 'info') {
+      iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
+    } else if (type === 'warning') {
+      iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    } else if (type === 'danger') {
+      iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`;
+    }
+
+    if (!toastContainer) {
+      if (toastEl) {
+        toastEl.textContent = `${title ? title + ': ' : ''}${message}`;
+        toastEl.classList.add('is-visible');
+        setTimeout(() => toastEl.classList.remove('is-visible'), duration);
+      }
+      return;
+    }
+
+    const card = document.createElement('div');
+    card.className = `admin-toast-card is-${type}`;
+    card.innerHTML = `
+      <div class="admin-toast-icon">${iconSvg}</div>
+      <div class="admin-toast-body">
+        <div class="admin-toast-header">
+          <span class="admin-toast-title">${title}</span>
+          <span class="admin-toast-time">${timeStr}</span>
+        </div>
+        <p class="admin-toast-desc">${message}</p>
+      </div>
+      <button type="button" class="admin-toast-close" aria-label="ปิด">&times;</button>
+      <div class="admin-toast-progress" style="animation-duration: ${duration}ms;"></div>
+    `;
+
+    const closeBtn = card.querySelector('.admin-toast-close');
+    function dismiss() {
+      if (card.classList.contains('is-leaving')) return;
+      card.classList.add('is-leaving');
+      setTimeout(() => {
+        if (card.parentNode) card.parentNode.removeChild(card);
+      }, 300);
+    }
+    if (closeBtn) closeBtn.addEventListener('click', dismiss);
+
+    const timer = setTimeout(dismiss, duration);
+    card.addEventListener('mouseenter', () => clearTimeout(timer));
+
+    toastContainer.appendChild(card);
+  }
+
+  // รองรับฟังก์ชันเก่า showToast
   function showToast(msg) {
-    if (!toastEl) return;
-    toastEl.textContent = '✓ ' + msg;
-    toastEl.classList.add('is-visible');
-    setTimeout(function () {
-      toastEl.classList.remove('is-visible');
-    }, 3800);
+    notify({ type: 'success', title: 'บันทึกสำเร็จ', message: msg });
+  }
+
+  // =========================================================================
+  // ระบบ Modal ยืนยันการลบข้อมูล (Delete Confirmation Modal)
+  // =========================================================================
+  const confirmBackdrop = document.getElementById('admin-confirm-backdrop');
+  const confirmTitleEl = document.getElementById('admin-confirm-title');
+  const confirmDescEl = document.getElementById('admin-confirm-desc');
+  const confirmIconWrap = document.getElementById('admin-confirm-icon-wrap');
+  const confirmCancelBtn = document.getElementById('admin-confirm-cancel');
+  const confirmOkBtn = document.getElementById('admin-confirm-ok');
+
+  let activeConfirmResolver = null;
+
+  /**
+   * แสดงกล่องยืนยันการลบข้อมูลแบบ Custom สวยงาม
+   * @param {Object} opts
+   * @param {string} opts.title - หัวข้อกล่องยืนยัน
+   * @param {string} opts.message - ข้อความอธิบาย
+   * @param {string} [opts.confirmText="ยืนยันการลบ"] - ข้อความบนปุ่มยืนยัน
+   * @param {string} [opts.cancelText="ยกเลิก"] - ข้อความบนปุ่มยกเลิก
+   * @param {'danger'|'warning'} [opts.type='danger']
+   * @returns {Promise<boolean>}
+   */
+  function showConfirmDialog({
+    title = 'ยืนยันการลบข้อมูล',
+    message = 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?',
+    confirmText = 'ยืนยันการลบ',
+    cancelText = 'ยกเลิก',
+    type = 'danger'
+  }) {
+    return new Promise((resolve) => {
+      activeConfirmResolver = resolve;
+      if (!confirmBackdrop) {
+        resolve(window.confirm(`${title}\n\n${message}`));
+        return;
+      }
+
+      if (confirmTitleEl) confirmTitleEl.textContent = title;
+      if (confirmDescEl) confirmDescEl.textContent = message;
+      if (confirmCancelBtn) confirmCancelBtn.textContent = cancelText;
+      if (confirmOkBtn) {
+        confirmOkBtn.textContent = confirmText;
+        confirmOkBtn.className = type === 'danger' ? 'admin-btn admin-btn-danger' : 'admin-btn admin-btn-primary';
+      }
+      if (confirmIconWrap) {
+        if (type === 'danger') {
+          confirmIconWrap.className = 'admin-confirm-icon-wrap';
+          confirmIconWrap.textContent = '🗑️';
+        } else {
+          confirmIconWrap.className = 'admin-confirm-icon-wrap is-warning';
+          confirmIconWrap.textContent = '⚠️';
+        }
+      }
+
+      confirmBackdrop.style.display = 'flex';
+    });
+  }
+
+  function closeConfirmDialog(result) {
+    if (confirmBackdrop) {
+      confirmBackdrop.classList.add('is-closing');
+      setTimeout(() => {
+        confirmBackdrop.style.display = 'none';
+        confirmBackdrop.classList.remove('is-closing');
+      }, 200);
+    }
+    if (activeConfirmResolver) {
+      activeConfirmResolver(result);
+      activeConfirmResolver = null;
+    }
+  }
+
+  if (confirmCancelBtn) confirmCancelBtn.addEventListener('click', () => closeConfirmDialog(false));
+  if (confirmOkBtn) confirmOkBtn.addEventListener('click', () => closeConfirmDialog(true));
+  if (confirmBackdrop) {
+    confirmBackdrop.addEventListener('click', (e) => {
+      if (e.target === confirmBackdrop) closeConfirmDialog(false);
+    });
   }
 
   // =========================================================================
@@ -302,19 +447,58 @@ document.addEventListener('DOMContentLoaded', function () {
   // ปุ่มคืนค่าเริ่มต้นทั้งหมด
   const resetAllBtn = document.getElementById('admin-reset-all-btn');
   if (resetAllBtn) {
-    resetAllBtn.addEventListener('click', function () {
-      if (confirm('ต้องการคืนค่าข้อมูลทุกส่วนกลับเป็นค่าเริ่มต้นของโรงพยาบาลใช่หรือไม่?')) {
+    resetAllBtn.addEventListener('click', async function () {
+      const confirmed = await showConfirmDialog({
+        title: 'ยืนยันการคืนค่าเริ่มต้นทั้งหมด',
+        message: 'ต้องการคืนค่าข้อมูลทุกส่วนกลับเป็นค่าเริ่มต้นของโรงพยาบาลใช่หรือไม่? ข้อมูลทั้งหมดที่แก้ไขจะถูกรีเซ็ต',
+        confirmText: 'คืนค่าเริ่มต้นทั้งหมด',
+        type: 'warning'
+      });
+      if (confirmed) {
         window.KSP_CMS.resetAll();
-        window.location.reload();
+        notify({
+          type: 'warning',
+          title: 'คืนค่าเริ่มต้นสำเร็จ',
+          message: 'คืนค่าข้อมูลทุกส่วนกลับเป็นค่าเริ่มต้นเรียบร้อยแล้ว กำลังรีโหลดหน้าจอ...',
+          duration: 3000
+        });
+        setTimeout(() => window.location.reload(), 1200);
       }
     });
   }
 
   // =========================================================================
-  // เมนูที่ 1: เพิ่มสมาชิก / จัดการผู้ใช้งานระบบหลังบ้าน
+  // เมนูที่ 1: เพิ่มสมาชิก / จัดการผู้ใช้งานระบบหลังบ้าน (รองรับ บันทึก / แก้ไข / ลบ)
   // =========================================================================
   let membersData = window.KSP_CMS.getSection('members', DEFAULT_MEMBERS_LIST);
   const membersListEl = document.getElementById('admin-members-list');
+  const memberForm = document.getElementById('form-add-member');
+  const memberFormTitle = document.getElementById('member-form-title');
+  const memberEditIndexInput = document.getElementById('member-edit-index');
+  const memberSubmitBtn = document.getElementById('member-submit-btn');
+  const memberCancelBtn = document.getElementById('member-cancel-btn');
+
+  function resetMemberForm() {
+    if (memberForm) {
+      memberForm.reset();
+      memberForm.classList.remove('is-editing');
+    }
+    if (memberEditIndexInput) memberEditIndexInput.value = '';
+    if (memberFormTitle) memberFormTitle.textContent = '+ เพิ่มสมาชิกใหม่';
+    if (memberSubmitBtn) memberSubmitBtn.textContent = 'บันทึกสมาชิกใหม่';
+    if (memberCancelBtn) memberCancelBtn.style.display = 'none';
+  }
+
+  if (memberCancelBtn) {
+    memberCancelBtn.addEventListener('click', function () {
+      resetMemberForm();
+      notify({
+        type: 'warning',
+        title: 'ยกเลิกการแก้ไข',
+        message: 'ยกเลิกการแก้ไขและกลับสู่โหมดเพิ่มสมาชิกใหม่'
+      });
+    });
+  }
 
   function renderAdminMembers() {
     if (!membersListEl) return;
@@ -328,28 +512,79 @@ document.addEventListener('DOMContentLoaded', function () {
               <p class="admin-list-sub">กลุ่มงาน/สิทธิ์: ${member.role} | รหัสผ่าน: ${member.password}</p>
             </div>
           </div>
-          ${
-            isDefaultAdmin
-              ? '<span style="font-size:0.78rem;color:#1f5a50;font-weight:600;">บัญชีหลัก</span>'
-              : `<button type="button" class="admin-btn admin-btn-danger" data-del-member="${idx}">ลบสมาชิก</button>`
-          }
+          <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="admin-btn admin-btn-outline" data-edit-member="${idx}">แก้ไข</button>
+            ${
+              isDefaultAdmin
+                ? '<span style="font-size:0.78rem;color:#1f5a50;font-weight:600;padding:0 8px;">บัญชีหลัก</span>'
+                : `<button type="button" class="admin-btn admin-btn-danger" data-del-member="${idx}">ลบ</button>`
+            }
+          </div>
         </div>
       `;
     }).join('');
 
+    // ปุ่มแก้ไขข้อมูลสมาชิก
+    membersListEl.querySelectorAll('[data-edit-member]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const idx = Number(btn.getAttribute('data-edit-member'));
+        const member = membersData[idx];
+        if (!member) return;
+
+        if (memberEditIndexInput) memberEditIndexInput.value = idx;
+        document.getElementById('member-username').value = member.username || '';
+        document.getElementById('member-password').value = member.password || '';
+        document.getElementById('member-fullname').value = member.fullName || '';
+        document.getElementById('member-role').value = member.role || 'ผู้ดูแลระบบ (Admin)';
+
+        if (memberFormTitle) memberFormTitle.textContent = `✎ แก้ไขข้อมูลสมาชิก: ${member.fullName}`;
+        if (memberSubmitBtn) memberSubmitBtn.textContent = 'บันทึกการแก้ไขสมาชิก';
+        if (memberCancelBtn) memberCancelBtn.style.display = 'inline-block';
+        if (memberForm) {
+          memberForm.classList.add('is-editing');
+          memberForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        notify({
+          type: 'info',
+          title: 'เข้าสู่โหมดแก้ไขข้อมูล',
+          message: `กำลังแก้ไขข้อมูลสมาชิก "${member.fullName}" (${member.username})`
+        });
+      });
+    });
+
+    // ปุ่มลบสมาชิก (มี Modal ยืนยันก่อนลบ)
     membersListEl.querySelectorAll('[data-del-member]').forEach(function (btn) {
       btn.addEventListener('click', async function () {
         const idx = Number(btn.getAttribute('data-del-member'));
+        const targetMember = membersData[idx];
+        if (!targetMember) return;
+
+        const confirmed = await showConfirmDialog({
+          title: 'ยืนยันการลบสมาชิก',
+          message: `คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีผู้ใช้ "${targetMember.fullName}" (Username: ${targetMember.username}) ออกจากระบบ? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+          confirmText: 'ยืนยันการลบ',
+          type: 'danger'
+        });
+
+        if (!confirmed) return;
+
+        const deletedName = targetMember.fullName;
         membersData.splice(idx, 1);
-        const res = await window.KSP_CMS.saveSection('members', 'สมาชิกผู้ดูแลระบบ', membersData, '../');
+        await window.KSP_CMS.saveSection('members', 'สมาชิกผู้ดูแลระบบ', membersData, '../');
         renderAdminMembers();
-        showToast(res.message);
+        resetMemberForm();
+
+        notify({
+          type: 'danger',
+          title: 'ลบข้อมูลสำเร็จ!',
+          message: `ลบบัญชีผู้ใช้ "${deletedName}" ออกจากระบบเรียบร้อยแล้ว`
+        });
       });
     });
   }
   renderAdminMembers();
 
-  const memberForm = document.getElementById('form-add-member');
   if (memberForm) {
     memberForm.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -357,23 +592,68 @@ document.addEventListener('DOMContentLoaded', function () {
       const password = document.getElementById('member-password').value.trim();
       const fullName = document.getElementById('member-fullname').value.trim();
       const role = document.getElementById('member-role').value;
+      const editIdxStr = memberEditIndexInput ? memberEditIndexInput.value : '';
 
-      if (membersData.some(function (m) { return m.username === username; })) {
-        alert('ชื่อผู้ใช้งาน (Username) นี้มีอยู่ในระบบแล้ว กรุณาใช้ชื่ออื่นครับ');
-        return;
+      if (editIdxStr !== '') {
+        // --- กรณีแก้ไขข้อมูลสมาชิกเดิม ---
+        const editIdx = Number(editIdxStr);
+        // ตรวจสอบ username ซ้ำกับคนอื่นที่ไม่ใช่ตัวเอง
+        const duplicate = membersData.some(function (m, idx) {
+          return idx !== editIdx && m.username.toLowerCase() === username.toLowerCase();
+        });
+        if (duplicate) {
+          notify({
+            type: 'warning',
+            title: 'ชื่อผู้ใช้งานซ้ำ',
+            message: 'ชื่อผู้ใช้งาน (Username) นี้ถูกใช้งานแล้ว กรุณาระบุชื่ออื่น'
+          });
+          return;
+        }
+
+        membersData[editIdx] = {
+          username: username,
+          password: password,
+          fullName: fullName,
+          role: role
+        };
+
+        await window.KSP_CMS.saveSection('members', 'สมาชิกผู้ดูแลระบบ', membersData, '../');
+        resetMemberForm();
+        renderAdminMembers();
+
+        notify({
+          type: 'success',
+          title: 'แก้ไขข้อมูลสำเร็จ!',
+          message: `อัปเดตข้อมูลสมาชิก "${fullName}" สำเร็จเรียบร้อย`
+        });
+      } else {
+        // --- กรณีเพิ่มสมาชิกใหม่ ---
+        if (membersData.some(function (m) { return m.username.toLowerCase() === username.toLowerCase(); })) {
+          notify({
+            type: 'warning',
+            title: 'ชื่อผู้ใช้งานซ้ำ',
+            message: 'ชื่อผู้ใช้งาน (Username) นี้มีอยู่ในระบบแล้ว กรุณาใช้ชื่ออื่น'
+          });
+          return;
+        }
+
+        membersData.push({
+          username: username,
+          password: password,
+          fullName: fullName,
+          role: role
+        });
+
+        await window.KSP_CMS.saveSection('members', 'สมาชิกผู้ดูแลระบบ', membersData, '../');
+        resetMemberForm();
+        renderAdminMembers();
+
+        notify({
+          type: 'success',
+          title: 'บันทึกสำเร็จ!',
+          message: `เพิ่มสมาชิกใหม่ "${fullName}" เรียบร้อย สามารถใช้เข้าสู่ระบบได้ทันที`
+        });
       }
-
-      membersData.push({
-        username: username,
-        password: password,
-        fullName: fullName,
-        role: role
-      });
-
-      await window.KSP_CMS.saveSection('members', 'สมาชิกผู้ดูแลระบบ', membersData, '../');
-      memberForm.reset();
-      renderAdminMembers();
-      showToast('เพิ่มสมาชิก "' + fullName + '" เรียบร้อย! สามารถใช้เข้าสู่ระบบได้ทันที');
     });
   }
 
@@ -499,6 +779,38 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  const newsForm = document.getElementById('form-add-news');
+  const newsFormTitle = document.getElementById('news-form-title');
+  const newsEditIndexInput = document.getElementById('news-edit-index');
+  const newsSubmitBtn = document.getElementById('news-submit-btn');
+  const newsCancelBtn = document.getElementById('news-cancel-btn');
+
+  function resetNewsForm() {
+    if (newsForm) {
+      newsForm.reset();
+      newsForm.classList.remove('is-editing');
+    }
+    pendingEnhancedCoverUrl = null;
+    pendingEnhancedGalleryUrls = [];
+    if (newsEditIndexInput) newsEditIndexInput.value = '';
+    if (newsFormTitle) newsFormTitle.textContent = '+ เพิ่มข่าวสาร/กิจกรรมใหม่';
+    if (newsSubmitBtn) newsSubmitBtn.textContent = 'บันทึกข่าวสารพร้อมอัลบั้มภาพงาน';
+    if (newsCancelBtn) newsCancelBtn.style.display = 'none';
+    if (newsCoverPreviewBox) newsCoverPreviewBox.style.display = 'none';
+    if (newsGalleryPreviewBox) newsGalleryPreviewBox.style.display = 'none';
+  }
+
+  if (newsCancelBtn) {
+    newsCancelBtn.addEventListener('click', function () {
+      resetNewsForm();
+      notify({
+        type: 'warning',
+        title: 'ยกเลิกการแก้ไข',
+        message: 'ยกเลิกการแก้ไขและกลับสู่โหมดเพิ่มข่าวสารใหม่'
+      });
+    });
+  }
+
   function resolveAdminImgPath(imgPath) {
     if (!imgPath) return '../assets/images/news/news-1.png';
     if (imgPath.startsWith('data:') || imgPath.startsWith('http')) return imgPath;
@@ -522,12 +834,13 @@ document.addEventListener('DOMContentLoaded', function () {
             />
             <div class="admin-list-text">
               <p class="admin-list-title">${item.title}</p>
-              <p class="admin-list-sub">ภาพปก HD 1 ภาพ | ภาพงานทั้งหมด ${galleryCount} ภาพ — ${item.excerpt.substring(0, 65)}...</p>
+              <p class="admin-list-sub">ภาพปก HD 1 ภาพ | ภาพงานทั้งหมด ${galleryCount} ภาพ — ${(item.excerpt || '').substring(0, 65)}...</p>
             </div>
           </div>
-          <div class="admin-list-actions">
-            <button type="button" class="admin-btn admin-btn-outline" data-view-news="${idx}">ดูภาพที่เพิ่ม (${galleryCount} ภาพ)</button>
-            <button type="button" class="admin-btn admin-btn-danger" data-del-news="${idx}">ลบข่าว</button>
+          <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="admin-btn admin-btn-outline" data-view-news="${idx}">ดูภาพ (${galleryCount})</button>
+            <button type="button" class="admin-btn admin-btn-outline" data-edit-news="${idx}">แก้ไข</button>
+            <button type="button" class="admin-btn admin-btn-danger" data-del-news="${idx}">ลบ</button>
           </div>
         </div>
       `;
@@ -545,24 +858,95 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
+    // ปุ่มเข้าสู่โหมดแก้ไขข่าวสาร
+    newsListEl.querySelectorAll('[data-edit-news]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const idx = Number(btn.getAttribute('data-edit-news'));
+        const item = newsData[idx];
+        if (!item) return;
+
+        if (newsEditIndexInput) newsEditIndexInput.value = idx;
+        document.getElementById('news-title').value = item.title || '';
+        document.getElementById('news-excerpt').value = item.excerpt || '';
+
+        // แสดงพรีวิวภาพปกเดิม
+        pendingEnhancedCoverUrl = item.image || null;
+        if (pendingEnhancedCoverUrl && newsCoverPreviewBox && newsCoverPreviewImg) {
+          newsCoverPreviewImg.src = resolveAdminImgPath(pendingEnhancedCoverUrl);
+          if (newsCoverStatus) newsCoverStatus.textContent = '✓ ภาพปกข่าวปัจจุบัน (หากต้องการเปลี่ยนให้เลือกไฟล์ใหม่)';
+          newsCoverPreviewBox.style.display = 'block';
+        }
+
+        // แสดงพรีวิวภาพงานเดิม
+        pendingEnhancedGalleryUrls = Array.isArray(item.gallery) ? item.gallery : (item.image ? [item.image] : []);
+        if (pendingEnhancedGalleryUrls.length > 0 && newsGalleryPreviewBox && newsGalleryPreviewGrid) {
+          if (newsGalleryStatus) newsGalleryStatus.textContent = `✓ ภาพงานปัจจุบันทั้งหมด ${pendingEnhancedGalleryUrls.length} ภาพ`;
+          newsGalleryPreviewGrid.innerHTML = pendingEnhancedGalleryUrls.map(function (url, gIdx) {
+            return `
+              <div class="admin-gallery-preview-item" data-preview-gallery-idx="${gIdx}" title="คลิกเพื่อดูภาพที่ ${gIdx + 1} ขนาดเต็ม">
+                <img src="${resolveAdminImgPath(url)}" alt="ภาพงานที่ ${gIdx + 1}" />
+              </div>
+            `;
+          }).join('');
+          newsGalleryPreviewBox.style.display = 'block';
+        }
+
+        if (newsFormTitle) newsFormTitle.textContent = `✎ แก้ไขข่าวสาร: ${item.title}`;
+        if (newsSubmitBtn) newsSubmitBtn.textContent = 'บันทึกการแก้ไขข่าวสาร';
+        if (newsCancelBtn) newsCancelBtn.style.display = 'inline-block';
+        if (newsForm) {
+          newsForm.classList.add('is-editing');
+          newsForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        notify({
+          type: 'info',
+          title: 'เข้าสู่โหมดแก้ไขข้อมูล',
+          message: `กำลังแก้ไขข่าวสาร: "${item.title}"`
+        });
+      });
+    });
+
+    // ปุ่มลบข่าวสาร (มี Modal ยืนยันก่อนลบ)
     newsListEl.querySelectorAll('[data-del-news]').forEach(function (btn) {
       btn.addEventListener('click', async function () {
         const idx = Number(btn.getAttribute('data-del-news'));
+        const targetItem = newsData[idx];
+        if (!targetItem) return;
+
+        const confirmed = await showConfirmDialog({
+          title: 'ยืนยันการลบข่าวสาร',
+          message: `คุณแน่ใจหรือไม่ว่าต้องการลบข่าวสาร "${targetItem.title}" ออกจากเว็บไซต์? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+          confirmText: 'ยืนยันการลบ',
+          type: 'danger'
+        });
+
+        if (!confirmed) return;
+
+        const deletedTitle = targetItem.title;
         newsData.splice(idx, 1);
-        const res = await window.KSP_CMS.saveSection('news', 'ข่าวสารและกิจกรรม', newsData, '../');
+        await window.KSP_CMS.saveSection('news', 'ข่าวสารและกิจกรรม', newsData, '../');
         renderAdminNews();
-        showToast(res.message);
+        resetNewsForm();
+
+        notify({
+          type: 'danger',
+          title: 'ลบข้อมูลสำเร็จ!',
+          message: `ลบข่าวสาร "${deletedTitle}" ออกจากระบบเรียบร้อยแล้ว`
+        });
       });
     });
   }
   renderAdminNews();
 
-  const newsForm = document.getElementById('form-add-news');
   if (newsForm) {
     newsForm.addEventListener('submit', async function (e) {
       e.preventDefault();
+      const title = document.getElementById('news-title').value.trim();
+      const excerpt = document.getElementById('news-excerpt').value.trim();
+      const editIdxStr = newsEditIndexInput ? newsEditIndexInput.value : '';
 
-      // หากผู้ใช้เลือกไฟล์ไว้แต่ยังไม่ได้ประมวลผล ให้ประมวลผลด้วย JS ก่อนบันทึก
+      // หากผู้ใช้เลือกไฟล์ใหม่ไว้แต่ยังไม่ได้ประมวลผล ให้ประมวลผลด้วย JS ก่อนบันทึก
       if (!pendingEnhancedCoverUrl && newsCoverInput && newsCoverInput.files && newsCoverInput.files[0]) {
         const r = await enhanceImageFileWithJS(newsCoverInput.files[0], { mode: 'cover', width: 1200, height: 750 });
         if (r) pendingEnhancedCoverUrl = r.dataUrl;
@@ -571,23 +955,46 @@ document.addEventListener('DOMContentLoaded', function () {
       const finalCover = pendingEnhancedCoverUrl || (pendingEnhancedGalleryUrls[0] || 'assets/images/news/news-1.png');
       const finalGallery = pendingEnhancedGalleryUrls.length > 0 ? pendingEnhancedGalleryUrls : [finalCover];
 
-      newsData.unshift({
-        image: finalCover,
-        gallery: finalGallery,
-        title: document.getElementById('news-title').value.trim(),
-        excerpt: document.getElementById('news-excerpt').value.trim(),
-        link: '/news'
-      });
+      if (editIdxStr !== '') {
+        // --- กรณีบันทึกการแก้ไขข่าวสารเดิม ---
+        const editIdx = Number(editIdxStr);
+        newsData[editIdx] = {
+          image: finalCover,
+          gallery: finalGallery,
+          title: title,
+          excerpt: excerpt,
+          link: '/news'
+        };
 
-      await window.KSP_CMS.saveSection('news', 'ข่าวสารและกิจกรรม', newsData, '../');
-      newsForm.reset();
-      pendingEnhancedCoverUrl = null;
-      pendingEnhancedGalleryUrls = [];
-      if (newsCoverPreviewBox) newsCoverPreviewBox.style.display = 'none';
-      if (newsGalleryPreviewBox) newsGalleryPreviewBox.style.display = 'none';
+        await window.KSP_CMS.saveSection('news', 'ข่าวสารและกิจกรรม', newsData, '../');
+        resetNewsForm();
+        renderAdminNews();
 
-      renderAdminNews();
-      showToast('บันทึกข่าวสารพร้อมภาพปกคมชัด HD และภาพงานทั้งหมด (' + finalGallery.length + ' ภาพ) สำเร็จ!');
+        notify({
+          type: 'success',
+          title: 'แก้ไขข้อมูลสำเร็จ!',
+          message: `อัปเดตข้อมูลข่าวสาร "${title}" เรียบร้อยแล้ว`
+        });
+      } else {
+        // --- กรณีเพิ่มข่าวสารใหม่ ---
+        newsData.unshift({
+          image: finalCover,
+          gallery: finalGallery,
+          title: title,
+          excerpt: excerpt,
+          link: '/news'
+        });
+
+        await window.KSP_CMS.saveSection('news', 'ข่าวสารและกิจกรรม', newsData, '../');
+        resetNewsForm();
+        renderAdminNews();
+
+        notify({
+          type: 'success',
+          title: 'บันทึกสำเร็จ!',
+          message: `บันทึกข่าวสาร "${title}" พร้อมภาพ HD (${finalGallery.length} ภาพ) สำเร็จเรียบร้อย`
+        });
+      }
     });
   }
 
@@ -599,7 +1006,42 @@ document.addEventListener('DOMContentLoaded', function () {
   const policyImageInput = document.getElementById('policy-image-file');
   const policyImgPreviewBox = document.getElementById('policy-img-preview-box');
   const policyImgPreview = document.getElementById('policy-img-preview');
+  const policyForm = document.getElementById('form-add-policy');
+  const policyFormTitle = document.getElementById('policy-form-title');
+  const policyEditIndexInput = document.getElementById('policy-edit-index');
+  const policySubmitBtn = document.getElementById('policy-submit-btn');
+  const policyCancelBtn = document.getElementById('policy-cancel-btn');
   let pendingPolicyImageUrl = null;
+
+  function resetPolicyForm() {
+    if (policyForm) {
+      policyForm.reset();
+      policyForm.classList.remove('is-editing');
+    }
+    pendingPolicyImageUrl = null;
+    if (policyEditIndexInput) policyEditIndexInput.value = '';
+    if (policyFormTitle) policyFormTitle.textContent = '+ เพิ่มประกาศนโยบายใหม่';
+    if (policySubmitBtn) policySubmitBtn.textContent = 'บันทึกประกาศนโยบายใหม่';
+    if (policyCancelBtn) policyCancelBtn.style.display = 'none';
+    if (policyImgPreviewBox) policyImgPreviewBox.style.display = 'none';
+    const b = document.getElementById('policy-badge');
+    if (b) b.value = 'ประกาศนโยบายโรงพยาบาล';
+    const d = document.getElementById('policy-date');
+    if (d) d.value = '30 ต.ค. 2569';
+    const v = document.getElementById('policy-views');
+    if (v) v.value = '0';
+  }
+
+  if (policyCancelBtn) {
+    policyCancelBtn.addEventListener('click', function () {
+      resetPolicyForm();
+      notify({
+        type: 'warning',
+        title: 'ยกเลิกการแก้ไข',
+        message: 'ยกเลิกการแก้ไขและกลับสู่โหมดเพิ่มประกาศนโยบายใหม่'
+      });
+    });
+  }
 
   if (policyImageInput) {
     policyImageInput.addEventListener('change', async function () {
@@ -639,51 +1081,141 @@ document.addEventListener('DOMContentLoaded', function () {
               <p class="admin-list-sub">วันที่ลงประกาศ: <strong>${item.date}</strong> | จำนวนคนเข้าดู: <strong>${item.views}</strong> ครั้ง | ${fileStatus}</p>
             </div>
           </div>
-          <button type="button" class="admin-btn admin-btn-danger" data-del-policy="${idx}">ลบประกาศ</button>
+          <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="admin-btn admin-btn-outline" data-edit-policy="${idx}">แก้ไข</button>
+            <button type="button" class="admin-btn admin-btn-danger" data-del-policy="${idx}">ลบ</button>
+          </div>
         </div>
       `;
     }).join('');
 
+    // ปุ่มแก้ไขประกาศนโยบาย
+    policyListEl.querySelectorAll('[data-edit-policy]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const idx = Number(btn.getAttribute('data-edit-policy'));
+        const item = policyData[idx];
+        if (!item) return;
+
+        if (policyEditIndexInput) policyEditIndexInput.value = idx;
+        document.getElementById('policy-title').value = item.title || '';
+        document.getElementById('policy-badge').value = item.categoryBadge || 'ประกาศนโยบายโรงพยาบาล';
+        document.getElementById('policy-date').value = item.date || '30 ต.ค. 2569';
+        document.getElementById('policy-views').value = item.views || 0;
+
+        pendingPolicyImageUrl = item.imageDataUrl || null;
+        if (pendingPolicyImageUrl && policyImgPreview && policyImgPreviewBox) {
+          policyImgPreview.src = pendingPolicyImageUrl;
+          policyImgPreviewBox.style.display = 'block';
+        } else if (policyImgPreviewBox) {
+          policyImgPreviewBox.style.display = 'none';
+        }
+
+        if (policyFormTitle) policyFormTitle.textContent = `✎ แก้ไขประกาศ: ${item.title}`;
+        if (policySubmitBtn) policySubmitBtn.textContent = 'บันทึกการแก้ไขประกาศ';
+        if (policyCancelBtn) policyCancelBtn.style.display = 'inline-block';
+        if (policyForm) {
+          policyForm.classList.add('is-editing');
+          policyForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        notify({
+          type: 'info',
+          title: 'เข้าสู่โหมดแก้ไขข้อมูล',
+          message: `กำลังแก้ไขประกาศนโยบาย: "${item.title}"`
+        });
+      });
+    });
+
+    // ปุ่มลบประกาศนโยบาย (Modal ยืนยันก่อนลบ)
     policyListEl.querySelectorAll('[data-del-policy]').forEach(function (btn) {
       btn.addEventListener('click', async function () {
         const idx = Number(btn.getAttribute('data-del-policy'));
+        const targetItem = policyData[idx];
+        if (!targetItem) return;
+
+        const confirmed = await showConfirmDialog({
+          title: 'ยืนยันการลบประกาศนโยบาย',
+          message: `คุณแน่ใจหรือไม่ว่าต้องการลบประกาศ "${targetItem.title}"? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+          confirmText: 'ยืนยันการลบ',
+          type: 'danger'
+        });
+
+        if (!confirmed) return;
+
+        const deletedTitle = targetItem.title;
         policyData.splice(idx, 1);
-        const res = await window.KSP_CMS.saveSection('policies', 'ประกาศนโยบายโรงพยาบาล', policyData, '../');
+        await window.KSP_CMS.saveSection('policies', 'ประกาศนโยบายโรงพยาบาล', policyData, '../');
         renderAdminPolicies();
-        showToast(res.message);
+        resetPolicyForm();
+
+        notify({
+          type: 'danger',
+          title: 'ลบข้อมูลสำเร็จ!',
+          message: `ลบประกาศนโยบาย "${deletedTitle}" ออกจากระบบเรียบร้อยแล้ว`
+        });
       });
     });
   }
   renderAdminPolicies();
 
-  const policyForm = document.getElementById('form-add-policy');
   if (policyForm) {
     policyForm.addEventListener('submit', async function (e) {
       e.preventDefault();
+      const title = document.getElementById('policy-title').value.trim();
+      const badge = document.getElementById('policy-badge').value.trim() || 'ประกาศนโยบายโรงพยาบาล';
+      const date = document.getElementById('policy-date').value.trim() || '30 ต.ค. 2569';
+      const views = Number(document.getElementById('policy-views').value || 0);
       const fileInput = document.getElementById('policy-file');
       const fileObj = fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
       const uploadedFileUrl = await readFileAsDataURL(fileInput);
+      const editIdxStr = policyEditIndexInput ? policyEditIndexInput.value : '';
 
-      policyData.unshift({
-        title: document.getElementById('policy-title').value.trim(),
-        categoryBadge: document.getElementById('policy-badge').value.trim() || 'ประกาศนโยบายโรงพยาบาล',
-        date: document.getElementById('policy-date').value.trim() || '30 ต.ค. 2569',
-        views: Number(document.getElementById('policy-views').value || 0),
-        fileName: fileObj ? fileObj.name : '',
-        fileDataUrl: uploadedFileUrl || '',
-        imageDataUrl: pendingPolicyImageUrl || '',
-        link: '/policy'
-      });
+      if (editIdxStr !== '') {
+        // --- กรณีแก้ไขประกาศเดิม ---
+        const editIdx = Number(editIdxStr);
+        policyData[editIdx] = {
+          title: title,
+          categoryBadge: badge,
+          date: date,
+          views: views,
+          fileName: fileObj ? fileObj.name : (policyData[editIdx].fileName || ''),
+          fileDataUrl: uploadedFileUrl || (policyData[editIdx].fileDataUrl || ''),
+          imageDataUrl: pendingPolicyImageUrl || (policyData[editIdx].imageDataUrl || ''),
+          link: '/policy'
+        };
 
-      await window.KSP_CMS.saveSection('policies', 'ประกาศนโยบายโรงพยาบาล', policyData, '../');
-      policyForm.reset();
-      pendingPolicyImageUrl = null;
-      if (policyImgPreviewBox) policyImgPreviewBox.style.display = 'none';
-      document.getElementById('policy-badge').value = 'ประกาศนโยบายโรงพยาบาล';
-      document.getElementById('policy-date').value = '30 ต.ค. 2569';
-      document.getElementById('policy-views').value = '0';
-      renderAdminPolicies();
-      showToast('บันทึกประกาศนโยบายโรงพยาบาลเรียบร้อย! ผู้ชมสามารถกดดาวน์โหลดเอกสารและรูปภาพได้ทันที');
+        await window.KSP_CMS.saveSection('policies', 'ประกาศนโยบายโรงพยาบาล', policyData, '../');
+        resetPolicyForm();
+        renderAdminPolicies();
+
+        notify({
+          type: 'success',
+          title: 'แก้ไขข้อมูลสำเร็จ!',
+          message: `อัปเดตประกาศนโยบาย "${title}" เรียบร้อยแล้ว`
+        });
+      } else {
+        // --- กรณีเพิ่มประกาศใหม่ ---
+        policyData.unshift({
+          title: title,
+          categoryBadge: badge,
+          date: date,
+          views: views,
+          fileName: fileObj ? fileObj.name : '',
+          fileDataUrl: uploadedFileUrl || '',
+          imageDataUrl: pendingPolicyImageUrl || '',
+          link: '/policy'
+        });
+
+        await window.KSP_CMS.saveSection('policies', 'ประกาศนโยบายโรงพยาบาล', policyData, '../');
+        resetPolicyForm();
+        renderAdminPolicies();
+
+        notify({
+          type: 'success',
+          title: 'บันทึกสำเร็จ!',
+          message: `บันทึกประกาศนโยบาย "${title}" เรียบร้อยแล้ว`
+        });
+      }
     });
   }
 
@@ -693,6 +1225,37 @@ document.addEventListener('DOMContentLoaded', function () {
   let downloadsData = window.KSP_CMS.getSection('downloads', DEFAULT_DOWNLOAD_ITEMS);
   const downloadsListEl = document.getElementById('admin-downloads-list');
   const dlFileInput = document.getElementById('dl-file');
+  const downloadForm = document.getElementById('form-add-download');
+  const dlFormTitle = document.getElementById('dl-form-title');
+  const dlEditIndexInput = document.getElementById('dl-edit-index');
+  const dlSubmitBtn = document.getElementById('dl-submit-btn');
+  const dlCancelBtn = document.getElementById('dl-cancel-btn');
+
+  function resetDownloadForm() {
+    if (downloadForm) {
+      downloadForm.reset();
+      downloadForm.classList.remove('is-editing');
+    }
+    if (dlEditIndexInput) dlEditIndexInput.value = '';
+    if (dlFormTitle) dlFormTitle.textContent = '+ ลงไฟล์เอกสารดาวน์โหลดใหม่';
+    if (dlSubmitBtn) dlSubmitBtn.textContent = 'บันทึกและอัปโหลดเอกสาร';
+    if (dlCancelBtn) dlCancelBtn.style.display = 'none';
+    const s = document.getElementById('dl-size');
+    if (s) s.value = '250 KB';
+    const d = document.getElementById('dl-date');
+    if (d) d.value = '30 ต.ค. 2569';
+  }
+
+  if (dlCancelBtn) {
+    dlCancelBtn.addEventListener('click', function () {
+      resetDownloadForm();
+      notify({
+        type: 'warning',
+        title: 'ยกเลิกการแก้ไข',
+        message: 'ยกเลิกการแก้ไขและกลับสู่โหมดเพิ่มเอกสารใหม่'
+      });
+    });
+  }
 
   if (dlFileInput) {
     dlFileInput.addEventListener('change', function () {
@@ -726,47 +1289,134 @@ document.addEventListener('DOMContentLoaded', function () {
               <p class="admin-list-sub">หมวดหมู่: ${item.category} | ขนาด: ${item.fileSize} | วันที่ลง: ${item.updatedDate} | ${hasFileLabel}</p>
             </div>
           </div>
-          <button type="button" class="admin-btn admin-btn-danger" data-del-download="${idx}">ลบเอกสาร</button>
+          <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="admin-btn admin-btn-outline" data-edit-download="${idx}">แก้ไข</button>
+            <button type="button" class="admin-btn admin-btn-danger" data-del-download="${idx}">ลบ</button>
+          </div>
         </div>
       `;
     }).join('');
 
+    // ปุ่มแก้ไขเอกสารดาวน์โหลด
+    downloadsListEl.querySelectorAll('[data-edit-download]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const idx = Number(btn.getAttribute('data-edit-download'));
+        const item = downloadsData[idx];
+        if (!item) return;
+
+        if (dlEditIndexInput) dlEditIndexInput.value = idx;
+        document.getElementById('dl-title').value = item.title || '';
+        document.getElementById('dl-category').value = item.category || 'ผู้รับบริการ';
+        document.getElementById('dl-type').value = item.fileType || 'PDF';
+        document.getElementById('dl-size').value = item.fileSize || '250 KB';
+        document.getElementById('dl-date').value = item.updatedDate || '30 ต.ค. 2569';
+
+        if (dlFormTitle) dlFormTitle.textContent = `✎ แก้ไขเอกสาร: ${item.title}`;
+        if (dlSubmitBtn) dlSubmitBtn.textContent = 'บันทึกการแก้ไขเอกสาร';
+        if (dlCancelBtn) dlCancelBtn.style.display = 'inline-block';
+        if (downloadForm) {
+          downloadForm.classList.add('is-editing');
+          downloadForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        notify({
+          type: 'info',
+          title: 'เข้าสู่โหมดแก้ไขข้อมูล',
+          message: `กำลังแก้ไขเอกสาร: "${item.title}"`
+        });
+      });
+    });
+
+    // ปุ่มลบเอกสารดาวน์โหลด (Modal ยืนยันก่อนลบ)
     downloadsListEl.querySelectorAll('[data-del-download]').forEach(function (btn) {
       btn.addEventListener('click', async function () {
         const idx = Number(btn.getAttribute('data-del-download'));
+        const targetItem = downloadsData[idx];
+        if (!targetItem) return;
+
+        const confirmed = await showConfirmDialog({
+          title: 'ยืนยันการลบเอกสาร',
+          message: `คุณแน่ใจหรือไม่ว่าต้องการลบเอกสาร "${targetItem.title}"? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+          confirmText: 'ยืนยันการลบ',
+          type: 'danger'
+        });
+
+        if (!confirmed) return;
+
+        const deletedTitle = targetItem.title;
         downloadsData.splice(idx, 1);
-        const res = await window.KSP_CMS.saveSection('downloads', 'ดาวน์โหลดเอกสาร', downloadsData, '../');
+        await window.KSP_CMS.saveSection('downloads', 'ดาวน์โหลดเอกสาร', downloadsData, '../');
         renderAdminDownloads();
-        showToast(res.message);
+        resetDownloadForm();
+
+        notify({
+          type: 'danger',
+          title: 'ลบข้อมูลสำเร็จ!',
+          message: `ลบเอกสาร "${deletedTitle}" ออกจากระบบเรียบร้อยแล้ว`
+        });
       });
     });
   }
   renderAdminDownloads();
 
-  const downloadForm = document.getElementById('form-add-download');
   if (downloadForm) {
     downloadForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-      const fObj = dlFileInput && dlFileInput.files && dlFileInput.files[0] ? dlFileInput.files[0] ? dlFileInput.files[0] : null : null;
+      const title = document.getElementById('dl-title').value.trim();
+      const category = document.getElementById('dl-category').value;
+      const fileType = document.getElementById('dl-type').value;
+      const fileSize = document.getElementById('dl-size').value.trim() || '250 KB';
+      const updatedDate = document.getElementById('dl-date').value.trim() || '30 ต.ค. 2569';
+      const fObj = dlFileInput && dlFileInput.files && dlFileInput.files[0] ? dlFileInput.files[0] : null;
       const uploadedDataUrl = await readFileAsDataURL(dlFileInput);
+      const editIdxStr = dlEditIndexInput ? dlEditIndexInput.value : '';
 
-      downloadsData.unshift({
-        title: document.getElementById('dl-title').value.trim(),
-        category: document.getElementById('dl-category').value,
-        fileType: document.getElementById('dl-type').value,
-        fileSize: document.getElementById('dl-size').value.trim() || '250 KB',
-        updatedDate: document.getElementById('dl-date').value.trim() || '30 ต.ค. 2569',
-        fileName: fObj ? fObj.name : '',
-        fileDataUrl: uploadedDataUrl || '',
-        fileUrl: '/downloads'
-      });
+      if (editIdxStr !== '') {
+        // --- กรณีแก้ไขเอกสารเดิม ---
+        const editIdx = Number(editIdxStr);
+        downloadsData[editIdx] = {
+          title: title,
+          category: category,
+          fileType: fileType,
+          fileSize: fileSize,
+          updatedDate: updatedDate,
+          fileName: fObj ? fObj.name : (downloadsData[editIdx].fileName || ''),
+          fileDataUrl: uploadedDataUrl || (downloadsData[editIdx].fileDataUrl || ''),
+          fileUrl: '/downloads'
+        };
 
-      await window.KSP_CMS.saveSection('downloads', 'ดาวน์โหลดเอกสาร', downloadsData, '../');
-      downloadForm.reset();
-      document.getElementById('dl-size').value = '250 KB';
-      document.getElementById('dl-date').value = '30 ต.ค. 2569';
-      renderAdminDownloads();
-      showToast('ลงไฟล์เอกสารดาวน์โหลดสำเร็จ!');
+        await window.KSP_CMS.saveSection('downloads', 'ดาวน์โหลดเอกสาร', downloadsData, '../');
+        resetDownloadForm();
+        renderAdminDownloads();
+
+        notify({
+          type: 'success',
+          title: 'แก้ไขข้อมูลสำเร็จ!',
+          message: `อัปเดตเอกสารดาวน์โหลด "${title}" เรียบร้อยแล้ว`
+        });
+      } else {
+        // --- กรณีเพิ่มเอกสารใหม่ ---
+        downloadsData.unshift({
+          title: title,
+          category: category,
+          fileType: fileType,
+          fileSize: fileSize,
+          updatedDate: updatedDate,
+          fileName: fObj ? fObj.name : '',
+          fileDataUrl: uploadedDataUrl || '',
+          fileUrl: '/downloads'
+        });
+
+        await window.KSP_CMS.saveSection('downloads', 'ดาวน์โหลดเอกสาร', downloadsData, '../');
+        resetDownloadForm();
+        renderAdminDownloads();
+
+        notify({
+          type: 'success',
+          title: 'บันทึกสำเร็จ!',
+          message: `ลงไฟล์เอกสาร "${title}" เรียบร้อยแล้ว`
+        });
+      }
     });
   }
 
@@ -814,7 +1464,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function resetSlideForm() {
-    if (slideForm) slideForm.reset();
+    if (slideForm) {
+      slideForm.reset();
+      slideForm.classList.remove('is-editing');
+    }
     pendingSlideImgUrl = null;
     if (slideEditIndexInput) slideEditIndexInput.value = '';
     if (slideFormTitle) slideFormTitle.textContent = '+ เพิ่มสไลด์ประกาศใหม่';
@@ -824,7 +1477,14 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   if (slideCancelEditBtn) {
-    slideCancelEditBtn.addEventListener('click', resetSlideForm);
+    slideCancelEditBtn.addEventListener('click', function () {
+      resetSlideForm();
+      notify({
+        type: 'warning',
+        title: 'ยกเลิกการแก้ไข',
+        message: 'ยกเลิกการแก้ไขและกลับสู่โหมดเพิ่มสไลด์ใหม่'
+      });
+    });
   }
 
   function renderAdminSlides() {
@@ -882,10 +1542,18 @@ document.addEventListener('DOMContentLoaded', function () {
         if (slidePreviewBox) slidePreviewBox.style.display = 'block';
 
         if (slideFormTitle) slideFormTitle.textContent = `✎ แก้ไขสไลด์ลำดับที่ ${idx + 1}`;
-        if (slideSubmitBtn) slideSubmitBtn.textContent = 'บันทึกการแก้ไข';
+        if (slideSubmitBtn) slideSubmitBtn.textContent = 'บันทึกการแก้ไขสไลด์';
         if (slideCancelEditBtn) slideCancelEditBtn.style.display = 'inline-block';
+        if (slideForm) {
+          slideForm.classList.add('is-editing');
+          slideForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
 
-        slideForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        notify({
+          type: 'info',
+          title: 'เข้าสู่โหมดแก้ไขข้อมูล',
+          message: `กำลังแก้ไขสไลด์ลำดับที่ ${idx + 1}: "${item.title}"`
+        });
       });
     });
 
@@ -899,7 +1567,11 @@ document.addEventListener('DOMContentLoaded', function () {
           slidesData[idx - 1] = temp;
           await window.KSP_CMS.saveSection('slides', 'Slide Bar', slidesData, '../');
           renderAdminSlides();
-          showToast('สลับลำดับสไลด์เรียบร้อย!');
+          notify({
+            type: 'info',
+            title: 'สลับลำดับสไลด์',
+            message: `เลื่อนสไลด์ "${temp.title}" ขึ้นเป็นลำดับที่ ${idx}`
+          });
         }
       });
     });
@@ -914,21 +1586,42 @@ document.addEventListener('DOMContentLoaded', function () {
           slidesData[idx + 1] = temp;
           await window.KSP_CMS.saveSection('slides', 'Slide Bar', slidesData, '../');
           renderAdminSlides();
-          showToast('สลับลำดับสไลด์เรียบร้อย!');
+          notify({
+            type: 'info',
+            title: 'สลับลำดับสไลด์',
+            message: `เลื่อนสไลด์ "${temp.title}" ลงเป็นลำดับที่ ${idx + 2}`
+          });
         }
       });
     });
 
-    // ปุ่มลบสไลด์
+    // ปุ่มลบสไลด์ (Modal ยืนยันก่อนลบ)
     slidesListEl.querySelectorAll('[data-del-slide]').forEach(function (btn) {
       btn.addEventListener('click', async function () {
         const idx = Number(btn.getAttribute('data-del-slide'));
-        if (confirm(`ต้องการลบสไลด์ "${slidesData[idx].title}" ใช่หรือไม่?`)) {
-          slidesData.splice(idx, 1);
-          const res = await window.KSP_CMS.saveSection('slides', 'Slide Bar', slidesData, '../');
-          renderAdminSlides();
-          showToast(res.message);
-        }
+        const targetItem = slidesData[idx];
+        if (!targetItem) return;
+
+        const confirmed = await showConfirmDialog({
+          title: 'ยืนยันการลบสไลด์ประกาศ',
+          message: `คุณแน่ใจหรือไม่ว่าต้องการลบสไลด์ "${targetItem.title}"? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+          confirmText: 'ยืนยันการลบ',
+          type: 'danger'
+        });
+
+        if (!confirmed) return;
+
+        const deletedTitle = targetItem.title;
+        slidesData.splice(idx, 1);
+        await window.KSP_CMS.saveSection('slides', 'Slide Bar', slidesData, '../');
+        renderAdminSlides();
+        resetSlideForm();
+
+        notify({
+          type: 'danger',
+          title: 'ลบข้อมูลสำเร็จ!',
+          message: `ลบสไลด์ "${deletedTitle}" ออกจากระบบเรียบร้อยแล้ว`
+        });
       });
     });
   }
@@ -951,6 +1644,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       if (editIdxStr !== '') {
+        // --- กรณีแก้ไขสไลด์เดิม ---
         const editIdx = Number(editIdxStr);
         slidesData[editIdx].category = category || 'ประกาศประชาสัมพันธ์';
         slidesData[editIdx].title = title;
@@ -961,8 +1655,14 @@ document.addEventListener('DOMContentLoaded', function () {
         await window.KSP_CMS.saveSection('slides', 'Slide Bar', slidesData, '../');
         resetSlideForm();
         renderAdminSlides();
-        showToast('แก้ไขข้อมูลสไลด์ประกาศเรียบร้อย!');
+
+        notify({
+          type: 'success',
+          title: 'แก้ไขข้อมูลสำเร็จ!',
+          message: `อัปเดตข้อมูลสไลด์ "${title}" เรียบร้อยแล้ว`
+        });
       } else {
+        // --- กรณีเพิ่มสไลด์ใหม่ ---
         slidesData.push({
           category: category || 'ประกาศประชาสัมพันธ์',
           title: title,
@@ -973,7 +1673,12 @@ document.addEventListener('DOMContentLoaded', function () {
         await window.KSP_CMS.saveSection('slides', 'Slide Bar', slidesData, '../');
         resetSlideForm();
         renderAdminSlides();
-        showToast('เพิ่มสไลด์ประกาศใหม่เรียบร้อย!');
+
+        notify({
+          type: 'success',
+          title: 'บันทึกสำเร็จ!',
+          message: `เพิ่มสไลด์ประกาศ "${title}" เรียบร้อยแล้ว`
+        });
       }
     });
   }
@@ -1007,16 +1712,48 @@ document.addEventListener('DOMContentLoaded', function () {
         execData.photo = enhancedPhoto.dataUrl;
       }
 
-      const res = await window.KSP_CMS.saveSection('executive', 'ผู้บริหารและวิสัยทัศน์', execData, '../');
-      showToast(res.message);
+      await window.KSP_CMS.saveSection('executive', 'ผู้บริหารและวิสัยทัศน์', execData, '../');
+
+      notify({
+        type: 'success',
+        title: 'บันทึกข้อมูลผู้บริหารสำเร็จ!',
+        message: 'อัปเดตข้อมูลผู้บริหารและวิสัยทัศน์โรงพยาบาลเรียบร้อยแล้ว'
+      });
     });
   }
 
   // =========================================================================
-  // เมนูที่ 7: จัดการแผนกและคลินิก
+  // เมนูที่ 7: จัดการแผนกและคลินิก (รองรับ บันทึก / แก้ไข / ลบ)
   // =========================================================================
   let deptsData = window.KSP_CMS.getSection('departments', DEFAULT_DEPARTMENTS_LIST);
   const deptsListEl = document.getElementById('admin-depts-list');
+  const deptForm = document.getElementById('form-add-dept');
+  const deptFormTitle = document.getElementById('dept-form-title');
+  const deptEditIndexInput = document.getElementById('dept-edit-index');
+  const deptSubmitBtn = document.getElementById('dept-submit-btn');
+  const deptCancelBtn = document.getElementById('dept-cancel-btn');
+
+  function resetDeptForm() {
+    if (deptForm) {
+      deptForm.reset();
+      deptForm.classList.remove('is-editing');
+    }
+    if (deptEditIndexInput) deptEditIndexInput.value = '';
+    if (deptFormTitle) deptFormTitle.textContent = '+ เพิ่มแผนก/คลินิกใหม่';
+    if (deptSubmitBtn) deptSubmitBtn.textContent = 'บันทึกแผนกใหม่';
+    if (deptCancelBtn) deptCancelBtn.style.display = 'none';
+  }
+
+  if (deptCancelBtn) {
+    deptCancelBtn.addEventListener('click', function () {
+      resetDeptForm();
+      notify({
+        type: 'warning',
+        title: 'ยกเลิกการแก้ไข',
+        message: 'ยกเลิกการแก้ไขและกลับสู่โหมดเพิ่มแผนกใหม่'
+      });
+    });
+  }
 
   function renderAdminDepts() {
     if (!deptsListEl) return;
@@ -1029,42 +1766,126 @@ document.addEventListener('DOMContentLoaded', function () {
               <p class="admin-list-sub">${item.description}</p>
             </div>
           </div>
-          <button type="button" class="admin-btn admin-btn-danger" data-del-dept="${idx}">ลบ</button>
+          <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="admin-btn admin-btn-outline" data-edit-dept="${idx}">แก้ไข</button>
+            <button type="button" class="admin-btn admin-btn-danger" data-del-dept="${idx}">ลบ</button>
+          </div>
         </div>
       `;
     }).join('');
 
+    // ปุ่มแก้ไขแผนก/คลินิก
+    deptsListEl.querySelectorAll('[data-edit-dept]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const idx = Number(btn.getAttribute('data-edit-dept'));
+        const item = deptsData[idx];
+        if (!item) return;
+
+        if (deptEditIndexInput) deptEditIndexInput.value = idx;
+        document.getElementById('dept-title').value = item.title || '';
+        document.getElementById('dept-desc').value = item.description || '';
+        const iconSelect = document.getElementById('dept-icon');
+        if (iconSelect) iconSelect.value = item.icon || 'heart';
+
+        if (deptFormTitle) deptFormTitle.textContent = `✎ แก้ไขแผนก: ${item.title}`;
+        if (deptSubmitBtn) deptSubmitBtn.textContent = 'บันทึกการแก้ไขแผนก';
+        if (deptCancelBtn) deptCancelBtn.style.display = 'inline-block';
+        if (deptForm) {
+          deptForm.classList.add('is-editing');
+          deptForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        notify({
+          type: 'info',
+          title: 'เข้าสู่โหมดแก้ไขข้อมูล',
+          message: `กำลังแก้ไขแผนก/คลินิก: "${item.title}"`
+        });
+      });
+    });
+
+    // ปุ่มลบแผนก/คลินิก (Modal ยืนยันก่อนลบ)
     deptsListEl.querySelectorAll('[data-del-dept]').forEach(function (btn) {
       btn.addEventListener('click', async function () {
         const idx = Number(btn.getAttribute('data-del-dept'));
+        const targetItem = deptsData[idx];
+        if (!targetItem) return;
+
+        const confirmed = await showConfirmDialog({
+          title: 'ยืนยันการลบแผนก/คลินิก',
+          message: `คุณแน่ใจหรือไม่ว่าต้องการลบแผนก "${targetItem.title}"? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+          confirmText: 'ยืนยันการลบ',
+          type: 'danger'
+        });
+
+        if (!confirmed) return;
+
+        const deletedTitle = targetItem.title;
         deptsData.splice(idx, 1);
-        const res = await window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../');
+        await window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../');
         renderAdminDepts();
-        showToast(res.message);
+        resetDeptForm();
+
+        notify({
+          type: 'danger',
+          title: 'ลบข้อมูลสำเร็จ!',
+          message: `ลบแผนก "${deletedTitle}" ออกจากระบบเรียบร้อยแล้ว`
+        });
       });
     });
   }
   renderAdminDepts();
 
-  const deptForm = document.getElementById('form-add-dept');
   if (deptForm) {
     deptForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-      deptsData.push({
-        icon: document.getElementById('dept-icon').value,
-        title: document.getElementById('dept-title').value.trim(),
-        description: document.getElementById('dept-desc').value.trim(),
-        link: '/departments'
-      });
-      const res = await window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../');
-      deptForm.reset();
-      renderAdminDepts();
-      showToast(res.message);
+      const title = document.getElementById('dept-title').value.trim();
+      const desc = document.getElementById('dept-desc').value.trim();
+      const icon = document.getElementById('dept-icon').value;
+      const editIdxStr = deptEditIndexInput ? deptEditIndexInput.value : '';
+
+      if (editIdxStr !== '') {
+        // --- กรณีแก้ไขแผนกเดิม ---
+        const editIdx = Number(editIdxStr);
+        deptsData[editIdx] = {
+          icon: icon,
+          title: title,
+          description: desc,
+          link: '/departments'
+        };
+
+        await window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../');
+        resetDeptForm();
+        renderAdminDepts();
+
+        notify({
+          type: 'success',
+          title: 'แก้ไขข้อมูลสำเร็จ!',
+          message: `อัปเดตข้อมูลแผนก "${title}" เรียบร้อยแล้ว`
+        });
+      } else {
+        // --- กรณีเพิ่มแผนกใหม่ ---
+        deptsData.push({
+          icon: icon,
+          title: title,
+          description: desc,
+          link: '/departments'
+        });
+
+        await window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../');
+        resetDeptForm();
+        renderAdminDepts();
+
+        notify({
+          type: 'success',
+          title: 'บันทึกสำเร็จ!',
+          message: `เพิ่มแผนก/คลินิกใหม่ "${title}" เรียบร้อยแล้ว`
+        });
+      }
     });
   }
 
   // =========================================================================
-  // เมนูที่ 8: จัดการเว็บไซต์ภายใน
+  // เมนูที่ 8: จัดการเว็บไซต์ภายใน (รองรับ บันทึก / แก้ไข / ลบ)
   // =========================================================================
   let intranetData = window.KSP_CMS.getSection('intranet', DEFAULT_INTERNAL_WEBSITES);
   const intranetListEl = document.getElementById('admin-intranet-list');
@@ -1106,7 +1927,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function resetIntraForm() {
-    if (intraForm) intraForm.reset();
+    if (intraForm) {
+      intraForm.reset();
+      intraForm.classList.remove('is-editing');
+    }
     pendingIntraLogoUrl = null;
     if (intraEditIndexInput) intraEditIndexInput.value = '';
     if (intraFormTitle) intraFormTitle.textContent = '+ เพิ่มระบบเว็บไซต์ภายในใหม่';
@@ -1116,7 +1940,14 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   if (intraCancelEditBtn) {
-    intraCancelEditBtn.addEventListener('click', resetIntraForm);
+    intraCancelEditBtn.addEventListener('click', function () {
+      resetIntraForm();
+      notify({
+        type: 'warning',
+        title: 'ยกเลิกการแก้ไข',
+        message: 'ยกเลิกการแก้ไขและกลับสู่โหมดเพิ่มระบบงานใหม่'
+      });
+    });
   }
 
   function renderAdminIntranet() {
@@ -1166,20 +1997,46 @@ document.addEventListener('DOMContentLoaded', function () {
         if (intraFormTitle) intraFormTitle.textContent = `✎ แก้ไขระบบงาน: [${item.code}] ${item.title}`;
         if (intraSubmitBtn) intraSubmitBtn.textContent = 'บันทึกการแก้ไข';
         if (intraCancelEditBtn) intraCancelEditBtn.style.display = 'inline-block';
+        if (intraForm) {
+          intraForm.classList.add('is-editing');
+          intraForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
 
-        intraForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        notify({
+          type: 'info',
+          title: 'เข้าสู่โหมดแก้ไขข้อมูล',
+          message: `กำลังแก้ไขระบบงาน: [${item.code}] "${item.title}"`
+        });
       });
     });
 
+    // ปุ่มลบระบบงาน (Modal ยืนยันก่อนลบ)
     intranetListEl.querySelectorAll('[data-del-intranet]').forEach(function (btn) {
       btn.addEventListener('click', async function () {
         const idx = Number(btn.getAttribute('data-del-intranet'));
-        if (confirm(`ต้องการลบระบบงาน "${intranetData[idx].title}" ใช่หรือไม่?`)) {
-          intranetData.splice(idx, 1);
-          const res = await window.KSP_CMS.saveSection('intranet', 'เว็บไซต์ภายใน', intranetData, '../');
-          renderAdminIntranet();
-          showToast(res.message);
-        }
+        const targetItem = intranetData[idx];
+        if (!targetItem) return;
+
+        const confirmed = await showConfirmDialog({
+          title: 'ยืนยันการลบระบบเว็บไซต์ภายใน',
+          message: `คุณแน่ใจหรือไม่ว่าต้องการลบระบบงาน "${targetItem.title}"? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+          confirmText: 'ยืนยันการลบ',
+          type: 'danger'
+        });
+
+        if (!confirmed) return;
+
+        const deletedTitle = targetItem.title;
+        intranetData.splice(idx, 1);
+        await window.KSP_CMS.saveSection('intranet', 'เว็บไซต์ภายใน', intranetData, '../');
+        renderAdminIntranet();
+        resetIntraForm();
+
+        notify({
+          type: 'danger',
+          title: 'ลบข้อมูลสำเร็จ!',
+          message: `ลบระบบงาน "${deletedTitle}" ออกจากระบบเรียบร้อยแล้ว`
+        });
       });
     });
   }
@@ -1219,7 +2076,12 @@ document.addEventListener('DOMContentLoaded', function () {
         await window.KSP_CMS.saveSection('intranet', 'เว็บไซต์ภายใน', intranetData, '../');
         resetIntraForm();
         renderAdminIntranet();
-        showToast('แก้ไขข้อมูลและ Logo เว็บไซต์ภายในเรียบร้อย!');
+
+        notify({
+          type: 'success',
+          title: 'แก้ไขข้อมูลสำเร็จ!',
+          message: `อัปเดตระบบงาน "${title}" เรียบร้อยแล้ว`
+        });
       } else {
         intranetData.push({
           code: code,
@@ -1231,7 +2093,12 @@ document.addEventListener('DOMContentLoaded', function () {
         await window.KSP_CMS.saveSection('intranet', 'เว็บไซต์ภายใน', intranetData, '../');
         resetIntraForm();
         renderAdminIntranet();
-        showToast('บันทึกระบบเว็บไซต์ภายในพร้อม Logo เรียบร้อย!');
+
+        notify({
+          type: 'success',
+          title: 'บันทึกสำเร็จ!',
+          message: `บันทึกระบบเว็บไซต์ภายใน "${title}" พร้อม Logo เรียบร้อยแล้ว`
+        });
       }
     });
   }
@@ -1348,8 +2215,12 @@ document.addEventListener('DOMContentLoaded', function () {
       contactData.email = document.getElementById('contact-email').value.trim();
       contactData.googleMapsDirUrl = document.getElementById('contact-map-dir').value.trim();
 
-      const res = await window.KSP_CMS.saveSection('contact', 'ติดต่อเรา', contactData, '../');
-      showToast(res.message);
+      await window.KSP_CMS.saveSection('contact', 'ติดต่อเรา', contactData, '../');
+      notify({
+        type: 'success',
+        title: 'บันทึกข้อมูลติดต่อสำเร็จ!',
+        message: 'อัปเดตข้อมูลติดต่อโรงพยาบาลและแผนที่เรียบร้อยแล้ว'
+      });
     });
   }
 });

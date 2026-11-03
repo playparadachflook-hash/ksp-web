@@ -422,16 +422,88 @@
                   <label for="intra-title">ชื่อระบบงานภายใน</label>
                   <input type="text" id="intra-title" placeholder="เช่น ระบบสารบรรณอิเล็กทรอนิกส์" required />
                 </div>
-                <div class="admin-field is-full">
-                  <label for="intra-desc">คำอธิบายระบบงาน</label>
-                  <input type="text" id="intra-desc" placeholder="กรอกรายละเอียดของระบบงาน เช่น บริการสำหรับเจ้าหน้าที่..." required />
+                <div class="admin-field">
+                  <label for="intra-theme">โทนสีการ์ด (สไตล์ราชการสะดวก)</label>
+                  <select id="intra-theme">
+                    <option value="white">สีขาวมาตรฐาน (White Card)</option>
+                    <option value="purple">สีม่วงลาเวนเดอร์ (Purple)</option>
+                    <option value="pink">สีชมพูอ่อน (Pastel Pink)</option>
+                    <option value="peach">สีพีช/ส้มอ่อน (Peach / Apricot)</option>
+                    <option value="sage">สีเขียวเสจ (Sage Green)</option>
+                    <option value="olive">สีเขียวโอลีฟ (Olive Green)</option>
+                    <option value="taupe">สีน้ำตาลกุหลาบ (Rosy Taupe)</option>
+                    <option value="yellow">สีเหลืองนวล (Warm Yellow)</option>
+                    <option value="mint">สีเขียวมิ้นต์ (Duck Egg Mint)</option>
+                    <option value="lavender">สีม่วงอ่อน (Lavender)</option>
+                    <option value="sky">สีฟ้าสว่าง (Sky Blue)</option>
+                    <option value="palegreen">สีเขียวอ่อน (Pale Lemon Green)</option>
+                    <option value="gray">สีเทาพาสเทล (Soft Gray)</option>
+                    <option value="rose">สีชมพูกุหลาบ (Pastel Rose)</option>
+                    <option value="forest">สีเขียวเข้มป่าไม้ (Deep Forest)</option>
+                    <option value="magenta">สีม่วงแดงสด (Vibrant Magenta)</option>
+                    <option value="maroon">สีแดงเลือดหมูเข้ม (Dark Maroon)</option>
+                  </select>
+                </div>
+                <div class="admin-field">
+                  <label for="intra-icon">ไอคอนสัญลักษณ์ประจำระบบ</label>
+                  <select id="intra-icon">
+                    <option value="globe">🌐 บัตรประชาชน / สิทธิ์รักษา (Globe)</option>
+                    <option value="pill">💊 เม็ดยา / สารเสพติด (Pill)</option>
+                    <option value="heart">❤️ หัวใจ / สุขภาพ (Heart / CDC)</option>
+                    <option value="wall">🧱 กำแพงความมั่นคงปลอดภัย (Cyber Security)</option>
+                    <option value="grad">🎓 หมวกบัณฑิต / การเรียนรู้ (e-Learning)</option>
+                    <option value="capsule">💊 แคปซูลยา / อย. (Capsule)</option>
+                    <option value="homeheart">🏠 บ้านและสุขภาพ (Health Station / ปันสุข)</option>
+                    <option value="toggle">⚡ สวิตช์เปิด-ปิด (IOT)</option>
+                    <option value="gauge">⏱️ มาตรวัดตัวชี้วัด (KPI Cockpit)</option>
+                    <option value="gender">⚧️ อนามัยแม่และเด็ก (MCH Net)</option>
+                    <option value="grid">▦ แดชบอร์ดสรุปผล (My Dashboard)</option>
+                    <option value="lock">🔒 แม่กุญแจความปลอดภัย (OTP Server)</option>
+                    <option value="idcard">🪪 บัตรประจำตัวบุคลากร (ProviderID)</option>
+                    <option value="car">🚗 ยานพาหนะและความปลอดภัย (Road Safety)</option>
+                    <option value="copy">📄 เอกสารและงานวิชาการ (Documents)</option>
+                    <option value="activity">📈 คลื่นหัวใจ / การออกกำลังกาย (Walk Run Bike)</option>
+                    <option value="search">🔍 แว่นขยายคัดกรอง (Screening)</option>
+                    <option value="shieldcheck">🛡️ โล่คุ้มครองผู้บริโภค (Consumer Shield)</option>
+                    <option value="store">🏪 ร้านชำสาธารณสุข (SAKON SCAN)</option>
+                    <option value="snowflake">❄️ สมุนไพรธรรมชาติ (Herbal Flower)</option>
+                    <option value="tools">🔧 เครื่องมือช่าง / ครุภัณฑ์ (Assets Tools)</option>
+                    <option value="contact">🪪 บัตรนักศึกษา / บุคลากร (Student ID)</option>
+                    <option value="image">📷 อัลบั้มภาพกิจกรรม (Photo Gallery)</option>
+                    <option value="drugpack">💊 แผงยา / เวชภัณฑ์ (Blister Pack)</option>
+                    <option value="user">👤 โปรไฟล์ผู้ใช้ / จิตเวช (User Profile)</option>
+                    <option value="rss">📡 ผลงานวิชาการ (RSS)</option>
+                    <option value="cross">➕ กาชาด / หมอพร้อม (Medical Cross)</option>
+                    <option value="pulsebadge">🩺 สุขภาพอัจฉริยะ (Smart Health)</option>
+                    <option value="megaphone">📢 โทรโข่งแจ้งเตือน (Alert)</option>
+                    <option value="userplus">➕ สมาชิก อสม. (AorSorMor Plus)</option>
+                    <option value="dollar">💰 การเงินและเรียกเก็บ (Billing Claim)</option>
+                    <option value="server">🖥️ เซิร์ฟเวอร์โรงพยาบาล (HOSxP / HIS)</option>
+                    <option value="mail">✉️ หนังสือราชการ (E-Office)</option>
+                  </select>
+                </div>
+                <div class="admin-field">
+                  <label for="intra-action-text">ข้อความบนปุ่ม</label>
+                  <input type="text" id="intra-action-text" placeholder="เช่น สมัครใช้งาน, เข้าสู่ระบบ, รอตรวจสอบสิทธิ์" value="สมัครใช้งาน" />
+                </div>
+                <div class="admin-field">
+                  <label for="intra-btn-style">รูปแบบสีปุ่มแคปซูล</label>
+                  <select id="intra-btn-style">
+                    <option value="green">ปุ่มสีเขียว (สมัครใช้งาน / เข้าใช้งาน)</option>
+                    <option value="yellow">ปุ่มสีเหลือง (รอตรวจสอบสิทธิ์)</option>
+                    <option value="transparent">ปุ่มโปร่งใสกลมกลืน (เข้าสู่ระบบ / ชมภาพ)</option>
+                  </select>
                 </div>
                 <div class="admin-field is-full">
-                  <label for="intra-url">ลิงก์ URL ของระบบงาน (เช่น http://192.168.2.247:8087 หรือ https://...)</label>
+                  <label for="intra-desc">คำอธิบายระบบงาน (ไม่บังคับ)</label>
+                  <input type="text" id="intra-desc" placeholder="กรอกรายละเอียดสั้นๆ ของระบบงาน..." />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="intra-url">ลิงก์ URL ของระบบงาน (เช่น https://... หรือ http://192.168.x.x:port)</label>
                   <input type="text" id="intra-url" placeholder="https:// หรือ http://192.168.x.x:port" required />
                 </div>
                 <div class="admin-field is-full">
-                  <label for="intra-logo-file">โลโก้ประจำระบบงาน (Logo) — หากไม่เลือกจะใช้โลโก้เริ่มต้นของโรงพยาบาล</label>
+                  <label for="intra-logo-file">โลโก้เฉพาะระบบงาน (เว้นว่างไว้จะใช้ไอคอนสัญลักษณ์ที่เลือกด้านบน)</label>
                   <input type="file" id="intra-logo-file" accept="image/*" />
                   <div class="admin-img-preview-box" id="intra-logo-preview-box" style="display:none;margin-top:10px;">
                     <div class="admin-img-preview-badge" id="intra-logo-preview-status">✓ พรีวิว Logo ระบบงาน</div>

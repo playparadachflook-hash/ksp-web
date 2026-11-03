@@ -2129,6 +2129,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (intraSubmitBtn) intraSubmitBtn.textContent = 'บันทึกระบบภายในใหม่';
     if (intraCancelEditBtn) intraCancelEditBtn.style.display = 'none';
     if (intraLogoPreviewBox) intraLogoPreviewBox.style.display = 'none';
+    const themeSel = document.getElementById('intra-theme');
+    if (themeSel) themeSel.value = 'white';
+    const iconSel = document.getElementById('intra-icon');
+    if (iconSel) iconSel.value = 'globe';
+    const actInput = document.getElementById('intra-action-text');
+    if (actInput) actInput.value = 'สมัครใช้งาน';
+    const btnStyleSel = document.getElementById('intra-btn-style');
+    if (btnStyleSel) btnStyleSel.value = 'green';
   }
 
   if (intraCancelEditBtn) {
@@ -2176,6 +2184,15 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('intra-title').value = item.title || '';
         document.getElementById('intra-desc').value = item.description || '';
         document.getElementById('intra-url').value = item.url || '';
+
+        const themeSel = document.getElementById('intra-theme');
+        if (themeSel) themeSel.value = item.theme || 'white';
+        const iconSel = document.getElementById('intra-icon');
+        if (iconSel) iconSel.value = item.icon || 'globe';
+        const actInput = document.getElementById('intra-action-text');
+        if (actInput) actInput.value = item.actionText || 'สมัครใช้งาน';
+        const btnStyleSel = document.getElementById('intra-btn-style');
+        if (btnStyleSel) btnStyleSel.value = item.btnStyle || 'green';
 
         pendingIntraLogoUrl = item.logo || null;
         if (pendingIntraLogoUrl) {
@@ -2241,6 +2258,10 @@ document.addEventListener('DOMContentLoaded', function () {
       const title = document.getElementById('intra-title').value.trim();
       const desc = document.getElementById('intra-desc').value.trim();
       let url = document.getElementById('intra-url').value.trim();
+      const theme = document.getElementById('intra-theme') ? document.getElementById('intra-theme').value : 'white';
+      const icon = document.getElementById('intra-icon') ? document.getElementById('intra-icon').value : 'globe';
+      const actionText = document.getElementById('intra-action-text') ? document.getElementById('intra-action-text').value.trim() : 'สมัครใช้งาน';
+      const btnStyle = document.getElementById('intra-btn-style') ? document.getElementById('intra-btn-style').value : 'green';
       const editIdxStr = intraEditIndexInput ? intraEditIndexInput.value : '';
 
       // จัดการ URL ให้พร้อมเปิดได้ทันที
@@ -2263,6 +2284,10 @@ document.addEventListener('DOMContentLoaded', function () {
           title: title,
           description: desc,
           url: url || '/internal-websites',
+          theme: theme,
+          icon: icon,
+          actionText: actionText,
+          btnStyle: btnStyle,
           logo: pendingIntraLogoUrl || intranetData[editIdx].logo || ''
         };
         await window.KSP_CMS.saveSection('intranet', 'เว็บไซต์ภายใน', intranetData, '../');
@@ -2280,6 +2305,10 @@ document.addEventListener('DOMContentLoaded', function () {
           title: title,
           description: desc,
           url: url || '/internal-websites',
+          theme: theme,
+          icon: icon,
+          actionText: actionText,
+          btnStyle: btnStyle,
           logo: pendingIntraLogoUrl || ''
         });
         await window.KSP_CMS.saveSection('intranet', 'เว็บไซต์ภายใน', intranetData, '../');
@@ -2289,7 +2318,7 @@ document.addEventListener('DOMContentLoaded', function () {
         notify({
           type: 'success',
           title: 'บันทึกสำเร็จ!',
-          message: `บันทึกระบบเว็บไซต์ภายใน "${title}" พร้อม Logo เรียบร้อยแล้ว`
+          message: `บันทึกระบบเว็บไซต์ภายใน "${title}" เรียบร้อยแล้ว`
         });
       }
     });

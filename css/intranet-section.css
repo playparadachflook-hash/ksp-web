@@ -1,151 +1,192 @@
-/* Hallmark Stamp: custom | ksp-hospital-intranet-section | critique: hospital-internal-websites-portal */
 /* ==========================================================================
    ไฟล์: css/intranet-section.css
-   หน้าที่: ตกแต่งส่วน "เว็บไซต์ภายใน" (ระบบสารสนเทศและหน่วยงานภายใน รพ.โคกศรีสุพรรณ)
-   แยกไฟล์อิสระเพื่อให้แก้ไขดีไซน์เฉพาะส่วนเว็บไซต์ภายในได้ง่าย
+   หน้าที่: สไตล์ส่วน "ระบบราชการสะดวกสำนักงานสาธารณสุขจังหวัดสกลนคร"
+   ตรงตามต้นฉบับ: Grid 6 คอลัมน์ การ์ดขอบมน 22px พาสเทล พร้อมปุ่มแคปซูลเขียว/เหลือง
    ========================================================================== */
 
-.intranet-section {
+/* กล่องคลุมทั้งส่วน: พื้นหลังโทนครีมอบอุ่นแบบราชการสะดวก สสจ.สกลนคร */
+.intranet-convenience-section {
   width: 100%;
-  background-color: #ffffff;
+  background-color: #faf7ee;
+  padding: 36px 0 60px;
 }
 
-.intranet-container {
-  max-width: var(--container-max-width);
+.intranet-convenience-container {
+  max-width: 1320px;
   width: 100%;
   margin: 0 auto;
-  padding-left: var(--container-padding-x);
-  padding-right: var(--container-padding-x);
+  padding: 0 24px;
 }
 
-/* --- หัวข้อตรงกลาง "เว็บไซต์ภายใน" --- */
-.intranet-header {
-  text-align: center;
-  margin-bottom: 32px;
+/* แถบหัวข้อตัวหนาสีเขียวธรรมชาติ */
+.intranet-convenience-header {
+  margin-bottom: 22px;
 }
 
-.intranet-title {
-  font-size: 2.15rem;
+.intranet-convenience-title {
+  font-size: 1.45rem;
   font-weight: 700;
-  color: #1d3965;
-  margin: 0 0 8px;
+  color: #196856;
+  margin: 0;
   letter-spacing: -0.01em;
-}
-
-.intranet-underline {
-  width: 220px;
-  height: 3.5px;
-  margin: 0 auto;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #1d3965 0%, #4ca58a 100%);
+  line-height: 1.35;
 }
 
 /* ==========================================================================
-   ตารางการ์ดระบบเว็บไซต์ภายใน (4 คอลัมน์ × 2 แถว = 8 ระบบงาน)
+   ตารางการ์ด Grid 6 คอลัมน์ต่อแถว (Desktop)
    ========================================================================== */
-.intranet-grid {
+.intranet-convenience-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
 }
 
-.intranet-card {
+/* ตัวการ์ดระบบงาน: ทรงสี่เหลี่ยมขอบมน 22px พร้อมเงาละมุน */
+.intranet-convenience-card {
   display: flex;
   flex-direction: column;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 20px;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.22s ease, border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
-}
-
-.intranet-card:hover {
-  transform: translateY(-3px);
-  background-color: #ffffff;
-  border-color: var(--color-primary);
-  box-shadow: 0 10px 24px rgba(31, 90, 80, 0.09);
-}
-
-.intranet-card-top {
-  display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  text-align: center;
+  padding: 18px 12px 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  min-height: 142px;
+  position: relative;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
-.intranet-logo-badge {
-  width: 44px;
-  height: 44px;
-  border-radius: 9px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  display: inline-flex;
+.intranet-convenience-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+.intranet-convenience-card:focus-visible {
+  outline: 3px solid #196856;
+  outline-offset: 2px;
+}
+
+/* กล่องไอคอนด้านบน */
+.intranet-card-icon-wrap {
+  width: 38px;
+  height: 38px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
 }
 
-.intranet-logo-badge img {
-  width: 100%;
-  height: 100%;
+.intranet-card-icon-wrap svg {
+  width: 32px;
+  height: 32px;
+}
+
+.intranet-card-logo-img {
+  width: 34px;
+  height: 34px;
   object-fit: contain;
 }
 
-.intranet-system-code {
-  font-size: 0.72rem;
+/* ชื่อระบบงานตรงกลางการ์ด */
+.intranet-card-title-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0 8px;
+  width: 100%;
+}
+
+.intranet-card-title-text {
+  font-size: 0.81rem;
   font-weight: 600;
-  color: var(--color-primary);
-  background-color: var(--color-primary-soft);
-  padding: 3px 9px;
-  border-radius: 999px;
-}
-
-.intranet-card-title {
-  font-size: 0.98rem;
-  font-weight: 700;
-  color: #1d3965;
-  margin: 0 0 6px;
-  line-height: 1.4;
-}
-
-.intranet-card-desc {
-  font-size: 0.82rem;
-  color: #64748b;
-  line-height: 1.55;
-  margin: 0 0 14px;
+  line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
 }
 
-.intranet-card-action {
-  margin-top: auto;
+/* ปุ่มแคปซูลด้านล่างการ์ด */
+.intranet-pill-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.8rem;
+  justify-content: center;
+  padding: 3.5px 14px;
+  border-radius: 999px;
+  font-size: 0.72rem;
   font-weight: 600;
-  color: var(--color-primary);
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.intranet-convenience-card:hover .intranet-pill-btn {
+  transform: scale(1.04);
+}
+
+.intranet-pill-green {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.intranet-pill-yellow {
+  background-color: #ca8a04;
+  color: #ffffff;
+}
+
+.intranet-pill-ghost {
+  background-color: rgba(0, 0, 0, 0.15);
+  color: inherit;
+  box-shadow: none;
 }
 
 /* ==========================================================================
-   รองรับหน้าจอแท็บเล็ตและมือถือ (Responsive)
+   Responsive: รองรับจอขนาดต่างๆ
    ========================================================================== */
-@media (max-width: 1024px) {
-  .intranet-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 1200px) {
+  .intranet-convenience-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
   }
 }
 
-@media (max-width: 576px) {
-  .intranet-title {
-    font-size: 1.65rem;
+@media (max-width: 992px) {
+  .intranet-convenience-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
   }
+}
 
-  .intranet-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 768px) {
+  .intranet-convenience-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .intranet-convenience-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .intranet-convenience-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .intranet-convenience-card {
+    padding: 14px 10px 12px;
+    border-radius: 18px;
+    min-height: 130px;
+  }
+  .intranet-card-title-text {
+    font-size: 0.76rem;
+  }
+  .intranet-pill-btn {
+    font-size: 0.68rem;
+    padding: 3px 10px;
   }
 }

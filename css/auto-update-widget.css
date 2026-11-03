@@ -1,0 +1,107 @@
+/* ==========================================================================
+   css/auto-update-widget.css - วิดเจ็ตปุ่มสถานะและอัปเดตระบบจาก GitHub
+   ========================================================================== */
+
+.ksp-update-floating-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-family: 'Prompt', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+  backdrop-filter: blur(8px);
+}
+
+.ksp-update-floating-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+/* สถานะสีเขียว: เป็นเวอร์ชันปัจจุบันแล้ว */
+.ksp-update-floating-widget.status-green {
+  background: #ffffff;
+  color: #166534;
+  border: 1.5px solid #86efac;
+}
+
+.ksp-update-floating-widget.status-green .status-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+/* สถานะสีเหลือง: มีอัปเดตใหม่ใน GitHub รออัปเดต */
+.ksp-update-floating-widget.status-yellow {
+  background: #fefce8;
+  color: #854d0e;
+  border: 1.5px solid #fde047;
+  animation: pulse-yellow 2s infinite;
+}
+
+.ksp-update-floating-widget.status-yellow .status-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #eab308;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.35);
+  animation: blink-dot 1.2s infinite;
+}
+
+/* สถานะกำลังอัปเดต */
+.ksp-update-floating-widget.status-updating {
+  background: #f0fdf4;
+  color: #0f766e;
+  border: 1.5px solid #5eead4;
+  pointer-events: none;
+}
+
+.ksp-update-floating-widget .widget-label {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.ksp-update-floating-widget .widget-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.ksp-update-floating-widget .widget-sub {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+@keyframes pulse-yellow {
+  0%, 100% {
+    box-shadow: 0 4px 18px rgba(234, 179, 8, 0.25);
+  }
+  50% {
+    box-shadow: 0 6px 26px rgba(234, 179, 8, 0.55);
+  }
+}
+
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@media (max-width: 768px) {
+  .ksp-update-floating-widget {
+    bottom: 16px;
+    right: 16px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+}

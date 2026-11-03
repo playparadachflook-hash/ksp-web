@@ -347,7 +347,7 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, {
       'Content-Type': contentType,
       'Content-Length': stats.size,
-      'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=3600'
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
     });
 
     const stream = fs.createReadStream(filePath);

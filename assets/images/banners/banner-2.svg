@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 569" width="1920" height="569" preserveAspectRatio="none" role="img" aria-label="ประกาศงานสิ่งพิมพ์: บริการตรวจสุขภาพประจำปี โรงพยาบาลโคกศรีสุพรรณ">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EEF5F3" />
+      <stop offset="60%" stop-color="#E2EFEA" />
+      <stop offset="100%" stop-color="#D1E6DF" />
+    </linearGradient>
+  </defs>
+
+  <!-- พื้นหลังโทนอบอุ่นสบายตา -->
+  <rect width="1920" height="569" fill="url(#bgGrad2)" />
+
+  <!-- ลวดลายใบไม้ตกแต่งด้านหลัง -->
+  <circle cx="1580" cy="285" r="360" fill="#1F5A50" fill-opacity="0.06" />
+  <circle cx="1650" cy="285" r="250" fill="#1F5A50" fill-opacity="0.09" />
+
+  <!-- แถบคาดด้านล่างสไตล์โปสเตอร์โรงพยาบาล -->
+  <rect x="0" y="445" width="1920" height="124" fill="#FFFFFF" fill-opacity="0.92" />
+  <rect x="0" y="440" width="760" height="6" fill="#1F5A50" />
+  <rect x="760" y="440" width="1160" height="6" fill="#243B55" />
+
+  <!-- ข้อความหลักฝั่งซ้าย -->
+  <g font-family="'Prompt', 'Sarabun', sans-serif">
+    <rect x="150" y="54" width="230" height="40" rx="20" fill="#1F5A50" />
+    <text x="265" y="80" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="600">งานสิ่งพิมพ์ประชาสัมพันธ์</text>
+
+    <text x="150" y="155" fill="#243B55" font-size="44" font-weight="700">โครงการตรวจสุขภาพประจำปี</text>
+    <text x="150" y="235" fill="#1F5A50" font-size="68" font-weight="700">ใส่ใจสุขภาพเชิงป้องกัน</text>
+    <text x="150" y="298" fill="#334155" font-size="30" font-weight="500">ครอบคลุมทุกช่วงวัย ด้วยทีมแพทย์และเครื่องมือตรวจวิเคราะห์มาตรฐาน</text>
+
+    <!-- ไอคอนจุดเด่น 3 รายการ -->
+    <g transform="translate(150, 336)">
+      <rect x="0" y="0" width="240" height="54" rx="27" fill="#FFFFFF" stroke="#1F5A50" stroke-width="2" />
+      <text x="120" y="34" text-anchor="middle" fill="#1F5A50" font-size="21" font-weight="600">ตรวจเลือด &amp; เอกซเรย์ปอด</text>
+
+      <rect x="260" y="0" width="260" height="54" rx="27" fill="#FFFFFF" stroke="#1F5A50" stroke-width="2" />
+      <text x="390" y="34" text-anchor="middle" fill="#1F5A50" font-size="21" font-weight="600">คลื่นไฟฟ้าหัวใจ (EKG)</text>
+
+      <rect x="540" y="0" width="270" height="54" rx="27" fill="#FFFFFF" stroke="#1F5A50" stroke-width="2" />
+      <text x="675" y="34" text-anchor="middle" fill="#1F5A50" font-size="21" font-weight="600">ปรึกษาแพทย์เฉพาะทาง</text>
+    </g>
+
+    <!-- ข้อมูลส่วนล่าง (เวลาทำการ & สถานที่) -->
+    <text x="150" y="492" fill="#1F5A50" font-size="28" font-weight="700">คลินิกตรวจสุขภาพ (Check-up Center)</text>
+    <text x="150" y="528" fill="#475569" font-size="20" font-weight="500">โรงพยาบาลโคกศรีสุพรรณ | เปิดให้บริการทุกวัน 08.00 - 16.00 น. โทร. 02 625 9000</text>
+  </g>
+
+  <!-- ภาพประกอบกราฟิกทางการแพทย์ฝั่งขวา -->
+  <g transform="translate(1320, 85)">
+    <rect x="0" y="0" width="440" height="310" rx="28" fill="#FFFFFF" stroke="#CFE2DC" stroke-width="3" />
+    <circle cx="220" cy="115" r="58" fill="#EEF5F3" />
+    <rect x="210" y="80" width="20" height="70" rx="4" fill="#1F5A50" />
+    <rect x="185" y="105" width="70" height="20" rx="4" fill="#1F5A50" />
+    <text x="220" y="218" text-anchor="middle" font-family="'Prompt', sans-serif" fill="#1F5A50" font-size="28" font-weight="700">โรงพยาบาลโคกศรีสุพรรณ</text>
+    <text x="220" y="252" text-anchor="middle" font-family="'Prompt', sans-serif" fill="#64748B" font-size="18" font-weight="500">KHOKSRISUPHAN HOSPITAL</text>
+  </g>
+</svg>

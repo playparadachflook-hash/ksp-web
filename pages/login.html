@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เข้าสู่ระบบจัดการหลังบ้าน | โรงพยาบาลโคกศรีสุพรรณ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/login.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+</head>
+<body>
+
+  <!-- ดึง Header Bar ตัวเดียวกันจาก ../js/header.js -->
+  <div id="header-placeholder"></div>
+
+  <!-- กล่องเข้าสู่ระบบหลังบ้าน -->
+  <main id="page-content">
+    <section class="login-section">
+      <div class="login-card">
+        <div class="login-brand">
+          <img src="../assets/images/logo-ksp.png" alt="โลโก้ รพ.โคกศรีสุพรรณ" class="login-logo" />
+          <h1 class="login-title">ระบบจัดการเว็บไซต์หลังบ้าน</h1>
+          <p class="login-subtitle">โรงพยาบาลโคกศรีสุพรรณ (กลุ่มงานสุขภาพดิจิทัล)</p>
+        </div>
+
+        <form class="login-form" id="ksp-login-form">
+          <div class="login-error" id="login-error-box"></div>
+
+          <div class="login-field">
+            <label for="login-username" class="login-label">ชื่อผู้ใช้งาน (Username)</label>
+            <input
+              type="text"
+              id="login-username"
+              class="login-input"
+              value="admin"
+              placeholder="กรอกชื่อผู้ใช้งาน"
+              required
+            />
+          </div>
+
+          <div class="login-field">
+            <label for="login-password" class="login-label">รหัสผ่าน (Password)</label>
+            <input
+              type="password"
+              id="login-password"
+              class="login-input"
+              value="1234"
+              placeholder="กรอกรหัสผ่าน"
+              required
+            />
+          </div>
+
+          <button type="submit" class="login-submit-btn">เข้าสู่ระบบจัดการเว็บไซต์</button>
+        </form>
+
+        <div class="login-hint-box">
+          <strong>ข้อมูลสำหรับทดสอบเข้าสู่ระบบ:</strong><br />
+          ชื่อผู้ใช้: <code>admin</code> &nbsp;|&nbsp; รหัสผ่าน: <code>1234</code>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ดึง Footer Bar ตัวเดียวกันจาก ../js/footer.js -->
+  <div id="footer-placeholder"></div>
+
+  <script src="../js/header.js"></script>
+  <script src="../js/login.js"></script>
+  <script src="../js/footer.js"></script>
+</body>
+</html>

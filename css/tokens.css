@@ -1,0 +1,402 @@
+/* Hallmark Stamp: custom | ksp-hospital-emerald-white-triangles | critique: green-white-geometric-triangle-shadow-bg */
+/* ==========================================================================
+   ไฟล์ที่ 1: css/tokens.css
+   หน้าที่: เก็บ "ตัวแปรกลาง" (Design Tokens) คุมโทน เขียว-ขาว (Emerald & Pure White)
+           พร้อมพื้นหลังมิติเรขาคณิตแบบมีเงาสามเหลี่ยม (3D Shadowed Geometric Triangles)
+   ========================================================================== */
+
+:root {
+  /* --- 1. โทนสีหลัก เขียว-ขาว โรงพยาบาลโคกศรีสุพรรณ (Emerald Green & Pure White) --- */
+  --color-primary: #196856;          /* สีเขียวมรกตหลักของโรงพยาบาล */
+  --color-primary-hover: #114b3e;    /* สีเขียวเข้มเวลาเอาเมาส์ชี้ */
+  --color-primary-light: #35967e;    /* สีเขียวสว่างสำหรับไล่เฉด */
+  --color-primary-soft: #eaf7f3;     /* สีเขียวอ่อนพาสเทลสว่างสำหรับพื้นหลังไอคอน/ป้ายกำกับ */
+  --color-warm-gold: #2b856e;        /* ปรับให้คุมโทนเขียวทั้งหมด */
+
+  /* --- 2. โทนสีหัวข้อและตัวอักษร (คุมโทนเขียวเข้ม-เทาเข้มสุภาพบนพื้นขาว) --- */
+  --color-heading: #114b3e;          /* สีเขียวเข้มมรกตสำหรับหัวข้อทุกส่วนและชื่อการ์ด */
+  --color-text-main: #18362f;        /* สีตัวอักษรหลักอมเขียวเข้มอ่านง่าย */
+  --color-text-body: #3d5a52;        /* สีตัวอักษรเนื้อหาในการ์ดทุกใบ */
+  --color-text-muted: #5e7d74;       /* สีตัวอักษรรอง / วันที่ / ยอดเข้าชม */
+  --color-phone-navy: #196856;       /* สีเบอร์โทรศัพท์คุมโทนเขียว */
+  --color-emergency: #dc2626;        /* สีแดงฉุกเฉิน (คงไว้เฉพาะปุ่มฉุกเฉินตามมาตรฐานการแพทย์) */
+  --color-emergency-soft: #fef2f2;
+
+  /* --- 3. มาตรฐานการ์ดสีขาวบริสุทธิ์ + ขอบเขียวมรกตชัด + เงาเขียวเด่นมีมิติ --- */
+  --color-surface: #ffffff;
+  --color-page-bg: #f6fcfa;
+  --color-border: #a7d7c8;
+  --card-bg: rgba(255, 255, 255, 0.96);
+  --card-border: 1.5px solid #a3d5c5;
+  --card-border-hover: #196856;
+  --card-radius: 14px;
+  --card-shadow:
+    0 12px 28px -4px rgba(17, 75, 62, 0.15),
+    0 4px 12px -2px rgba(25, 104, 86, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.95);
+  --card-shadow-hover:
+    0 20px 42px -6px rgba(17, 75, 62, 0.25),
+    0 8px 20px -4px rgba(25, 104, 86, 0.15),
+    0 0 0 1.5px #196856;
+
+  /* --- 4. มาตรฐานฟอนต์และขนาดตัวอักษร --- */
+  --font-primary: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+  --section-title-size: 1.95rem;
+  --card-title-size: 1.02rem;
+  --card-desc-size: 0.88rem;
+
+  /* --- 5. ความกว้างเว็บไซต์และระยะห่าง --- */
+  --container-max-width: 1520px;
+  --container-padding-x: 32px;
+  --section-gap: 56px;
+  --shadow-header: 0 6px 22px -4px rgba(17, 75, 62, 0.12);
+  --shadow-dropdown: 0 14px 32px rgba(17, 75, 62, 0.16);
+}
+
+/* ==========================================================================
+   ตั้งค่าพื้นฐานและพื้นหลังเงาสามเหลี่ยม โทนเขียว-ขาว (3D Geometric Triangle Shadow Background)
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-primary);
+}
+
+html,
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+  font-family: var(--font-primary);
+  background-color: var(--color-page-bg);
+  color: var(--color-text-main);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  z-index: 0;
+}
+
+/* ชั้นที่ 1: พื้นหลังลวดลายสามเหลี่ยมซ้อนมิติพร้อมเงาตกกระทบ (3D Faceted Green-White Triangles SVG) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-color: #f7fcfa;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' width='100%25' height='100%25' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3Cfilter id='ts' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='8' stdDeviation='12' flood-color='%230f4c3d' flood-opacity='0.13'/%3E%3C/filter%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff'/%3E%3Cstop offset='100%25' stop-color='%23e3f5ee'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23d0ede2'/%3E%3Cstop offset='100%25' stop-color='%23f7fcfa'/%3E%3C/linearGradient%3E%3ClinearGradient id='g3' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23bde5d6'/%3E%3Cstop offset='100%25' stop-color='%23eaf8f3'/%3E%3C/linearGradient%3E%3ClinearGradient id='g4' x1='100%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff'/%3E%3Cstop offset='100%25' stop-color='%23d7f0e7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='1000' fill='%23f6fcfa'/%3E%3Cg filter='url(%23ts)'%3E%3Cpolygon points='0,0 420,0 210,310' fill='url(%23g3)'/%3E%3Cpolygon points='420,0 860,0 610,280' fill='url(%23g1)'/%3E%3Cpolygon points='860,0 1320,0 1090,320' fill='url(%23g2)'/%3E%3Cpolygon points='1320,0 1600,0 1600,360 1090,320' fill='url(%23g3)'/%3E%3Cpolygon points='0,0 210,310 0,540' fill='url(%23g1)'/%3E%3Cpolygon points='420,0 610,280 210,310' fill='url(%23g4)'/%3E%3Cpolygon points='860,0 1090,320 610,280' fill='url(%23g3)'/%3E%3Cpolygon points='210,310 610,280 430,620' fill='url(%23g2)'/%3E%3Cpolygon points='610,280 1090,320 840,640' fill='url(%23g1)'/%3E%3Cpolygon points='1090,320 1600,360 1360,680' fill='url(%23g4)'/%3E%3Cpolygon points='0,540 210,310 430,620 140,820' fill='url(%23g3)'/%3E%3Cpolygon points='430,620 610,280 840,640' fill='url(%23g4)'/%3E%3Cpolygon points='1090,320 1360,680 840,640' fill='url(%23g2)'/%3E%3Cpolygon points='1600,360 1600,820 1360,680' fill='url(%23g1)'/%3E%3Cpolygon points='0,540 140,820 0,1000' fill='url(%23g2)'/%3E%3Cpolygon points='140,820 430,620 580,1000 0,1000' fill='url(%23g1)'/%3E%3Cpolygon points='430,620 840,640 580,1000' fill='url(%23g3)'/%3E%3Cpolygon points='840,640 1160,1000 580,1000' fill='url(%23g4)'/%3E%3Cpolygon points='840,640 1360,680 1160,1000' fill='url(%23g1)'/%3E%3Cpolygon points='1360,680 1600,820 1600,1000 1160,1000' fill='url(%23g3)'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+}
+
+/* ชั้นที่ 2: แสงเฉียงสามเหลี่ยมโปร่งใสซ้อนด้านบนเพื่อเพิ่มมิติความลึก (Geometric Prism Highlight) */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(25, 104, 86, 0.06) 0%, transparent 42%),
+    linear-gradient(225deg, rgba(53, 150, 126, 0.07) 0%, transparent 45%),
+    linear-gradient(45deg, rgba(25, 104, 86, 0.05) 0%, transparent 38%);
+}
+
+/* ==========================================================================
+   ระบบจัดเรียงเนื้อหาอัตโนมัติ (Universal Page Layout)
+   ========================================================================== */
+#page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  width: 100%;
+  padding-bottom: 72px;
+}
+
+#page-content > * {
+  width: 100%;
+  margin: 0;
+}
+
+.executive-section,
+.departments-section,
+.news-section,
+.policy-section,
+.downloads-section,
+.intranet-section,
+.contact-section {
+  background-color: transparent !important;
+}
+
+/* กล่องความกว้างมาตรฐานของทุกส่วนในเว็บไซต์ */
+.section-container,
+.executive-container,
+.departments-container,
+.news-container,
+.policy-container,
+.downloads-container,
+.intranet-container,
+.contact-container {
+  max-width: var(--container-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--container-padding-x);
+  padding-right: var(--container-padding-x);
+}
+
+/* ==========================================================================
+   มาตรฐานหัวข้อของทุกส่วน (คุมโทนเขียว-ขาว ทั้งเว็บไซต์)
+   ========================================================================== */
+.executive-section-header,
+.departments-header,
+.news-header,
+.policy-header,
+.downloads-header,
+.intranet-header,
+.contact-header {
+  text-align: center !important;
+  margin-bottom: 32px !important;
+}
+
+.executive-section-title,
+.departments-title,
+.news-title,
+.policy-title,
+.downloads-title,
+.intranet-title,
+.contact-title {
+  font-family: var(--font-primary) !important;
+  font-size: var(--section-title-size) !important;
+  font-weight: 700 !important;
+  color: var(--color-heading) !important;
+  margin: 0 0 10px !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.35 !important;
+  text-shadow: 0 1px 0 #ffffff;
+}
+
+.executive-section-underline,
+.departments-underline,
+.news-underline,
+.policy-underline,
+.downloads-underline,
+.intranet-underline,
+.contact-underline {
+  width: 110px !important;
+  height: 4px !important;
+  margin: 0 auto !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #114b3e 0%, #35967e 100%) !important;
+  box-shadow: 0 2px 6px rgba(25, 104, 86, 0.25);
+}
+
+/* ==========================================================================
+   มาตรฐานกรอบการ์ดสีขาวคลีน ขอบเขียวมรกตชัด เงาลอยเด่น
+   ========================================================================== */
+.announcement-slidebar,
+.executive-card,
+.executive-vision-panel,
+.vision-pillar-card,
+.department-card,
+.news-card,
+.policy-card,
+.download-card,
+.intranet-card,
+.contact-map-wrapper {
+  background-color: var(--card-bg) !important;
+  border: var(--card-border) !important;
+  border-radius: var(--card-radius) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+.contact-details {
+  background-color: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px 28px;
+}
+
+.executive-card:hover,
+.department-card:hover,
+.news-card:hover,
+.policy-card:hover,
+.download-card:hover,
+.intranet-card:hover,
+.vision-pillar-card:hover {
+  background-color: #ffffff !important;
+  border-color: var(--card-border-hover) !important;
+  box-shadow: var(--card-shadow-hover) !important;
+}
+
+/* มาตรฐานฟอนต์หัวข้อและเนื้อหาในการ์ดทุกใบ */
+.department-card-title,
+.news-card-title,
+.policy-card-title,
+.download-doc-title,
+.intranet-card-title,
+.vision-pillar-title {
+  font-family: var(--font-primary) !important;
+  font-size: var(--card-title-size) !important;
+  font-weight: 600 !important;
+  color: var(--color-heading) !important;
+}
+
+.department-card-desc,
+.news-card-excerpt,
+.intranet-card-desc,
+.vision-pillar-desc {
+  font-family: var(--font-primary) !important;
+  font-size: var(--card-desc-size) !important;
+  font-weight: 400 !important;
+  color: var(--color-text-body) !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   หน้าต่างป๊อปอัปส่วนกลาง (Global Modal System) โทนเขียว-ขาว
+   ========================================================================== */
+.ksp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(12, 46, 38, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.ksp-modal-backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ksp-modal-dialog {
+  width: 100%;
+  max-width: 740px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border: 1.5px solid #a3d5c5;
+  border-radius: 16px;
+  box-shadow: 0 24px 54px rgba(17, 75, 62, 0.22);
+  padding: 28px 32px;
+  position: relative;
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ksp-modal-backdrop.is-open .ksp-modal-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.ksp-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #dfeee9;
+}
+
+.ksp-modal-badge {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+
+.ksp-modal-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.ksp-modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #cce5dd;
+  background-color: #f4fbf8;
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ksp-modal-close:hover {
+  background-color: #196856;
+  color: #ffffff;
+}
+
+.ksp-modal-body {
+  font-size: 0.98rem;
+  color: var(--color-text-main);
+  line-height: 1.75;
+}
+
+.ksp-modal-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #dfeee9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.ksp-modal-ok-btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-title-size: 1.55rem;
+    --section-gap: 40px;
+    --container-padding-x: 16px;
+  }
+}

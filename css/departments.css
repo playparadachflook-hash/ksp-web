@@ -1,0 +1,172 @@
+/* Hallmark Stamp: custom | ksp-hospital-departments | critique: bch-departments-grid */
+/* ==========================================================================
+   ไฟล์: css/departments.css
+   หน้าที่: ตกแต่งส่วนที่ 3 — แผนกและคลินิก (แสดงต่อจาก Slide Bar)
+   แยกไฟล์อิสระเพื่อให้แก้ไขดีไซน์เฉพาะส่วนแผนกและคลินิกได้ง่าย
+   ========================================================================== */
+
+/* --- กล่องคลุมส่วนแผนกและคลินิก --- */
+.departments-section {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 0;
+}
+
+.departments-container {
+  max-width: var(--container-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--container-padding-x);
+}
+
+/* --- หัวข้อตรงกลาง "แผนกและคลินิก" พร้อมเส้นขีดไล่สี แดงเข้ม -> น้ำเงิน --- */
+.departments-header {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.departments-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1d3965;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+
+.departments-underline {
+  width: 196px;
+  height: 3.5px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8b2318 0%, #7c2d23 45%, #1d4ed8 100%);
+}
+
+/* ==========================================================================
+   ตารางการ์ดแผนกและคลินิก (CSS Grid: แถวละ 4 การ์ด × 2 แถว = 8 การ์ด)
+   ========================================================================== */
+.departments-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+
+/* --- ตัวการ์ดแต่ละแผนก --- */
+.department-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #ffffff;
+  border: 1px solid #e6ebf2;
+  border-radius: 10px;
+  padding: 20px 22px 22px;
+  text-decoration: none;
+  box-shadow: 0 3px 14px rgba(15, 23, 42, 0.04);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.department-card:hover {
+  transform: translateY(-3px);
+  border-color: #bfd0eb;
+  box-shadow: 0 10px 24px rgba(29, 57, 101, 0.09);
+}
+
+.department-card:focus-visible {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 2px;
+}
+
+/* --- กล่องไอคอนสี่เหลี่ยมขอบมนสีเขียวพาสเทลสว่างด้านบนซ้ายของการ์ด --- */
+.department-icon-box {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.department-icon-box svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* --- ชื่อแผนก (เช่น หัวใจ, มะเร็ง) --- */
+.department-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1d3965;
+  margin: 0 0 6px;
+  line-height: 1.35;
+}
+
+/* --- รายละเอียดแผนก (จำกัด 2 บรรทัด พร้อม ... ต่อท้ายอัตโนมัติ) --- */
+.department-card-desc {
+  font-size: 0.84rem;
+  font-weight: 400;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   ลิงก์ "ดูทั้งหมด >" มุมขวาล่าง
+   ========================================================================== */
+.departments-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+
+.departments-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: 6px 4px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.departments-view-all:hover {
+  color: var(--color-primary-hover);
+  transform: translateX(3px);
+}
+
+.departments-view-all svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.3;
+}
+
+/* ==========================================================================
+   รองรับหน้าจอแท็บเล็ตและมือถือ (Responsive)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .departments-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .departments-section {
+    padding: 36px 0 24px;
+  }
+
+  .departments-title {
+    font-size: 1.6rem;
+  }
+
+  .departments-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

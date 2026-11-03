@@ -1,0 +1,451 @@
+/* Hallmark Stamp: custom | ksp-hospital-bch-2row-grid | critique: exact-bch-2row-asymmetric-header */
+/* ==========================================================================
+   ไฟล์ที่ 2: css/header.css
+   หน้าที่: จัดเรียง Header Bar ตามโครงสร้างในรูปต้นแบบเป๊ะ (CSS Grid 2 คอลัมน์ × 2 แถว):
+   ┌───────────────────┬────────────────────────────────────────────────────────────────────────────────────────┐
+   │                   │                        [🔍 ค้นหา เช่น แพทย์, แพ็กเกจ...]   📞 โทร        🚨 ฉุกเฉิน       [🇹🇭 TH] │
+   │   [ โลโก้ รพ. ]    │                        ───────────────────────────────   02 625 9000   02 634 0990           │
+   │  โคกศรีสุพรรณ      ├────────────────────────────────────────────────────────────────────────────────────────┤
+   │                   │  หน้าแรก   งานบริการ ⌄   ข่าวสาร & กิจกรรม   เกี่ยวกับเรา ⌄   ติดต่อเรา                 เข้าสู่ระบบ │
+   └───────────────────┴────────────────────────────────────────────────────────────────────────────────────────┘
+   ========================================================================== */
+
+/* --- กล่องคลุม Header ทั้งแถบ (แบบกระจกฝ้า Glassmorphism ลอยมีมิติ) --- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid #a3d5c5;
+  box-shadow: 0 8px 24px -4px rgba(17, 75, 62, 0.12);
+}
+
+/* --- โครงสร้าง Grid หลัก: คอลัมน์ซ้าย (โลโก้กิน 2 แถว) | คอลัมน์ขวา (แถวบน + แถวล่าง) --- */
+.header-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 14px var(--container-padding-x) 10px;
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "logo  top-row"
+    "logo  bottom-row";
+  column-gap: 40px;
+  row-gap: 10px;
+  align-items: center;
+}
+
+/* ==========================================================================
+   ส่วนที่ 1: ฝั่งซ้าย — โลโก้โรงพยาบาลโคกศรีสุพรรณ (พื้นที่ Grid: logo)
+   ========================================================================== */
+.header-logo-area {
+  grid-area: logo;
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo-link {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  line-height: 1.15;
+  transition: opacity 0.2s ease;
+}
+
+.brand-logo-link:hover {
+  opacity: 0.9;
+}
+
+.brand-logo-mark {
+  width: 62px;
+  height: 58px;
+  display: block;
+  object-fit: contain;
+  margin-bottom: 3px;
+}
+
+.brand-title-th {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.brand-title-en {
+  font-size: 0.56rem;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   ส่วนที่ 2: แถวบน (พื้นที่ Grid: top-row) — ชิดขวาตามรูปเป๊ะ
+   ประกอบด้วย: [🔍 ช่องค้นหาขีดเส้นใต้]  [📞 โทร 02 625 9000]  [🚨 ฉุกเฉิน 02 634 0990]  [🇹🇭 TH]
+   ========================================================================== */
+.header-top-row {
+  grid-area: top-row;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* ดันทั้งชุดไปฝั่งขวาตามรูป */
+  gap: 24px;
+}
+
+/* --- 2.1 ช่องค้นหาแบบมีเส้นใต้บางๆ (อยู่หน้าปุ่มโทร ตามรูป) --- */
+.header-search-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 310px;
+  padding: 4px 2px 6px;
+  border-bottom: 1px solid #e2e8f0;
+  transition: border-color 0.2s ease;
+}
+
+.header-search-form:focus-within {
+  border-bottom-color: var(--color-primary);
+}
+
+.search-submit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #344966;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.search-submit-btn:hover {
+  color: var(--color-primary);
+}
+
+.search-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-primary);
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--color-text-main);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+/* --- 2.2 ปุ่มโทรปกติ & ฉุกเฉิน --- */
+.quick-call-item {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  column-gap: 8px;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.quick-call-item:hover {
+  opacity: 0.85;
+}
+
+.quick-call-icon {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
+.quick-call-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.quick-call-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.quick-call-number {
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* โทรปกติ (สีกรมท่า #344966) */
+.quick-call-item.is-normal {
+  color: #344966;
+}
+
+/* ฉุกเฉิน (สีแดง #DC2626) */
+.quick-call-item.is-emergency {
+  color: #dc2626;
+}
+
+.quick-call-item.is-emergency .quick-call-icon {
+  width: 23px;
+  height: 23px;
+}
+
+/* --- 2.3 ปุ่มเลือกภาษา [ 🇹🇭 TH ] กรอบสี่เหลี่ยมมน --- */
+.lang-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 13px;
+  background-color: #ffffff;
+  border: 1px solid #d5dce4;
+  border-radius: 8px;
+  font-family: var(--font-primary);
+  font-size: 0.86rem;
+  font-weight: 400;
+  color: #344966;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.lang-switch-btn:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+}
+
+.lang-flag-wrap {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid #eef2f6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.lang-flag-icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ==========================================================================
+   ส่วนที่ 3: แถวล่าง (พื้นที่ Grid: bottom-row) — เมนูหลักชิดซ้ายต่อจากโลโก้ตามรูป
+   ประกอบด้วย: [หน้าแรก  งานบริการ ⌄  ข่าวสาร & กิจกรรม  เกี่ยวกับเรา ⌄  ติดต่อเรา] ... [เข้าสู่ระบบ]
+   ========================================================================== */
+.header-bottom-row {
+  grid-area: bottom-row;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main-nav-list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: clamp(16px, 2.6vw, 34px);
+}
+
+.nav-item {
+  position: relative;
+  white-space: nowrap;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-primary);
+  font-size: 0.98rem;
+  font-weight: 400;
+  color: #334155;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 2px;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover,
+.nav-item.is-open > .nav-link {
+  color: var(--color-primary);
+}
+
+/* เมนูที่กำลังเปิดอยู่ (Active) */
+.nav-link.is-active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.dropdown-caret {
+  width: 13px;
+  height: 13px;
+  color: #1e293b;
+  stroke-width: 2.3;
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+
+.nav-link:hover .dropdown-caret,
+.nav-item.is-open .dropdown-caret {
+  color: var(--color-primary);
+}
+
+.nav-item.is-open .dropdown-caret {
+  transform: rotate(180deg);
+}
+
+/* --- กล่องเมนูย่อยที่เลื่อนลงมา (Dropdown Menu) --- */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 250px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 3px solid var(--color-primary);
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 10px 25px rgba(15, 37, 55, 0.1);
+  list-style: none;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  z-index: 1100;
+}
+
+.nav-item.is-open .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-link {
+  display: block;
+  padding: 9px 18px;
+  font-size: 0.94rem;
+  font-weight: 400;
+  color: #334155;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+}
+
+.dropdown-link:hover,
+.dropdown-link.is-active {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  padding-left: 22px;
+  font-weight: 500;
+}
+
+/* ปุ่มเข้าสู่ระบบ (อยู่ฝั่งขวาของแถวล่าง) */
+.login-link {
+  font-size: 0.96rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 4px 2px;
+  transition: color 0.15s ease;
+}
+
+.login-link:hover,
+.login-link.is-active {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   ส่วนที่ 4: รองรับหน้าจอมือถือ / แท็บเล็ต (Responsive)
+   ========================================================================== */
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: 1px solid #d5dce4;
+  border-radius: 8px;
+  padding: 5px 10px;
+  color: #334155;
+  font-family: var(--font-primary);
+  font-size: 0.86rem;
+  cursor: pointer;
+  align-items: center;
+  gap: 5px;
+}
+
+@media (max-width: 1080px) {
+  .header-container {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "logo top-row"
+      "bottom-row bottom-row";
+    column-gap: 16px;
+    row-gap: 10px;
+  }
+
+  .header-top-row {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .header-search-form {
+    width: 220px;
+  }
+
+  .mobile-menu-toggle {
+    display: inline-flex;
+  }
+
+  .header-bottom-row {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .site-header.is-mobile-open .header-bottom-row {
+    display: flex;
+  }
+
+  .main-nav-list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: space-between;
+    padding: 9px 6px;
+  }
+
+  .dropdown-menu {
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-left: 3px solid var(--color-primary);
+    margin-left: 12px;
+    background-color: var(--color-primary-soft);
+    display: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .nav-item.is-open .dropdown-menu {
+    display: block;
+  }
+}

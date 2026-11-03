@@ -1,0 +1,149 @@
+/* Hallmark Stamp: custom | ksp-hospital-contact-section | critique: exact-google-map-contact-details */
+/* ==========================================================================
+   ไฟล์: css/contact-section.css
+   หน้าที่: ตกแต่งส่วนติดต่อเรา (แผนที่ Google Maps + ข้อมูลที่อยู่ เบอร์โทร และอีเมล)
+   แยกไฟล์อิสระเพื่อให้แก้ไขดีไซน์เฉพาะหน้าติดต่อเราได้ง่าย
+   ========================================================================== */
+
+/* --- กล่องคลุมส่วนติดต่อเรา --- */
+.contact-section {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 12px 0 32px;
+}
+
+.contact-container {
+  max-width: var(--container-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--container-padding-x);
+  padding-right: var(--container-padding-x);
+}
+
+/* --- หัวข้อตรงกลาง "ติดต่อเรา" พร้อมเส้นขีดสีแดงด้านล่าง (รูปแบบเดียวกับประกาศนโยบายโรงพยาบาล) --- */
+.contact-header {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.contact-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #09090b;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.contact-underline {
+  width: min(560px, 85%);
+  height: 3.5px;
+  margin: 0 auto;
+  background-color: #f03224;
+}
+
+/* ==========================================================================
+   ส่วนที่ 1: แผนที่ Google Maps แบบกว้างเต็มกรอบตามรูปตัวอย่าง
+   ========================================================================== */
+.contact-map-wrapper {
+  width: 100%;
+  height: 450px;
+  background-color: #e5e7eb;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 18px;
+}
+
+.contact-map-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* ==========================================================================
+   ส่วนที่ 2: ข้อมูลติดต่อด้านล่างแผนที่ (ชิดซ้าย เรียงลงมาตามรูปตัวอย่างเป๊ะ)
+   ========================================================================== */
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* ชื่อโรงพยาบาลตัวหนาสีดำ */
+.contact-hospital-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin: 0 0 2px;
+  line-height: 1.4;
+}
+
+/* รายการที่อยู่ / โทร / อีเมล์ */
+.contact-info-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.12rem;
+  font-weight: 400;
+  color: var(--color-text-main);
+  line-height: 1.5;
+}
+
+/* ไอคอนวงกลมสีเขียวมรกตด้านหน้าแต่ละบรรทัด */
+.contact-info-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-info-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.contact-info-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.contact-info-link:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   รองรับหน้าจอมือถือ (Responsive)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .contact-title {
+    font-size: 1.65rem;
+  }
+
+  .contact-map-wrapper {
+    height: 320px;
+  }
+
+  .contact-hospital-name {
+    font-size: 1.1rem;
+  }
+
+  .contact-info-item {
+    font-size: 0.98rem;
+    align-items: flex-start;
+  }
+}

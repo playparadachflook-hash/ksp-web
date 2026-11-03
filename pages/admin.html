@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบจัดการหลังบ้าน (Back-Office CMS) | โรงพยาบาลโคกศรีสุพรรณ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+</head>
+<body>
+
+  <!-- แถบเมนูด้านบน (Header Bar) -->
+  <div id="header-placeholder"></div>
+
+  <main id="page-content">
+    <div class="admin-wrapper">
+
+      <!-- แถบควบคุมระบบหลังบ้านด้านบน -->
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <img src="../assets/images/logo-ksp.png" alt="Logo" class="admin-topbar-logo" />
+          <div>
+            <h1 class="admin-topbar-title">ระบบจัดการเว็บไซต์หลังบ้าน (Admin Back-Office)</h1>
+            <p class="admin-topbar-sub" id="admin-welcome-user">โรงพยาบาลโคกศรีสุพรรณ — กลุ่มงานสุขภาพดิจิทัล</p>
+          </div>
+        </div>
+
+        <div class="admin-topbar-actions">
+          <!-- ปุ่มสถานะและอัปเดตระบบจาก GitHub (เขียว = ปัจจุบัน, เหลือง = มีอัปเดตใหม่) -->
+          <button type="button" class="admin-btn admin-btn-git-update status-current" id="admin-git-update-btn" title="ตรวจสอบและอัปเดตระบบจาก GitHub">
+            <span id="admin-git-status-icon">🟢</span>
+            <span id="admin-git-status-text">เวอร์ชันปัจจุบัน</span>
+          </button>
+          <a href="../index.html" class="admin-btn admin-btn-primary">ดูหน้าเว็บไซต์จริง &rarr;</a>
+          <button type="button" class="admin-btn admin-btn-outline" id="admin-reset-all-btn">คืนค่าเริ่มต้นทั้งหมด</button>
+          <button type="button" class="admin-btn admin-btn-danger" id="admin-logout-btn">ออกจากระบบ</button>
+        </div>
+      </div>
+
+      <!-- แถบแจ้งเตือนเมื่อกดบันทึกสำเร็จ -->
+      <div class="admin-toast" id="admin-toast"></div>
+
+      <!-- โครงสร้าง 2 คอลัมน์: เมนูด้านซ้าย | ฟอร์มจัดการด้านขวา -->
+      <div class="admin-layout">
+
+        <!-- เมนูเลือกส่วนที่ต้องการแก้ไข (9 เมนูครบทุกส่วน) -->
+        <aside class="admin-sidebar">
+          <button type="button" class="admin-nav-btn is-active" data-tab="members">1. เพิ่มสมาชิก / ผู้ใช้งาน</button>
+          <button type="button" class="admin-nav-btn" data-tab="news">2. ข่าวสาร &amp; กิจกรรม (ภาพปก+ภาพงาน)</button>
+          <button type="button" class="admin-nav-btn" data-tab="policies">3. ประกาศนโยบายโรงพยาบาล</button>
+          <button type="button" class="admin-nav-btn" data-tab="downloads">4. ดาวน์โหลดเอกสาร (ลงไฟล์ได้)</button>
+          <button type="button" class="admin-nav-btn" data-tab="slides">5. จัดการสไลด์ประกาศ (Slide Bar)</button>
+          <button type="button" class="admin-nav-btn" data-tab="executive">6. ผู้บริหาร &amp; วิสัยทัศน์</button>
+          <button type="button" class="admin-nav-btn" data-tab="departments">7. แผนกและคลินิก</button>
+          <button type="button" class="admin-nav-btn" data-tab="intranet">8. เว็บไซต์ภายใน</button>
+          <button type="button" class="admin-nav-btn" data-tab="contact">9. ติดต่อเรา &amp; แผนที่</button>
+        </aside>
+
+        <!-- พื้นที่ฟอร์มแก้ไขของแต่ละเมนู -->
+        <div class="admin-content-panel">
+
+          <!-- =================================================================
+               แท็บที่ 1: เมนูเพิ่มสมาชิก / จัดการผู้ดูแลระบบ
+               ================================================================= -->
+          <div class="admin-tab-pane is-active" id="tab-members">
+            <h2 class="admin-pane-title">1. เมนูเพิ่มสมาชิก / จัดการผู้ใช้งานระบบหลังบ้าน</h2>
+            <p class="admin-pane-desc">เพิ่มบัญชีสมาชิกสำหรับเจ้าหน้าที่โรงพยาบาลเพื่อใช้เข้าสู่ระบบจัดการเว็บไซต์</p>
+
+            <form class="admin-form-box" id="form-add-member">
+              <h3>+ เพิ่มสมาชิกใหม่</h3>
+              <div class="admin-form-grid">
+                <div class="admin-field">
+                  <label for="member-username">ชื่อผู้ใช้งาน (Username สำหรับ Login)</label>
+                  <input type="text" id="member-username" placeholder="เช่น staff01" required />
+                </div>
+                <div class="admin-field">
+                  <label for="member-password">รหัสผ่าน (Password)</label>
+                  <input type="text" id="member-password" placeholder="กำหนดรหัสผ่าน" required />
+                </div>
+                <div class="admin-field">
+                  <label for="member-fullname">ชื่อ-นามสกุล สมาชิก</label>
+                  <input type="text" id="member-fullname" placeholder="กรอกชื่อ-นามสกุลจริง" required />
+                </div>
+                <div class="admin-field">
+                  <label for="member-role">กลุ่มงาน / สิทธิ์การใช้งาน</label>
+                  <select id="member-role">
+                    <option value="ผู้ดูแลระบบ (Admin)">ผู้ดูแลระบบ (Admin)</option>
+                    <option value="กลุ่มงานสุขภาพดิจิทัล">กลุ่มงานสุขภาพดิจิทัล</option>
+                    <option value="เจ้าหน้าที่ประชาสัมพันธ์">เจ้าหน้าที่ประชาสัมพันธ์</option>
+                    <option value="งานบริหารทั่วไป/สารบรรณ">งานบริหารทั่วไป/สารบรรณ</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="admin-btn admin-btn-primary">บันทึกสมาชิกใหม่</button>
+            </form>
+
+            <div class="admin-items-list" id="admin-members-list"></div>
+          </div>
+
+          <!-- =================================================================
+               แท็บที่ 2: จัดการข่าวสาร & กิจกรรม (ใส่ภาพปก + ใส่ภาพงานทั้งหมด)
+               ================================================================= -->
+          <div class="admin-tab-pane" id="tab-news">
+            <h2 class="admin-pane-title">2. จัดการข่าวสาร &amp; กิจกรรม (ใส่ภาพปก &amp; ภาพงานทั้งหมด)</h2>
+            <p class="admin-pane-desc">ทุกครั้งที่เพิ่มภาพปกและภาพงาน ระบบ JavaScript จะปรับขนาดและเพิ่มความคมชัด (HD Sharpening) ให้อัตโนมัติ พร้อมคลิกดูภาพขยายใหญ่ได้ทันที</p>
+
+            <form class="admin-form-box" id="form-add-news">
+              <h3>+ เพิ่มข่าวสาร/กิจกรรมใหม่</h3>
+              <div class="admin-form-grid">
+                <div class="admin-field is-full">
+                  <label for="news-title">หัวข้อข่าวสาร / ชื่อกิจกรรม</label>
+                  <input type="text" id="news-title" placeholder="กรอกหัวข้อข่าวสารหรือกิจกรรม" required />
+                </div>
+                <div class="admin-field">
+                  <label for="news-cover-file">1. เลือกรูปภาพปกข่าว (JavaScript ปรับขนาดและความคมชัด HD อัตโนมัติ)</label>
+                  <input type="file" id="news-cover-file" accept="image/*" />
+                  <!-- กล่องพรีวิวภาพปกที่ผ่านการปรับความคมชัดแล้ว (คลิกเพื่อดูภาพใหญ่ได้) -->
+                  <div class="admin-img-preview-box" id="news-cover-preview-box" style="display:none;">
+                    <div class="admin-img-preview-badge" id="news-cover-status">✓ ปรับขนาดภาพปกและความคมชัด HD เรียบร้อย (คลิกที่ภาพเพื่อขยายดู)</div>
+                    <img id="news-cover-preview-img" src="" alt="พรีวิวภาพปกข่าว" class="admin-cover-preview-thumb" title="คลิกเพื่อดูภาพปกขนาดใหญ่" />
+                  </div>
+                </div>
+                <div class="admin-field">
+                  <label for="news-gallery-files">2. เลือกรูปภาพงานทั้งหมด (เลือกได้หลายรูป + คลิกดูภาพที่เพิ่มได้)</label>
+                  <input type="file" id="news-gallery-files" accept="image/*" multiple />
+                  <!-- กล่องพรีวิวภาพงานทั้งหมด (คลิกดูทีละภาพได้) -->
+                  <div class="admin-img-preview-box" id="news-gallery-preview-box" style="display:none;">
+                    <div class="admin-img-preview-badge" id="news-gallery-status">✓ ภาพงานทั้งหมด (คลิกที่รูปเพื่อดูภาพขยายใหญ่)</div>
+                    <div class="admin-gallery-preview-grid" id="news-gallery-preview-grid"></div>
+                  </div>
+                </div>
+                <div class="admin-field is-full">
+                  <label for="news-excerpt">รายละเอียดเนื้อหาข่าว</label>
+                  <textarea id="news-excerpt" rows="3" placeholder="กรอกรายละเอียดเนื้อหาข่าวสารและกิจกรรม" required></textarea>
+                </div>
+              </div>
+              <button type="submit" class="admin-btn admin-btn-primary">บันทึกข่าวสารพร้อมอัลบั้มภาพงาน</button>
+            </form>
+
+            <div class="admin-items-list" id="admin-news-list"></div>
+          </div>
+
+          <!-- =================================================================
+               แท็บที่ 3: จัดการประกาศนโยบายโรงพยาบาล (เพิ่มไฟล์เอกสาร/รูปภาพได้ + วันที่ลงประกาศ + จำนวนคนเข้าดู)
+               ================================================================= -->
+          <div class="admin-tab-pane" id="tab-policies">
+            <h2 class="admin-pane-title">3. จัดการประกาศนโยบายโรงพยาบาล</h2>
+            <p class="admin-pane-desc">แนบไฟล์เอกสาร (PDF/Word) หรือรูปภาพประกาศ เพื่อให้ผู้ชมกดเข้าดูและดาวน์โหลดเอกสารหรือรูปภาพจากหน้าเว็บได้ทันที</p>
+
+            <form class="admin-form-box" id="form-add-policy">
+              <h3>+ เพิ่มประกาศนโยบายใหม่</h3>
+              <div class="admin-form-grid">
+                <div class="admin-field is-full">
+                  <label for="policy-title">หัวข้อประกาศนโยบายโรงพยาบาล</label>
+                  <input type="text" id="policy-title" placeholder="เช่น แนวทางการตรวจห้องปฏิบัติการอย่างสมเหตุผล" required />
+                </div>
+                <div class="admin-field">
+                  <label for="policy-file">1. แนบไฟล์เอกสารประกาศ (PDF / Word / Excel)</label>
+                  <input type="file" id="policy-file" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*" />
+                </div>
+                <div class="admin-field">
+                  <label for="policy-image-file">2. แนบรูปภาพใบประกาศ (PNG / JPG — ใช้ดาวน์โหลดเป็นรูปภาพได้)</label>
+                  <input type="file" id="policy-image-file" accept="image/*" />
+                  <div class="admin-img-preview-box" id="policy-img-preview-box" style="display:none;">
+                    <div class="admin-img-preview-badge">✓ พรีวิวรูปภาพประกาศ (คลิกที่รูปเพื่อดูภาพขยายใหญ่)</div>
+                    <img id="policy-img-preview" src="" alt="พรีวิวรูปประกาศ" class="admin-cover-preview-thumb" />
+                  </div>
+                </div>
+                <div class="admin-field">
+                  <label for="policy-date">วันที่ลงประกาศ</label>
+                  <input type="text" id="policy-date" value="30 ต.ค. 2569" required />
+                </div>
+                <div class="admin-field">
+                  <label for="policy-badge">ป้ายหมวดหมู่</label>
+                  <input type="text" id="policy-badge" value="ประกาศนโยบายโรงพยาบาล" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="policy-views">จำนวนคนที่เข้าดูเริ่มต้น (ระบบจะบวกเพิ่ม +1 อัตโนมัติเมื่อมีคนกดดู)</label>
+                  <input type="number" id="policy-views" value="0" min="0" required />
+                </div>
+              </div>
+              <button type="submit" class="admin-btn admin-btn-primary">บันทึกประกาศนโยบายใหม่</button>
+            </form>
+
+            <div class="admin-items-list" id="admin-policy-list"></div>
+          </div>
+
+          <!-- =================================================================
+               แท็บที่ 4: จัดการดาวน์โหลดเอกสาร (อัปโหลดไฟล์เอกสารได้จริง)
+               ================================================================= -->
+          <div class="admin-tab-pane" id="tab-downloads">
+            <h2 class="admin-pane-title">4. จัดการดาวน์โหลดเอกสาร (ลงไฟล์เอกสารได้จริง)</h2>
+            <p class="admin-pane-desc">อัปโหลดไฟล์เอกสารเพื่อให้ประชาชนหรือเจ้าหน้าที่กดดาวน์โหลดจากหน้าเว็บไซต์ได้โดยตรง</p>
+
+            <form class="admin-form-box" id="form-add-download">
+              <h3>+ ลงไฟล์เอกสารดาวน์โหลดใหม่</h3>
+              <div class="admin-form-grid">
+                <div class="admin-field is-full">
+                  <label for="dl-title">ชื่อเอกสาร / แบบฟอร์ม</label>
+                  <input type="text" id="dl-title" placeholder="กรอกชื่อเอกสารสำหรับดาวน์โหลด" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="dl-file">เลือกไฟล์เอกสารจากเครื่องคอมพิวเตอร์ (PDF, DOCX, XLSX, รูปภาพ)</label>
+                  <input type="file" id="dl-file" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*" />
+                </div>
+                <div class="admin-field">
+                  <label for="dl-category">หมวดหมู่เอกสาร</label>
+                  <select id="dl-category">
+                    <option value="ผู้รับบริการ">ผู้รับบริการ</option>
+                    <option value="เอกสารราชการ/จัดซื้อจัดจ้าง">เอกสารราชการ/จัดซื้อจัดจ้าง</option>
+                    <option value="คู่มือประชาชน">คู่มือประชาชน</option>
+                  </select>
+                </div>
+                <div class="admin-field">
+                  <label for="dl-type">ชนิดไฟล์ (ระบบตรวจจับให้อัตโนมัติเมื่อเลือกไฟล์)</label>
+                  <select id="dl-type">
+                    <option value="PDF">PDF</option>
+                    <option value="DOCX">DOCX</option>
+                    <option value="XLSX">XLSX</option>
+                    <option value="IMAGE">IMAGE</option>
+                  </select>
+                </div>
+                <div class="admin-field">
+                  <label for="dl-size">ขนาดไฟล์ (คำนวณอัตโนมัติเมื่อเลือกไฟล์)</label>
+                  <input type="text" id="dl-size" value="250 KB" required />
+                </div>
+                <div class="admin-field">
+                  <label for="dl-date">วันที่ลงเอกสาร</label>
+                  <input type="text" id="dl-date" value="30 ต.ค. 2569" required />
+                </div>
+              </div>
+              <button type="submit" class="admin-btn admin-btn-primary">บันทึกและอัปโหลดเอกสาร</button>
+            </form>
+
+            <div class="admin-items-list" id="admin-downloads-list"></div>
+          </div>
+
+          <!-- =================================================================
+               แท็บที่ 5: จัดการสไลด์ประกาศ
+               ================================================================= -->
+          <div class="admin-tab-pane" id="tab-slides">
+            <h2 class="admin-pane-title">5. จัดการสไลด์ประกาศ (Slide Bar / แบนเนอร์หน้าแรก)</h2>
+            <p class="admin-pane-desc">เพิ่ม, แก้ไข, จัดลำดับ หรือลบรูปภาพสไลด์ประกาศและแบนเนอร์ประชาสัมพันธ์หน้าแรกของโรงพยาบาล</p>
+
+            <form class="admin-form-box" id="form-add-slide">
+              <h3 id="slide-form-title">+ เพิ่มสไลด์ประกาศใหม่</h3>
+              <input type="hidden" id="slide-edit-index" value="" />
+              <div class="admin-form-grid">
+                <div class="admin-field">
+                  <label for="slide-category">หมวดหมู่สไลด์</label>
+                  <input type="text" id="slide-category" placeholder="เช่น ประกาศคลินิกเฉพาะทาง / งานสิ่งพิมพ์" required />
+                </div>
+                <div class="admin-field">
+                  <label for="slide-link">ลิงก์ปลายทางเมื่อคลิกสไลด์</label>
+                  <select id="slide-link">
+                    <option value="pages/departments.html">แผนกและคลินิก (pages/departments.html)</option>
+                    <option value="pages/news.html">ข่าวสารและกิจกรรม (pages/news.html)</option>
+                    <option value="pages/downloads.html">ดาวน์โหลดเอกสาร (pages/downloads.html)</option>
+                    <option value="pages/policy.html">ประกาศนโยบาย (pages/policy.html)</option>
+                    <option value="pages/contact.html">ติดต่อเรา (pages/contact.html)</option>
+                    <option value="index.html">หน้าแรก (index.html)</option>
+                  </select>
+                </div>
+                <div class="admin-field is-full">
+                  <label for="slide-file">อัปโหลดรูปภาพสไลด์/แบนเนอร์ (ระบบ JavaScript ปรับความคมชัด HD ให้อัตโนมัติ)</label>
+                  <input type="file" id="slide-file" accept="image/*" />
+                  <div class="admin-img-preview-box" id="slide-preview-box" style="display:none;margin-top:10px;">
+                    <div class="admin-img-preview-badge" id="slide-preview-status">✓ พรีวิวรูปภาพสไลด์ (คลิกเพื่อดูภาพเต็ม)</div>
+                    <img id="slide-preview-img" src="" alt="พรีวิวสไลด์" class="admin-cover-preview-thumb" style="max-height:160px;object-fit:cover;cursor:pointer;" />
+                  </div>
+                </div>
+                <div class="admin-field is-full">
+                  <label for="slide-title">หัวข้อ / คำอธิบายสไลด์</label>
+                  <input type="text" id="slide-title" placeholder="กรอกชื่อประกาศหรือคำบรรยายสไลด์" required />
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button type="submit" class="admin-btn admin-btn-primary" id="slide-submit-btn">บันทึกสไลด์</button>
+                <button type="button" class="admin-btn admin-btn-outline" id="slide-cancel-edit-btn" style="display:none;">ยกเลิกการแก้ไข</button>
+              </div>
+            </form>
+
+            <div class="admin-items-list" id="admin-slides-list"></div>
+          </div>
+
+          <!-- =================================================================
+               แท็บที่ 6: ผู้บริหารและวิสัยทัศน์
+               ================================================================= -->
+          <div class="admin-tab-pane" id="tab-executive">
+            <h2 class="admin-pane-title">6. จัดการข้อมูลผู้บริหาร &amp; วิสัยทัศน์โรงพยาบาล</h2>
+            <p class="admin-pane-desc">แก้ไขชื่อ ตำแหน่ง รูปภาพผู้บริหาร และข้อความวิสัยทัศน์ของโรงพยาบาล</p>
+
+            <form class="admin-form-box" id="form-edit-executive">
+              <div class="admin-form-grid">
+                <div class="admin-field">
+                  <label for="exec-name">ชื่อ-นามสกุล ผู้บริหาร</label>
+                  <input type="text" id="exec-name" required />
+                </div>
+                <div class="admin-field">
+                  <label for="exec-rank">ตำแหน่งทางวิชาการ/สายงาน</label>
+                  <input type="text" id="exec-rank" required />
+                </div>
+                <div class="admin-field">
+                  <label for="exec-acting">สถานะการดำรงตำแหน่ง</label>
+                  <input type="text" id="exec-acting" required />
+                </div>
+                <div class="admin-field">
+                  <label for="exec-role">ตำแหน่งบริหาร</label>
+                  <input type="text" id="exec-role" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="exec-photo-file">เปลี่ยนรูปภาพผู้บริหาร (เว้นว่างไว้หากใช้รูปเดิม)</label>
+                  <input type="file" id="exec-photo-file" accept="image/*" />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="exec-headline">หัวข้อสารจากผู้อำนวยการ / วิสัยทัศน์หลัก</label>
+                  <input type="text" id="exec-headline" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="exec-quote">คำกล่าววิสัยทัศน์</label>
+                  <textarea id="exec-quote" rows="3" required></textarea>
+                </div>
+              </div>
+              <button type="submit" class="admin-btn admin-btn-primary">บันทึกข้อมูลผู้บริหารและวิสัยทัศน์</button>
+            </form>
+          </div>
+
+          <!-- =================================================================
+               แท็บที่ 7: แผนกและคลินิก
+               ================================================================= -->
+          <div class="admin-tab-pane" id="tab-departments">
+            <h2 class="admin-pane-title">7. จัดการแผนกและคลินิก</h2>
+            <p class="admin-pane-desc">เพิ่มหรือลบการ์ดแผนกและคลินิกเฉพาะทาง</p>
+
+            <form class="admin-form-box" id="form-add-dept">
+              <h3>+ เพิ่มแผนก/คลินิกใหม่</h3>
+              <div class="admin-form-grid">
+                <div class="admin-field">
+                  <label for="dept-title">ชื่อแผนก/คลินิก</label>
+                  <input type="text" id="dept-title" placeholder="เช่น อายุรกรรม, กุมารเวชกรรม, หัวใจ" required />
+                </div>
+                <div class="admin-field">
+                  <label for="dept-icon">ไอคอนประจำแผนก</label>
+                  <select id="dept-icon">
+                    <option value="heart">ไอคอนหัวใจ (Heart)</option>
+                    <option value="ribbon">ไอคอนโบว์ทางการแพทย์ (Ribbon)</option>
+                  </select>
+                </div>
+                <div class="admin-field is-full">
+                  <label for="dept-desc">รายละเอียดการให้บริการ</label>
+                  <input type="text" id="dept-desc" placeholder="กรอกรายละเอียดคลินิกย่อย" required />
+                </div>
+              </div>
+              <button type="submit" class="admin-btn admin-btn-primary">บันทึกแผนกใหม่</button>
+            </form>
+
+            <div class="admin-items-list" id="admin-depts-list"></div>
+          </div>
+
+          <!-- =================================================================
+               แท็บที่ 8: เว็บไซต์ภายใน
+               ================================================================= -->
+          <div class="admin-tab-pane" id="tab-intranet">
+            <h2 class="admin-pane-title">8. จัดการเว็บไซต์ภายใน (ระบบสารสนเทศโรงพยาบาล)</h2>
+            <p class="admin-pane-desc">เพิ่ม, แก้ไข หรือลบลิงก์ระบบสารสนเทศภายในองค์กร (รองรับทั้ง IP ในเครือข่ายโรงพยาบาล และเว็บภายนอก)</p>
+
+            <form class="admin-form-box" id="form-add-intranet">
+              <h3 id="intra-form-title">+ เพิ่มระบบเว็บไซต์ภายในใหม่</h3>
+              <input type="hidden" id="intra-edit-index" value="" />
+              <div class="admin-form-grid">
+                <div class="admin-field">
+                  <label for="intra-code">รหัส/ชื่อย่อระบบ</label>
+                  <input type="text" id="intra-code" placeholder="เช่น E-Office, IPD, HIS" required />
+                </div>
+                <div class="admin-field">
+                  <label for="intra-title">ชื่อระบบงานภายใน</label>
+                  <input type="text" id="intra-title" placeholder="เช่น ระบบสารบรรณอิเล็กทรอนิกส์" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="intra-desc">คำอธิบายระบบงาน</label>
+                  <input type="text" id="intra-desc" placeholder="กรอกรายละเอียดของระบบงาน เช่น บริการสำหรับเจ้าหน้าที่..." required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="intra-url">ลิงก์ URL ของระบบงาน (เช่น http://192.168.2.247:8087 หรือ https://...)</label>
+                  <input type="text" id="intra-url" placeholder="https:// หรือ http://192.168.x.x:port" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="intra-logo-file">โลโก้ประจำระบบงาน (Logo) — หากไม่เลือกจะใช้โลโก้เริ่มต้นของโรงพยาบาล</label>
+                  <input type="file" id="intra-logo-file" accept="image/*" />
+                  <div class="admin-img-preview-box" id="intra-logo-preview-box" style="display:none;margin-top:10px;">
+                    <div class="admin-img-preview-badge" id="intra-logo-preview-status">✓ พรีวิว Logo ระบบงาน</div>
+                    <img id="intra-logo-preview-img" src="" alt="พรีวิว Logo" class="admin-cover-preview-thumb" style="max-height:80px;max-width:80px;object-fit:contain;background:#fff;padding:4px;border:1px solid #cbd5e1;cursor:pointer;" />
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button type="submit" class="admin-btn admin-btn-primary" id="intra-submit-btn">บันทึกระบบภายในใหม่</button>
+                <button type="button" class="admin-btn admin-btn-outline" id="intra-cancel-edit-btn" style="display:none;">ยกเลิกการแก้ไข</button>
+              </div>
+            </form>
+
+            <div class="admin-items-list" id="admin-intranet-list"></div>
+          </div>
+
+          <!-- =================================================================
+               แท็บที่ 9: ติดต่อเรา & แผนที่
+               ================================================================= -->
+          <div class="admin-tab-pane" id="tab-contact">
+            <h2 class="admin-pane-title">9. ตั้งค่าข้อมูลติดต่อเรา &amp; แผนที่</h2>
+            <p class="admin-pane-desc">แก้ไขที่อยู่ เบอร์โทรศัพท์ อีเมล และลิงก์นำทาง Google Maps</p>
+
+            <form class="admin-form-box" id="form-edit-contact">
+              <div class="admin-form-grid">
+                <div class="admin-field">
+                  <label for="contact-name">ชื่อโรงพยาบาล</label>
+                  <input type="text" id="contact-name" required />
+                </div>
+                <div class="admin-field">
+                  <label for="contact-phone">เบอร์โทรศัพท์</label>
+                  <input type="text" id="contact-phone" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="contact-address">ที่อยู่โรงพยาบาล</label>
+                  <input type="text" id="contact-address" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="contact-email">อีเมลติดต่อ</label>
+                  <input type="email" id="contact-email" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="contact-map-dir">ลิงก์นำทาง Google Maps</label>
+                  <input type="text" id="contact-map-dir" required />
+                </div>
+              </div>
+              <button type="submit" class="admin-btn admin-btn-primary">บันทึกข้อมูลติดต่อเรา</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Modal เปิดดูภาพขนาดใหญ่ (Image Lightbox สำหรับดูภาพปกและภาพงานทั้งหมดที่เพิ่ม) -->
+      <div class="ksp-modal-backdrop" id="admin-lightbox-backdrop" role="dialog" aria-modal="true" aria-labelledby="admin-lightbox-title">
+        <div class="ksp-modal-dialog" style="max-width:920px;">
+          <div class="ksp-modal-header">
+            <div>
+              <span class="ksp-modal-badge" id="admin-lightbox-badge">ตรวจสอบความคมชัดรูปภาพ (HD Image Viewer)</span>
+              <h3 class="ksp-modal-title" id="admin-lightbox-title">ดูรูปภาพขนาดเต็ม</h3>
+            </div>
+            <button type="button" class="ksp-modal-close" id="admin-lightbox-close" aria-label="ปิดหน้าต่าง">&times;</button>
+          </div>
+          <div class="ksp-modal-body" id="admin-lightbox-body" style="text-align:center;"></div>
+          <div class="ksp-modal-footer" id="admin-lightbox-footer">
+            <button type="button" class="ksp-modal-ok-btn" id="admin-lightbox-ok">ปิดหน้าต่าง</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- แถบส่วนท้ายเว็บไซต์ (Footer Bar) -->
+  <div id="footer-placeholder"></div>
+
+  <!-- โหลดข้อมูลเริ่มต้นของแต่ละส่วนเพื่อให้ระบบหลังบ้านนำไปแสดงและแก้ไขได้ทันที -->
+  <script src="../js/header.js"></script>
+  <script src="../js/data/cms-store.js"></script>
+  <script src="../js/slidebar.js"></script>
+  <script src="../js/executive.js"></script>
+  <script src="../js/departments.js"></script>
+  <script src="../js/news-section.js"></script>
+  <script src="../js/policy-section.js"></script>
+  <script src="../js/downloads-section.js"></script>
+  <script src="../js/intranet-section.js"></script>
+  <script src="../js/contact-section.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="../js/footer.js"></script>
+</body>
+</html>

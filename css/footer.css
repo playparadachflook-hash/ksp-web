@@ -1,0 +1,46 @@
+/* Hallmark Stamp: custom | ksp-hospital-footer | critique: exact-ksp-footer-bar */
+/* ==========================================================================
+   ไฟล์: css/footer.css
+   หน้าที่: ตกแต่งแถบส่วนท้ายของเว็บไซต์ (Footer Bar)
+   แยกไฟล์อิสระเพื่อให้แก้ไขสี ขนาด หรือข้อความของ Footer ได้ง่ายในจุดเดียว
+   ========================================================================== */
+
+/* --- กล่องคลุม Footer เต็มความกว้างหน้าจอ (โทนสว่างเรียบง่าย สะอาดตา) --- */
+.site-footer {
+  width: 100%;
+  background: linear-gradient(90deg, #114b3e 0%, #196856 50%, #114b3e 100%);
+  border-top: 2px solid #80c4b1;
+  box-shadow: 0 -8px 24px -4px rgba(17, 75, 62, 0.18);
+  padding: 20px;
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* --- ข้อความลิขสิทธิ์สีขาวคมชัดบนแถบเขียวมรกต --- */
+.footer-copyright {
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 640px) {
+  .site-footer {
+    padding: 14px 16px;
+  }
+
+  .footer-copyright {
+    font-size: 0.82rem;
+  }
+}

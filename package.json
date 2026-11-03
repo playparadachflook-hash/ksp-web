@@ -1,0 +1,10 @@
+{
+  "name": "ksp-web",
+  "version": "1.0.0",
+  "description": "โรงพยาบาลโคกศรีสุพรรณ Website & CMS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {}
+}

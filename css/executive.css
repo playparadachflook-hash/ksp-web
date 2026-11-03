@@ -1,0 +1,409 @@
+/* Hallmark Stamp: custom | ksp-hospital-executive-vision-modal | critique: interactive-vision-mission-corevalues-modal */
+/* ==========================================================================
+   ไฟล์: css/executive.css
+   หน้าที่: ตกแต่งส่วน "ทำเนียบผู้บริหาร & วิสัยทัศน์โรงพยาบาล"
+           พร้อมหน้าต่างป๊อปอัป (Modal) แสดงรายละเอียด วิสัยทัศน์ / พันธกิจ / ค่านิยมหลัก
+   ========================================================================== */
+
+.executive-section {
+  width: 100%;
+  background-color: transparent;
+}
+
+.executive-container {
+  max-width: var(--container-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--container-padding-x);
+  padding-right: var(--container-padding-x);
+}
+
+/* --- หัวข้อส่วนผู้บริหารและวิสัยทัศน์ --- */
+.executive-section-header {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.executive-section-title {
+  font-size: var(--section-title-size);
+  font-weight: 700;
+  color: var(--color-heading);
+  margin: 0 0 10px;
+}
+
+.executive-section-underline {
+  width: 240px;
+  height: 4px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1f5a50 0%, #4ca58a 55%, #1d3965 100%);
+}
+
+/* ==========================================================================
+   โครงสร้าง Grid 2 คอลัมน์:
+   - ฝั่งซ้าย (250px) : การ์ดผู้บริหาร
+   - ฝั่งขวา (1fr)   : สารจากผู้อำนวยการ & การ์ดกดอ่าน วิสัยทัศน์ / พันธกิจ / ค่านิยมหลัก
+   ========================================================================== */
+.executive-vision-grid {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 32px;
+  align-items: stretch;
+}
+
+/* --- คอลัมน์ซ้าย: การ์ดผู้บริหาร --- */
+.executive-card {
+  width: 100%;
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.executive-header {
+  padding-bottom: 7px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.executive-heading {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #262626;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.executive-photo-wrap {
+  width: 100%;
+  margin-bottom: 12px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.executive-photo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.executive-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.executive-name,
+.executive-rank,
+.executive-acting,
+.executive-role {
+  margin: 0;
+  color: #1e293b;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.executive-name {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.executive-rank {
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.executive-acting {
+  font-size: 0.86rem;
+  color: #475569;
+}
+
+.executive-role {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+/* ==========================================================================
+   คอลัมน์ขวา: กล่องสารจากผู้อำนวยการ & การ์ดกดเปิด Modal วิสัยทัศน์ / พันธกิจ / ค่านิยมหลัก
+   ========================================================================== */
+.executive-vision-panel {
+  padding: 30px 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.vision-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.vision-headline {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+
+.vision-quote {
+  font-size: 0.98rem;
+  color: #334155;
+  line-height: 1.7;
+  margin: 0 0 24px;
+  padding-left: 16px;
+  border-left: 3.5px solid var(--color-primary);
+}
+
+/* --- 3 กล่องย่อย: กดเพื่อเปิดหน้าต่างป๊อปอัป (Modal) --- */
+.vision-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: auto;
+}
+
+.vision-pillar-card {
+  width: 100%;
+  text-align: left;
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.vision-pillar-card:hover {
+  transform: translateY(-4px);
+}
+
+.vision-pillar-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4ca58a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.vision-pillar-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin: 0 0 6px;
+}
+
+.vision-pillar-desc {
+  font-size: 0.86rem;
+  color: var(--color-text-body);
+  line-height: 1.55;
+  margin: 0 0 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vision-pillar-readbtn {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+  padding: 5px 12px;
+  border-radius: 999px;
+  align-self: flex-start;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.vision-pillar-card:hover .vision-pillar-readbtn {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   หน้าต่างป๊อปอัป (Modal) สำหรับแสดงรายละเอียดโดยไม่ต้องเปลี่ยนหน้า
+   ใช้ร่วมกันได้ทั้ง วิสัยทัศน์/พันธกิจ/ค่านิยมหลัก และ อ่านข่าวสาร+ดูอัลบั้มภาพงาน
+   ========================================================================== */
+.ksp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.ksp-modal-backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ksp-modal-dialog {
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border: 1px solid rgba(180, 226, 211, 0.9);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(15, 37, 55, 0.25);
+  padding: 28px 32px;
+  position: relative;
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ksp-modal-backdrop.is-open .ksp-modal-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.ksp-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ksp-modal-badge {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+
+.ksp-modal-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.ksp-modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  color: #475569;
+  font-size: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ksp-modal-close:hover {
+  background-color: #fee2e2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.ksp-modal-body {
+  font-size: 0.98rem;
+  color: #334155;
+  line-height: 1.75;
+}
+
+.ksp-modal-body p {
+  margin: 0 0 14px;
+}
+
+.ksp-modal-list {
+  margin: 12px 0 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ksp-modal-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ksp-modal-ok-btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ksp-modal-ok-btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
+@media (max-width: 992px) {
+  .executive-vision-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .executive-card {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  .vision-pillars-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .executive-vision-panel {
+    padding: 22px 20px;
+  }
+
+  .vision-headline {
+    font-size: 1.2rem;
+  }
+
+  .ksp-modal-dialog {
+    padding: 20px;
+  }
+}

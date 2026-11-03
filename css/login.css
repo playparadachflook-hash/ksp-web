@@ -1,0 +1,131 @@
+/* Hallmark Stamp: custom | ksp-hospital-admin-login | critique: clean-hospital-staff-login */
+/* ==========================================================================
+   ไฟล์: css/login.css
+   หน้าที่: ตกแต่งหน้าเข้าสู่ระบบสำหรับผู้ดูแลระบบหลังบ้าน (pages/login.html)
+   ========================================================================== */
+
+.login-section {
+  width: 100%;
+  padding: 48px 20px 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  padding: 36px 32px;
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-logo {
+  height: 64px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.login-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin: 0 0 4px;
+}
+
+.login-subtitle {
+  font-size: 0.86rem;
+  color: var(--color-text-body);
+  margin: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.login-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.94rem;
+  color: var(--color-text-main);
+  background-color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(31, 90, 80, 0.14);
+}
+
+.login-error {
+  display: none;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 0.84rem;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.login-error.is-visible {
+  display: block;
+}
+
+.login-submit-btn {
+  width: 100%;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.login-submit-btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.login-hint-box {
+  margin-top: 20px;
+  padding: 12px 14px;
+  background-color: #eef5f3;
+  border: 1px dashed #80bfab;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  color: #1f5a50;
+  text-align: center;
+  line-height: 1.5;
+}

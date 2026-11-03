@@ -1,0 +1,151 @@
+/* Hallmark Stamp: custom | ksp-hospital-intranet-section | critique: hospital-internal-websites-portal */
+/* ==========================================================================
+   ไฟล์: css/intranet-section.css
+   หน้าที่: ตกแต่งส่วน "เว็บไซต์ภายใน" (ระบบสารสนเทศและหน่วยงานภายใน รพ.โคกศรีสุพรรณ)
+   แยกไฟล์อิสระเพื่อให้แก้ไขดีไซน์เฉพาะส่วนเว็บไซต์ภายในได้ง่าย
+   ========================================================================== */
+
+.intranet-section {
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.intranet-container {
+  max-width: var(--container-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--container-padding-x);
+  padding-right: var(--container-padding-x);
+}
+
+/* --- หัวข้อตรงกลาง "เว็บไซต์ภายใน" --- */
+.intranet-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.intranet-title {
+  font-size: 2.15rem;
+  font-weight: 700;
+  color: #1d3965;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.intranet-underline {
+  width: 220px;
+  height: 3.5px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1d3965 0%, #4ca58a 100%);
+}
+
+/* ==========================================================================
+   ตารางการ์ดระบบเว็บไซต์ภายใน (4 คอลัมน์ × 2 แถว = 8 ระบบงาน)
+   ========================================================================== */
+.intranet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.intranet-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.22s ease, border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.intranet-card:hover {
+  transform: translateY(-3px);
+  background-color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: 0 10px 24px rgba(31, 90, 80, 0.09);
+}
+
+.intranet-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.intranet-logo-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 9px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+.intranet-logo-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.intranet-system-code {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.intranet-card-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #1d3965;
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+
+.intranet-card-desc {
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0 0 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.intranet-card-action {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* ==========================================================================
+   รองรับหน้าจอแท็บเล็ตและมือถือ (Responsive)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .intranet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .intranet-title {
+    font-size: 1.65rem;
+  }
+
+  .intranet-grid {
+    grid-template-columns: 1fr;
+  }
+}

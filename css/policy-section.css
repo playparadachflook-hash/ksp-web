@@ -1,0 +1,188 @@
+/* Hallmark Stamp: custom | ksp-hospital-policy-section | critique: hospital-policy-announcement-cards */
+/* ==========================================================================
+   ไฟล์: css/policy-section.css
+   หน้าที่: ตกแต่งส่วนที่ 5 — ประกาศนโยบายโรงพยาบาล (แสดงต่อจาก ข่าวสาร & กิจกรรม)
+   แยกไฟล์อิสระเพื่อให้แก้ไขดีไซน์เฉพาะส่วนประกาศนโยบายได้ง่าย
+   ========================================================================== */
+
+/* --- กล่องคลุมส่วนประกาศนโยบายโรงพยาบาล --- */
+.policy-section {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 0 0 40px;
+}
+
+.policy-container {
+  max-width: var(--container-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--container-padding-x);
+}
+
+/* --- หัวข้อตรงกลาง พร้อมเส้นขีดสีแดงยาวด้านล่างตามรูปต้นแบบ --- */
+.policy-header {
+  text-align: center;
+  margin-bottom: 38px;
+}
+
+.policy-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #09090b;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.policy-underline {
+  width: min(560px, 85%);
+  height: 3.5px;
+  margin: 0 auto;
+  background-color: #f03224;
+}
+
+/* ==========================================================================
+   ตารางการ์ดประกาศนโยบาย 3 คอลัมน์ × 2 แถว (6 การ์ด)
+   ========================================================================== */
+.policy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 36px;
+  row-gap: 28px;
+}
+
+/* --- ตัวการ์ดแต่ละประกาศ (กรอบสี่เหลี่ยมเส้นคมตามรูปต้นแบบ) --- */
+.policy-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #ffffff;
+  border: 1px solid #3f3f46;
+  padding: 9px 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.policy-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.policy-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   ฝั่งซ้ายของการ์ด: กล่องพื้นหลังสีเทาอ่อนแสดง Logo รพ.โคกศรีสุพรรณ + ป้ายสีอิฐด้านล่าง
+   ========================================================================== */
+.policy-thumb {
+  width: 116px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.policy-thumb-logo-box {
+  width: 100%;
+  height: 46px;
+  background-color: #ffffff;
+  border: 1px solid #edf2f4;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+/* รูปโลโก้โรงพยาบาลโคกศรีสุพรรณที่ดึงมาแสดงอัตโนมัติทุกครั้งที่เพิ่มประกาศ */
+.policy-thumb-logo {
+  height: 34px;
+  width: auto;
+  max-width: 96px;
+  object-fit: contain;
+  display: block;
+}
+
+/* ป้ายกำกับโทนเขียวสะอาดตาด้านล่างโลโก้ */
+.policy-thumb-badge {
+  margin-top: 4px;
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  border: 1px solid #cce5dd;
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  padding: 3px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   ฝั่งขวาของการ์ด: ชื่อประกาศ + วันที่และจำนวนผู้เข้าชม
+   ========================================================================== */
+.policy-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.policy-card-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #18181b;
+  line-height: 1.4;
+  margin: 0 0 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.policy-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.76rem;
+  color: #71717a;
+}
+
+.policy-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.policy-meta-item svg {
+  width: 13px;
+  height: 13px;
+  color: #71717a;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   รองรับหน้าจอแท็บเล็ตและมือถือ (Responsive)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .policy-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .policy-title {
+    font-size: 1.65rem;
+  }
+
+  .policy-grid {
+    grid-template-columns: 1fr;
+    row-gap: 16px;
+  }
+}

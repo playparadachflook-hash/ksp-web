@@ -1,0 +1,223 @@
+/* Hallmark Stamp: custom | ksp-hospital-downloads-section | critique: hospital-document-downloads-hub */
+/* ==========================================================================
+   ไฟล์: css/downloads-section.css
+   หน้าที่: ตกแต่งส่วน "ดาวน์โหลดเอกสาร" (แสดงในหน้าแรกและหน้า pages/downloads.html)
+   แยกไฟล์อิสระเพื่อให้แก้ไขดีไซน์เฉพาะส่วนดาวน์โหลดเอกสารได้ง่าย
+   ========================================================================== */
+
+.downloads-section {
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.downloads-container {
+  max-width: var(--container-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--container-padding-x);
+  padding-right: var(--container-padding-x);
+}
+
+/* --- หัวข้อตรงกลาง "ดาวน์โหลดเอกสาร" --- */
+.downloads-header {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.downloads-title {
+  font-size: 2.15rem;
+  font-weight: 700;
+  color: #1d3965;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.downloads-underline {
+  width: 220px;
+  height: 3.5px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1f5a50 0%, #1d4ed8 100%);
+}
+
+/* --- ปุ่มกรองหมวดหมู่เอกสาร (Filter Tabs) --- */
+.downloads-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.download-tab-btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #d5dce6;
+  background-color: #ffffff;
+  color: #334155;
+  font-family: var(--font-primary);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.download-tab-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.download-tab-btn.is-active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   ตารางรายการเอกสารดาวน์โหลด (2 คอลัมน์ × 3 แถว = 6 รายการ)
+   ========================================================================== */
+.downloads-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.download-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.03);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.download-card:hover {
+  transform: translateY(-2px);
+  border-color: #94a3b8;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+}
+
+.download-card-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* กล่องไอคอน PDF พร้อมโลโก้ รพ. */
+.download-icon-box {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background-color: #eef5f3;
+  color: var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #d4e7e2;
+}
+
+.download-icon-box svg {
+  width: 22px;
+  height: 22px;
+}
+
+.download-file-type {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+.download-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.download-doc-title {
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 5px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.download-doc-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.download-category-tag {
+  background-color: #f1f5f9;
+  color: #334155;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* ปุ่มกดดาวน์โหลดฝั่งขวา */
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.download-btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.download-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ==========================================================================
+   รองรับหน้าจอแท็บเล็ตและมือถือ (Responsive)
+   ========================================================================== */
+@media (max-width: 900px) {
+  .downloads-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .downloads-title {
+    font-size: 1.65rem;
+  }
+
+  .download-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .download-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

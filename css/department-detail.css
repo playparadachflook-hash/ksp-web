@@ -1,0 +1,544 @@
+/* ==========================================================================
+   ไฟล์: css/department-detail.css
+   หน้าที่: สไตล์หน้ารายละเอียดคลินิกเฉพาะทาง (อ้างอิงตามเลย์เอาต์ตัวอย่างศูนย์การแพทย์)
+   ========================================================================== */
+
+/* --- แถบ Breadcrumb ด้านบน --- */
+.dept-detail-breadcrumb-bar {
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 0;
+  font-size: 0.9rem;
+}
+
+.dept-detail-container {
+  max-width: var(--container-max-width, 1200px);
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.dept-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #64748b;
+}
+
+.dept-breadcrumb a {
+  color: #0284c7;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.dept-breadcrumb a:hover {
+  color: #0369a1;
+  text-decoration: underline;
+}
+
+.breadcrumb-sep {
+  color: #cbd5e1;
+}
+
+.breadcrumb-current {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+/* --- ส่วนหัวคลินิก (Header Banner พร้อมไอคอนวงกลม) --- */
+.dept-detail-main {
+  padding-top: 36px;
+  padding-bottom: 72px;
+  background-color: #ffffff;
+}
+
+.dept-header-banner {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding-bottom: 28px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dept-header-icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1.5px solid #bfdbfe;
+  background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+  flex-shrink: 0;
+}
+
+.dept-header-icon-circle svg {
+  width: 44px;
+  height: 44px;
+}
+
+.dept-header-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dept-header-title {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 6px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.dept-header-subtitle {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: #0284c7;
+  margin: 0;
+}
+
+/* ==========================================================================
+   โครงสร้าง 2 คอลัมน์ (Desktop Grid)
+   ========================================================================== */
+.dept-layout-grid {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+
+/* ==========================================================================
+   คอลัมน์ซ้าย: Sidebar
+   ========================================================================== */
+.dept-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 90px;
+}
+
+/* 1. การ์ดเมนูนำทางลัด */
+.dept-nav-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+}
+
+.dept-nav-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.dept-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dept-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.dept-nav-link .nav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.dept-nav-link:hover {
+  background-color: #f0f9ff;
+  color: #0284c7;
+}
+
+.dept-nav-link:hover .nav-dot,
+.dept-nav-link.active .nav-dot {
+  background-color: #0284c7;
+  transform: scale(1.3);
+}
+
+.dept-nav-link.active {
+  background-color: #f0f9ff;
+  color: #0284c7;
+  font-weight: 600;
+}
+
+/* 2. การ์ดข้อมูลติดต่อ & เวลาทำการ ตามแบบรูปเป๊ะๆ */
+.dept-contact-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.dept-contact-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0284c7;
+  margin: 0 0 18px;
+  line-height: 1.3;
+}
+
+.dept-hours-block {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.dept-hours-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.dept-hours-time {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.dept-contact-divider {
+  border: 0;
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 18px 0;
+}
+
+.dept-tel-block {
+  margin-bottom: 16px;
+}
+
+.dept-tel-label {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.dept-tel-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0284c7;
+  font-size: 0.96rem;
+  font-weight: 600;
+}
+
+.dept-tel-number svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.dept-location-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.45;
+  margin-bottom: 20px;
+}
+
+.dept-location-block svg {
+  width: 17px;
+  height: 17px;
+  color: #94a3b8;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.dept-action-box {
+  margin-top: 10px;
+}
+
+.dept-btn-appointment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #196856 0%, #115e59 100%);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(25, 104, 86, 0.2);
+  transition: all 0.25s ease;
+}
+
+.dept-btn-appointment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(25, 104, 86, 0.3);
+}
+
+.dept-btn-appointment svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dept-back-box {
+  margin-top: -6px;
+}
+
+.dept-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.dept-back-link:hover {
+  color: #0284c7;
+  text-decoration: underline;
+}
+
+.dept-back-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   คอลัมน์ขวา: Main Content
+   ========================================================================== */
+.dept-content {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.dept-cover-wrapper {
+  width: 100%;
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.dept-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* หัวข้อแต่ละส่วนตามแบบรูปเป๊ะๆ (เช่น 1. รายละเอียดศูนย์, 2. บริการ) */
+.dept-section-block {
+  scroll-margin-top: 100px;
+}
+
+.dept-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #0284c7;
+  margin: 0 0 18px;
+  line-height: 1.35;
+}
+
+.dept-section-num {
+  color: #0284c7;
+  font-weight: 700;
+}
+
+/* ย่อหน้ารายละเอียด */
+.dept-section-body p {
+  font-size: 1.02rem;
+  line-height: 1.85;
+  color: #334155;
+  margin: 0 0 16px;
+  text-align: justify;
+}
+
+.dept-section-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* รายการบริการแบบ Bullet List ตามแบบรูปเป๊ะๆ */
+.dept-services-wrapper {
+  background-color: #fafbfc;
+  border: 1px solid #eef2f6;
+  border-radius: 12px;
+  padding: 24px 28px;
+}
+
+.dept-services-bullet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dept-services-bullet-list li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #1e293b;
+}
+
+.dept-services-bullet-list li::before {
+  content: "•";
+  position: absolute;
+  left: 6px;
+  top: 0;
+  color: #0284c7;
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+/* ส่วนที่ 3: แพทย์ประจำคลินิก */
+.dept-doctors-box {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.dept-doctor-card {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.dept-doctor-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dept-doctor-avatar svg {
+  width: 32px;
+  height: 32px;
+}
+
+.dept-doctor-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.dept-doctor-sub {
+  font-size: 0.88rem;
+  color: #0284c7;
+  font-weight: 500;
+  margin: 0 0 6px;
+}
+
+.dept-doctor-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ส่วนที่ 4: คำแนะนำการเตรียมตัว */
+.dept-guide-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dept-guide-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background-color: #f8fafc;
+  border-left: 3.5px solid #0284c7;
+  border-radius: 6px;
+  padding: 14px 18px;
+  font-size: 0.95rem;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.dept-guide-item .guide-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media (max-width: 991px) {
+  .dept-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .dept-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .dept-header-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .dept-header-title {
+    font-size: 1.65rem;
+  }
+
+  .dept-header-icon-circle {
+    width: 64px;
+    height: 64px;
+  }
+
+  .dept-header-icon-circle svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .dept-services-wrapper {
+    padding: 18px 20px;
+  }
+}

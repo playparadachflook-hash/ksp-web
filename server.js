@@ -286,10 +286,28 @@ if (useExpress) {
         await dbPool.execute('DELETE FROM departments');
         let order = 1;
         for (const dept of sectionData) {
+          const deptId = dept.id || order;
+          const deptLink = dept.link || `/department/${deptId}`;
+          const servicesJson = Array.isArray(dept.services) ? JSON.stringify(dept.services) : (dept.services || dept.services_list || '');
           await dbPool.execute(`
-            INSERT INTO departments (name_th, description, icon_svg, image, link, display_order)
-            VALUES (?, ?, ?, ?, ?, ?)
-          `, [dept.title || '', dept.description || '', dept.icon || 'heart', dept.image || null, dept.link || '/departments', order++]);
+            INSERT INTO departments (id, dept_code, name_th, description, icon_svg, image, link, display_order, location_info, tel_internal, open_hours_weekday, open_hours_weekend, services_list, detail_text)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
+            deptId,
+            dept.slug || dept.dept_code || ('clinic-' + deptId),
+            dept.title || '',
+            dept.description || '',
+            dept.icon || 'heart',
+            dept.image || null,
+            deptLink,
+            order++,
+            dept.location || dept.location_info || 'อาคารผู้ป่วยนอก โรงพยาบาลโคกศรีสุพรรณ',
+            dept.tel || dept.tel_internal || '042-766054 ต่อ 101',
+            dept.open_hours_weekday || 'วันจันทร์ – ศุกร์ 08.00 – 16.00 น.',
+            dept.open_hours_weekend || 'ปิดทำการวันหยุดราชการ',
+            servicesJson,
+            dept.detail || dept.detail_text || ''
+          ]);
         }
         console.log(`[MySQL Sync] ซิงค์ข้อมูลแผนก ${sectionData.length} รายการลงตาราง Web_Ksp.departments สำเร็จ!`);
       } else if (sectionKey === 'intranet' && Array.isArray(sectionData)) {
@@ -625,6 +643,15 @@ if (useExpress) {
   // 7. Route หน้าเว็บทั้งหมด (Clean URLs)
   app.get('/', (req, res) => {
     res.render('index');
+  });
+
+  // Route หน้ารายละเอียดคลินิกเฉพาะทาง (รองรับทั้ง /department/:id และ /departments/:id)
+  app.get(['/department/:id', '/departments/:id', '/clinic/:id'], (req, res) => {
+    res.render('department-detail', { deptId: req.params.id });
+  });
+
+  app.get('/department-detail', (req, res) => {
+    res.render('department-detail', { deptId: req.query.id || '1' });
   });
 
   app.get('/:page', (req, res, next) => {

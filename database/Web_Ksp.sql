@@ -139,6 +139,10 @@ CREATE TABLE `departments` (
   `image` LONGTEXT DEFAULT NULL COMMENT 'รูปภาพคลินิก/แผนก (URL หรือ Base64)',
   `link` VARCHAR(255) DEFAULT '/departments',
   `display_order` INT DEFAULT 1,
+  `detail_text` LONGTEXT DEFAULT NULL COMMENT 'เนื้อหารายละเอียดคลินิกแบบเต็ม',
+  `services_list` TEXT DEFAULT NULL COMMENT 'รายการบริการย่อย (บรรทัดหรือ JSON)',
+  `open_hours_weekday` VARCHAR(150) DEFAULT 'วันจันทร์ – ศุกร์ 08.00 – 16.00 น.',
+  `open_hours_weekend` VARCHAR(150) DEFAULT 'ปิดทำการวันหยุดราชการ',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ตารางแผนกและคลินิก';
 

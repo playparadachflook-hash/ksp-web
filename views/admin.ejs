@@ -390,8 +390,32 @@
                   </select>
                 </div>
                 <div class="admin-field is-full">
-                  <label for="dept-desc">รายละเอียดการให้บริการ</label>
-                  <input type="text" id="dept-desc" placeholder="กรอกรายละเอียดคลินิกย่อย" required />
+                  <label for="dept-desc">รายละเอียดแบบสั้น (แสดงบนการ์ดแผนกหน้าแรก)</label>
+                  <input type="text" id="dept-desc" placeholder="เช่น ตรวจรักษาและติดตามอาการโรคหัวใจและหลอดเลือด คลื่นไฟฟ้าหัวใจ (EKG)" required />
+                </div>
+                <div class="admin-field is-full">
+                  <label for="dept-detail">1. รายละเอียดศูนย์ (เนื้อหาฉบับเต็มในหน้ารายละเอียดคลินิก เว้นบรรทัดเพื่อแยกย่อหน้า)</label>
+                  <textarea id="dept-detail" rows="4" style="width:100%;padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:0.92rem;" placeholder="กรอกเนื้อหาแนะนำคลินิก ความเชี่ยวชาญ เทคโนโลยี และความปลอดภัยทางการแพทย์"></textarea>
+                </div>
+                <div class="admin-field is-full">
+                  <label for="dept-services">2. รายการบริการทางการแพทย์ (กรอก 1 รายการบริการ ต่อ 1 บรรทัด ระบบจะแปลงเป็น Bullet Points ให้อัตโนมัติ)</label>
+                  <textarea id="dept-services" rows="4" style="width:100%;padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:0.92rem;" placeholder="ตรวจคัดกรองความเสี่ยงโรคหัวใจ&#10;ตรวจคลื่นไฟฟ้าหัวใจ (EKG 12 Leads)&#10;ตรวจรักษาและควบคุมความดันโลหิตสูง&#10;การฟื้นฟูสมรรถภาพหัวใจ"></textarea>
+                </div>
+                <div class="admin-field">
+                  <label for="dept-hours-weekday">เวลาทำการ: วันจันทร์ – ศุกร์</label>
+                  <input type="text" id="dept-hours-weekday" placeholder="เช่น 08.00 – 16.00 น." />
+                </div>
+                <div class="admin-field">
+                  <label for="dept-hours-weekend">เวลาทำการ: วันเสาร์ – อาทิตย์ / วันหยุด</label>
+                  <input type="text" id="dept-hours-weekend" placeholder="เช่น ปิดทำการ (หรือ ทุกพฤหัสบดีที่ 2 ของเดือน)" />
+                </div>
+                <div class="admin-field">
+                  <label for="dept-tel">เบอร์โทรศัพท์ติดต่อ / เบอร์ต่อภายใน</label>
+                  <input type="text" id="dept-tel" placeholder="เช่น 042-766054 ต่อ 101, 102" />
+                </div>
+                <div class="admin-field">
+                  <label for="dept-location">อาคารและชั้นที่ตั้ง</label>
+                  <input type="text" id="dept-location" placeholder="เช่น อาคารผู้ป่วยนอก ชั้น 1 โรงพยาบาลโคกศรีสุพรรณ" />
                 </div>
                 <div class="admin-field is-full">
                   <label for="dept-image-file">รูปภาพประจำคลินิก/แผนก (ระบบ JavaScript ปรับความคมชัด HD ให้อัตโนมัติ — เว้นว่างไว้ได้หากใช้เฉพาะไอคอน)</label>

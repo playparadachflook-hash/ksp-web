@@ -1907,6 +1907,18 @@ document.addEventListener('DOMContentLoaded', function () {
     if (deptFormTitle) deptFormTitle.textContent = '+ เพิ่มแผนก/คลินิกใหม่';
     if (deptSubmitBtn) deptSubmitBtn.textContent = 'บันทึกแผนกใหม่';
     if (deptCancelBtn) deptCancelBtn.style.display = 'none';
+    const detailEl = document.getElementById('dept-detail');
+    if (detailEl) detailEl.value = '';
+    const servEl = document.getElementById('dept-services');
+    if (servEl) servEl.value = '';
+    const hwEl = document.getElementById('dept-hours-weekday');
+    if (hwEl) hwEl.value = '';
+    const hweEl = document.getElementById('dept-hours-weekend');
+    if (hweEl) hweEl.value = '';
+    const telEl = document.getElementById('dept-tel');
+    if (telEl) telEl.value = '';
+    const locEl = document.getElementById('dept-location');
+    if (locEl) locEl.value = '';
   }
 
   if (deptCancelBtn) {
@@ -1930,7 +1942,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="admin-list-info" style="display:flex;gap:14px;align-items:center;">
             ${thumbSrc ? `<img src="${thumbSrc}" alt="${item.title}" class="admin-list-thumb" data-view-dept="${idx}" title="คลิกเพื่อดูภาพเต็ม" style="width:72px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid #cbd5e1;" />` : `<div style="width:72px;height:52px;background:#f8fafc;border-radius:6px;display:flex;align-items:center;justify-content:center;border:1px solid #e2e8f0;padding:6px;"><div style="width:34px;height:34px;">${iconSvg || '<span style=\"color:#64748b;font-size:0.75rem;\">ไม่มีรูป</span>'}</div></div>`}
             <div class="admin-list-text">
-              <p class="admin-list-title"><span style="color:#196856;font-weight:700;">ลำดับที่ ${idx + 1}:</span> ${item.title} <span style="font-size:0.75rem;padding:2px 8px;border-radius:999px;background:#e0f2fe;color:#0369a1;font-weight:500;margin-left:6px;">ไอคอน: ${item.icon || 'heart'}</span></p>
+              <p class="admin-list-title"><span style="color:#196856;font-weight:700;">ลำดับที่ ${idx + 1}:</span> ${item.title} <span style="font-size:0.75rem;padding:2px 8px;border-radius:999px;background:#e0f2fe;color:#0369a1;font-weight:500;margin-left:6px;">ไอคอน: ${item.icon || 'heart'}</span> <a href="/department/${item.id || idx + 1}" target="_blank" style="font-size:0.78rem;color:#0284c7;text-decoration:none;margin-left:8px;font-weight:600;">[🔗 ดูหน้ารายละเอียด]</a></p>
               <p class="admin-list-sub">${item.description}</p>
             </div>
           </div>
@@ -1965,6 +1977,26 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('dept-desc').value = item.description || '';
         const iconSelect = document.getElementById('dept-icon');
         if (iconSelect) iconSelect.value = item.icon || 'heart';
+
+        // โหลดฟิลด์รายละเอียดศูนย์และบริการ
+        const detailEl = document.getElementById('dept-detail');
+        if (detailEl) detailEl.value = item.detail || item.detail_text || '';
+        const servEl = document.getElementById('dept-services');
+        if (servEl) {
+          if (Array.isArray(item.services)) {
+            servEl.value = item.services.join('\n');
+          } else {
+            servEl.value = item.services || item.services_list || '';
+          }
+        }
+        const hwEl = document.getElementById('dept-hours-weekday');
+        if (hwEl) hwEl.value = item.open_hours_weekday || 'วันจันทร์ – ศุกร์ 08.00 – 16.00 น.';
+        const hweEl = document.getElementById('dept-hours-weekend');
+        if (hweEl) hweEl.value = item.open_hours_weekend || 'ปิดทำการวันหยุดราชการ';
+        const telEl = document.getElementById('dept-tel');
+        if (telEl) telEl.value = item.tel || item.tel_internal || '042-766054 ต่อ 101';
+        const locEl = document.getElementById('dept-location');
+        if (locEl) locEl.value = item.location || item.location_info || 'อาคารผู้ป่วยนอก ชั้น 1 โรงพยาบาลโคกศรีสุพรรณ';
 
         // โหลดรูปภาพเดิมถ้ามี
         pendingDeptImgUrl = item.image || null;
@@ -2032,6 +2064,15 @@ document.addEventListener('DOMContentLoaded', function () {
       const icon = document.getElementById('dept-icon').value;
       const editIdxStr = deptEditIndexInput ? deptEditIndexInput.value : '';
 
+      // ฟิลด์รายละเอียดศูนย์และบริการ
+      const detail = document.getElementById('dept-detail') ? document.getElementById('dept-detail').value.trim() : '';
+      const rawServices = document.getElementById('dept-services') ? document.getElementById('dept-services').value.trim() : '';
+      const services = rawServices ? rawServices.split('\n').map(s => s.trim().replace(/^[-•*]\s*/, '')).filter(Boolean) : [];
+      const open_hours_weekday = document.getElementById('dept-hours-weekday') ? document.getElementById('dept-hours-weekday').value.trim() : 'วันจันทร์ – ศุกร์ 08.00 – 16.00 น.';
+      const open_hours_weekend = document.getElementById('dept-hours-weekend') ? document.getElementById('dept-hours-weekend').value.trim() : 'ปิดทำการวันหยุดราชการ';
+      const tel = document.getElementById('dept-tel') ? document.getElementById('dept-tel').value.trim() : '042-766054 ต่อ 101';
+      const location = document.getElementById('dept-location') ? document.getElementById('dept-location').value.trim() : 'อาคารผู้ป่วยนอก ชั้น 1 โรงพยาบาลโคกศรีสุพรรณ';
+
       // ดึงรูปคลินิก ถ้ามีการเลือกไฟล์ใหม่แต่ยังไม่ได้ประมวลผล
       let finalImgUrl = pendingDeptImgUrl;
       if (!finalImgUrl && deptImageInput && deptImageInput.files && deptImageInput.files[0]) {
@@ -2042,12 +2083,25 @@ document.addEventListener('DOMContentLoaded', function () {
       if (editIdxStr !== '') {
         // --- กรณีแก้ไขแผนกเดิม ---
         const editIdx = Number(editIdxStr);
+        const existing = deptsData[editIdx] || {};
+        const deptId = existing.id || (editIdx + 1);
+        const deptSlug = existing.slug || ('clinic-' + deptId);
+
         deptsData[editIdx] = {
+          ...existing,
+          id: deptId,
+          slug: deptSlug,
           icon: icon,
           title: title,
           description: desc,
-          image: finalImgUrl || '',
-          link: '/departments'
+          detail: detail,
+          services: services,
+          open_hours_weekday: open_hours_weekday,
+          open_hours_weekend: open_hours_weekend,
+          tel: tel,
+          location: location,
+          image: finalImgUrl !== undefined ? finalImgUrl : (existing.image || ''),
+          link: `/department/${deptId}`
         };
 
         await window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../');
@@ -2061,12 +2115,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       } else {
         // --- กรณีเพิ่มแผนกใหม่ ---
+        const newId = deptsData.length > 0 ? Math.max(...deptsData.map(d => Number(d.id) || 0)) + 1 : 1;
         deptsData.push({
+          id: newId,
+          slug: 'clinic-' + newId,
           icon: icon,
           title: title,
           description: desc,
+          detail: detail,
+          services: services,
+          open_hours_weekday: open_hours_weekday,
+          open_hours_weekend: open_hours_weekend,
+          tel: tel,
+          location: location,
           image: finalImgUrl || '',
-          link: '/departments'
+          link: `/department/${newId}`
         });
 
         await window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../');

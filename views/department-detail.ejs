@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>รายละเอียดคลินิกเฉพาะทาง | โรงพยาบาลโคกศรีสุพรรณ</title>
+
+  <!-- ฟอนต์ภาษาไทย Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- เชื่อมต่อไฟล์ CSS -->
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/header.css" />
+  <link rel="stylesheet" href="/css/department-detail.css" />
+  <link rel="stylesheet" href="/css/footer.css" />
+</head>
+<body>
+
+  <!-- แถบเมนูด้านบน (Header Bar) -->
+  <div id="header-placeholder"></div>
+
+  <!-- Breadcrumb นำทาง -->
+  <div class="dept-detail-breadcrumb-bar">
+    <div class="dept-detail-container">
+      <nav class="dept-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">หน้าแรก</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href="/departments">แผนกและคลินิก</a>
+        <span class="breadcrumb-sep">/</span>
+        <span id="breadcrumb-clinic-name" class="breadcrumb-current">รายละเอียดคลินิก</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- เนื้อหาหลัก 2 คอลัมน์ตามรูปต้นแบบ -->
+  <main class="dept-detail-main">
+    <div class="dept-detail-container">
+
+      <!-- หัวข้อคลินิกด้านบน พร้อมไอคอนวงกลม -->
+      <header class="dept-header-banner">
+        <div class="dept-header-icon-circle" id="clinic-icon-badge">
+          <!-- SVG Icon แทรกด้วย JavaScript -->
+        </div>
+        <div class="dept-header-info">
+          <h1 class="dept-header-title" id="clinic-title">กำลังโหลดข้อมูลคลินิก...</h1>
+          <p class="dept-header-subtitle" id="clinic-hospital-tag">โรงพยาบาลโคกศรีสุพรรณ</p>
+        </div>
+      </header>
+
+      <!-- โครงสร้าง 2 คอลัมน์: ด้านซ้าย Sidebar ข้อมูลติดต่อ & เมนูลัด / ด้านขวา เนื้อหาละเอียด -->
+      <div class="dept-layout-grid">
+
+        <!-- ================= คอลัมน์ซ้าย (Sidebar) ================= -->
+        <aside class="dept-sidebar">
+
+          <!-- 1. เมนูนำทางลัด (Quick Nav) -->
+          <nav class="dept-nav-card" aria-label="เมนูภายในคลินิก">
+            <h3 class="dept-nav-card-title">บริการของเรา</h3>
+            <ul class="dept-nav-list">
+              <li>
+                <a href="#section-overview" class="dept-nav-link active">
+                  <span class="nav-dot"></span>
+                  <span>1. รายละเอียดศูนย์</span>
+                </a>
+              </li>
+              <li>
+                <a href="#section-services" class="dept-nav-link">
+                  <span class="nav-dot"></span>
+                  <span>2. บริการทางการแพทย์</span>
+                </a>
+              </li>
+              <li>
+                <a href="#section-doctors" class="dept-nav-link">
+                  <span class="nav-dot"></span>
+                  <span>แพทย์ที่เกี่ยวข้อง</span>
+                </a>
+              </li>
+              <li>
+                <a href="#section-guide" class="dept-nav-link">
+                  <span class="nav-dot"></span>
+                  <span>คำแนะนำการรับบริการ</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- 2. ข้อมูลติดต่อและเวลาทำการ (Contact Card) ตามแบบรูปเป๊ะๆ -->
+          <div class="dept-contact-card">
+            <h3 class="dept-contact-card-title" id="contact-card-title">ติดต่อคลินิก</h3>
+
+            <!-- บล็อกเวลาทำการ 1: วันจันทร์ - ศุกร์ -->
+            <div class="dept-hours-block">
+              <span class="dept-hours-label">วันจันทร์ – ศุกร์</span>
+              <span class="dept-hours-time" id="clinic-hours-weekday">08.00 – 16.00 น.</span>
+            </div>
+
+            <!-- บล็อกเวลาทำการ 2: เสาร์ - อาทิตย์ / วันหยุด -->
+            <div class="dept-hours-block">
+              <span class="dept-hours-label">วันเสาร์ – อาทิตย์ / วันหยุดราชการ</span>
+              <span class="dept-hours-time" id="clinic-hours-weekend">ปิดทำการ</span>
+            </div>
+
+            <hr class="dept-contact-divider" />
+
+            <!-- เบอร์โทรศัพท์ติดต่อตรง -->
+            <div class="dept-tel-block">
+              <span class="dept-tel-label" id="clinic-tel-title">ติดต่อสอบถาม</span>
+              <div class="dept-tel-number">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <span id="clinic-phone">โทร. 042-766054 ต่อ 101</span>
+              </div>
+            </div>
+
+            <!-- สถานที่ตั้ง -->
+            <div class="dept-location-block">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span id="clinic-location">อาคารผู้ป่วยนอก โรงพยาบาลโคกศรีสุพรรณ</span>
+            </div>
+
+            <!-- ปุ่มทำนัดหมาย / ปรึกษา -->
+            <div class="dept-action-box">
+              <a href="/appointment" class="dept-btn-appointment">
+                <span>ทำนัดหมายตรวจล่วงหน้า</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+
+          </div>
+
+          <!-- ปุ่มย้อนกลับไปดูคลินิกทั้งหมด -->
+          <div class="dept-back-box">
+            <a href="/departments" class="dept-back-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              <span>ดูคลินิกทั้งหมด (13 คลินิก)</span>
+            </a>
+          </div>
+
+        </aside>
+
+        <!-- ================= คอลัมน์ขวา (Main Content) ================= -->
+        <article class="dept-content">
+
+          <!-- รูปภาพแบนเนอร์/ปกคลินิก (ถ้ามีอัปโหลดไว้) -->
+          <div class="dept-cover-wrapper" id="dept-cover-box" style="display:none;">
+            <img id="dept-cover-img" src="" alt="รูปภาพคลินิก" class="dept-cover-img" />
+          </div>
+
+          <!-- ส่วนที่ 1: รายละเอียดศูนย์ (ตามภาพเป๊ะๆ) -->
+          <section id="section-overview" class="dept-section-block">
+            <h2 class="dept-section-title">
+              <span class="dept-section-num">1.</span>
+              <span id="overview-heading-text">รายละเอียดศูนย์</span>
+            </h2>
+            <div class="dept-section-body" id="clinic-detail-paragraphs">
+              <!-- ย่อหน้ารายละเอียดคลินิกแบบเต็ม -->
+            </div>
+          </section>
+
+          <!-- ส่วนที่ 2: บริการ (ตามภาพเป๊ะๆ) -->
+          <section id="section-services" class="dept-section-block">
+            <h2 class="dept-section-title">
+              <span class="dept-section-num">2.</span>
+              <span>บริการ</span>
+            </h2>
+            <div class="dept-services-wrapper">
+              <ul class="dept-services-bullet-list" id="clinic-services-list">
+                <!-- รายการบริการแบบ bullet points -->
+              </ul>
+            </div>
+          </section>
+
+          <!-- ส่วนที่ 3: แพทย์ที่เกี่ยวข้อง -->
+          <section id="section-doctors" class="dept-section-block">
+            <h2 class="dept-section-title">
+              <span class="dept-section-num">3.</span>
+              <span>แพทย์ที่เกี่ยวข้อง</span>
+            </h2>
+            <div class="dept-doctors-box">
+              <div class="dept-doctor-card">
+                <div class="dept-doctor-avatar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <div class="dept-doctor-info">
+                  <h4 class="dept-doctor-name">ทีมแพทย์เฉพาะทางและพยาบาลวิชาชีพ</h4>
+                  <p class="dept-doctor-sub">กลุ่มงานการแพทย์ โรงพยาบาลโคกศรีสุพรรณ</p>
+                  <p class="dept-doctor-desc">พร้อมให้คำปรึกษาและดูแลรักษาตามมาตรฐานวิชาชีพเวชกรรม ด้วยความเอาใจใส่และปลอดภัย</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ส่วนที่ 4: คำแนะนำการเตรียมตัวเข้ารับบริการ -->
+          <section id="section-guide" class="dept-section-block">
+            <h2 class="dept-section-title">
+              <span class="dept-section-num">4.</span>
+              <span>คำแนะนำในการเข้ารับบริการ</span>
+            </h2>
+            <div class="dept-guide-box">
+              <div class="dept-guide-item">
+                <span class="guide-icon">🪪</span>
+                <div>
+                  <strong>เอกสารที่ต้องนำมา:</strong> บัตรประจำตัวประชาชนตัวจริง หรือสูติบัตร (กรณีเด็ก) และบัตรสิทธิการรักษาพยาบาล
+                </div>
+              </div>
+              <div class="dept-guide-item">
+                <span class="guide-icon">💊</span>
+                <div>
+                  <strong>ยาที่รับประทานประจำ:</strong> นำซองยาเดิม หรือประวัติการแพ้ยาทุกชนิดมาแสดงต่อแพทย์ทุกครั้ง
+                </div>
+              </div>
+              <div class="dept-guide-item">
+                <span class="guide-icon">⏰</span>
+                <div>
+                  <strong>การมาถึงก่อนเวลานัด:</strong> ควรเดินทางมาถึงโรงพยาบาลก่อนเวลานัดหมายอย่างน้อย 15-30 นาที เพื่อวัดสัญญาณชีพและคัดกรองเบื้องต้น
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- แถบส่วนท้ายเว็บไซต์ (Footer Bar) -->
+  <div id="footer-placeholder"></div>
+
+  <!-- สคริปต์ทำงาน -->
+  <script src="/js/header.js"></script>
+  <script src="/js/departments.js"></script>
+  <script src="/js/department-detail.js"></script>
+  <script src="/js/footer.js"></script>
+</body>
+</html>

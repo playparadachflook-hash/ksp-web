@@ -1847,6 +1847,11 @@ document.addEventListener('DOMContentLoaded', function () {
   // เมนูที่ 7: จัดการแผนกและคลินิก (รองรับ บันทึก / แก้ไข / ลบ พร้อมระบบอัปโหลดรูปภาพ)
   // =========================================================================
   let deptsData = window.KSP_CMS.getSection('departments', DEFAULT_DEPARTMENTS_LIST);
+  // อัปเกรดข้อมูลคลินิกอัตโนมัติหากยังเป็นชุด Mock เดิม (มีคำว่า มะเร็ง หรือมีน้อยกว่า 13 รายการ)
+  if (!Array.isArray(deptsData) || deptsData.some(d => d.title === 'มะเร็ง') || deptsData.length < 13) {
+    deptsData = JSON.parse(JSON.stringify(DEFAULT_DEPARTMENTS_LIST));
+    window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../').catch(() => {});
+  }
   const deptsListEl = document.getElementById('admin-depts-list');
   const deptForm = document.getElementById('form-add-dept');
   const deptFormTitle = document.getElementById('dept-form-title');
@@ -1919,12 +1924,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!deptsListEl) return;
     deptsListEl.innerHTML = deptsData.map(function (item, idx) {
       const thumbSrc = item.image ? resolveAdminImgPath(item.image) : '';
+      const iconSvg = (typeof DEPARTMENT_ICONS !== 'undefined' && DEPARTMENT_ICONS[item.icon]) ? DEPARTMENT_ICONS[item.icon] : '';
       return `
         <div class="admin-list-row">
           <div class="admin-list-info" style="display:flex;gap:14px;align-items:center;">
-            ${thumbSrc ? `<img src="${thumbSrc}" alt="${item.title}" class="admin-list-thumb" data-view-dept="${idx}" title="คลิกเพื่อดูภาพเต็ม" style="width:72px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid #cbd5e1;" />` : `<div style="width:72px;height:52px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:0.75rem;border:1px dashed #cbd5e1;">ไม่มีรูป</div>`}
+            ${thumbSrc ? `<img src="${thumbSrc}" alt="${item.title}" class="admin-list-thumb" data-view-dept="${idx}" title="คลิกเพื่อดูภาพเต็ม" style="width:72px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid #cbd5e1;" />` : `<div style="width:72px;height:52px;background:#f8fafc;border-radius:6px;display:flex;align-items:center;justify-content:center;border:1px solid #e2e8f0;padding:6px;"><div style="width:34px;height:34px;">${iconSvg || '<span style=\"color:#64748b;font-size:0.75rem;\">ไม่มีรูป</span>'}</div></div>`}
             <div class="admin-list-text">
-              <p class="admin-list-title"><span style="color:#196856;font-weight:700;">ลำดับที่ ${idx + 1}:</span> ${item.title}</p>
+              <p class="admin-list-title"><span style="color:#196856;font-weight:700;">ลำดับที่ ${idx + 1}:</span> ${item.title} <span style="font-size:0.75rem;padding:2px 8px;border-radius:999px;background:#e0f2fe;color:#0369a1;font-weight:500;margin-left:6px;">ไอคอน: ${item.icon || 'heart'}</span></p>
               <p class="admin-list-sub">${item.description}</p>
             </div>
           </div>

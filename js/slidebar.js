@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    ไฟล์: js/slidebar.js
    หน้าที่: ควบคุมส่วนที่ 2 — Slide Bar (แบนเนอร์ประกาศรูปภาพ, งานสิ่งพิมพ์ และบทความออนไลน์)
    พร้อมระบบ JavaScript คำนวณและปรับขนาดรูปภาพให้พอดีกับกรอบสไลด์อัตโนมัติ
@@ -138,31 +138,47 @@ document.addEventListener('DOMContentLoaded', function () {
   let autoPlayTimer = null;
 
   // =========================================================================
-  // ฟังก์ชันคำนวณและปรับขนาดภาพให้พอดีกับกรอบสไลด์อัตโนมัติ (JS Auto-Fit Image)
+  // ฟังก์ชันคำนวณและปรับขนาดภาพให้สมส่วน กึ่งกลาง ไม่ยืดภาพ (Auto-Fit Proportional)
   // =========================================================================
   function fitSlideImagesToContainer() {
     if (!viewport || slideImages.length === 0) return;
 
-    // 1. หาความกว้างของกรอบสไลด์ในปัจจุบัน (หลังบีบซ้าย 15% และขวา 15% เหลือความกว้าง 70%)
-    const viewportWidth = viewport.clientWidth || Math.round(window.innerWidth * 0.7);
+    // 1. หาความกว้างของกรอบสไลด์ในปัจจุบัน
+    const viewportWidth = viewport.clientWidth;
+    if (viewportWidth <= 0) return;
 
-    // 2. อ่านสัดส่วนภาพต้นฉบับจากรูปแรก (ถ้ายังไม่โหลดเสร็จ ใช้สัดส่วนมาตรฐานแบนเนอร์ 1205 / 357)
-    const firstImg = slideImages[0];
-    const naturalW = firstImg.naturalWidth || 1205;
-    const naturalH = firstImg.naturalHeight || 357;
-    const aspectRatio = naturalW / naturalH;
+    // 2. อ่านสัดส่วนภาพต้นฉบับจากสไลด์ปัจจุบัน หรือภาพแรกที่พร้อมแสดงผล
+    const activeImg = slideImages[currentIndex] || slideImages[0];
+    let naturalW = activeImg ? activeImg.naturalWidth : 0;
+    let naturalH = activeImg ? activeImg.naturalHeight : 0;
 
-    // 3. คำนวณความสูงที่พอดีเป๊ะตามสัดส่วนภาพจริง (ภาพไม่ยืดไม่เบี้ยว รองรับหน้าจอกว้าง 1520px)
+    if (!naturalW || !naturalH) {
+      for (let i = 0; i < slideImages.length; i++) {
+        if (slideImages[i].naturalWidth && slideImages[i].naturalHeight) {
+          naturalW = slideImages[i].naturalWidth;
+          naturalH = slideImages[i].naturalHeight;
+          break;
+        }
+      }
+    }
+
+    // 3. สัดส่วนภาพจริง (ถ้ายังโหลดไม่เสร็จ ใช้สัดส่วนมาตรฐานแบนเนอร์ ~3.23:1)
+    const aspectRatio = (naturalW > 0 && naturalH > 0)
+      ? (naturalW / naturalH)
+      : (888 / 275);
+
+    // 4. คำนวณความสูงที่พอดีเป๊ะตามสัดส่วนภาพจริง (ภาพสมส่วน ไม่ยืด ไม่เบี้ยว)
     const idealHeight = Math.round(viewportWidth / aspectRatio);
-    const finalHeight = Math.max(140, Math.min(idealHeight, 520));
+    const finalHeight = Math.max(160, Math.min(idealHeight, 520));
 
-    // 4. กำหนดความสูงให้กรอบสไลด์และปรับรูปทุกใบให้ฟิตเต็มกรอบสไลด์ 100% พอดีเป๊ะไร้ขอบส่วนเกิน
+    // 5. กำหนดความสูงให้กรอบสไลด์และปรับรูปทุกใบให้สมส่วน กึ่งกลาง ไม่ยืดภาพ
     viewport.style.height = finalHeight + 'px';
 
     slideImages.forEach(function (img) {
       img.style.width = '100%';
-      img.style.height = finalHeight + 'px';
-      img.style.objectFit = 'fill';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      img.style.objectPosition = 'center center';
     });
   }
 
@@ -196,6 +212,9 @@ document.addEventListener('DOMContentLoaded', function () {
     dots.forEach(function (dot, idx) {
       dot.classList.toggle('is-active', idx === currentIndex);
     });
+
+    // ปรับความสูงให้สมส่วนกับรูปสไลด์ปัจจุบันอัตโนมัติ
+    fitSlideImagesToContainer();
   }
 
   // กดปุ่มลูกศรซ้าย [ < ]

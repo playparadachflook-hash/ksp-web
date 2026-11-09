@@ -5,11 +5,11 @@
    (แยกไฟล์ออกจาก css/header.css อย่างอิสระ เพื่อให้ง่ายต่อการแก้ไข)
    ========================================================================== */
 
-/* --- กล่องคลุม Slide Bar ทั้งหมด (ใช้กรอบและระยะขอบเดียวกับทุกส่วนในเว็บ) --- */
+/* --- กล่องคลุม Slide Bar ทั้งหมด (ปรับลดขนาดลง 20% และจัดกึ่งกลางหน้าเว็บ) --- */
 .announcement-slidebar {
   position: relative;
-  max-width: calc(var(--container-max-width) - (var(--container-padding-x) * 2));
-  width: calc(100% - (var(--container-padding-x) * 2));
+  max-width: calc((var(--container-max-width) - (var(--container-padding-x) * 2)) * 0.8);
+  width: calc((100% - (var(--container-padding-x) * 2)) * 0.8);
   margin: 22px auto 0;
   background-color: var(--card-bg);
   border: var(--card-border);
@@ -160,6 +160,13 @@
 /* ==========================================================================
    รองรับหน้าจอมือถือ / แท็บเล็ต (Responsive)
    ========================================================================== */
+@media (max-width: 991px) {
+  .announcement-slidebar {
+    max-width: calc(var(--container-max-width) - (var(--container-padding-x) * 2));
+    width: calc(100% - (var(--container-padding-x) * 2));
+  }
+}
+
 @media (max-width: 768px) {
   .slidebar-arrow {
     width: 24px;

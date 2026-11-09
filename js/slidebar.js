@@ -167,9 +167,9 @@ document.addEventListener('DOMContentLoaded', function () {
       ? (naturalW / naturalH)
       : (888 / 275);
 
-    // 4. คำนวณความสูงที่พอดีเป๊ะตามสัดส่วนภาพจริง (ภาพสมส่วน ไม่ยืด ไม่เบี้ยว)
+    // 4. คำนวณความสูงที่พอดีเป๊ะตามสัดส่วนภาพจริง (ปรับลดลง 20% ตามขนาดกรอบใหม่)
     const idealHeight = Math.round(viewportWidth / aspectRatio);
-    const finalHeight = Math.max(160, Math.min(idealHeight, 520));
+    const finalHeight = Math.max(140, Math.min(idealHeight, 420));
 
     // 5. กำหนดความสูงให้กรอบสไลด์และปรับรูปทุกใบให้สมส่วน กึ่งกลาง ไม่ยืดภาพ
     viewport.style.height = finalHeight + 'px';

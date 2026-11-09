@@ -455,6 +455,40 @@ if (useExpress) {
     }
 
     // ------------------------------------------------------------------------
+    // 4.2.1 ดึงข้อมูลเฉพาะส่วน (Get Single Section) จาก MySQL Web_Ksp.cms_sections
+    // ------------------------------------------------------------------------
+    if (action === 'get_section') {
+      const sectionKey = (req.query.section_key || req.body.section_key || '').trim();
+      if (!sectionKey) {
+        return res.status(400).json({ status: 'error', message: 'กรุณาระบุ section_key' });
+      }
+
+      if (dbPool) {
+        try {
+          const [rows] = await dbPool.execute('SELECT section_key, section_data FROM cms_sections WHERE section_key = ?', [sectionKey]);
+          if (rows.length > 0) {
+            let parsed = rows[0].section_data;
+            try { parsed = JSON.parse(rows[0].section_data); } catch (e) {}
+            return res.json({
+              status: 'ok',
+              section_key: sectionKey,
+              section_data: parsed
+            });
+          }
+        } catch (dbErr) {
+          console.error('[MySQL Get Section Error]', dbErr.message);
+        }
+      }
+
+      const localAll = getLocalCmsData();
+      return res.json({
+        status: 'ok',
+        section_key: sectionKey,
+        section_data: localAll[sectionKey] || null
+      });
+    }
+
+    // ------------------------------------------------------------------------
     // 4.3 บันทึกข้อมูลแต่ละส่วน (Save Section) ลง MySQL Web_Ksp.cms_sections
     // ------------------------------------------------------------------------
     if (action === 'save_section' && req.method === 'POST') {

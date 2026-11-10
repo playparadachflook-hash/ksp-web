@@ -23,10 +23,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // พยายามโหลดข้อมูลล่าสุดจาก API MySQL
   try {
-    const res = await fetch('/api/cms?action=get_section&section_key=departments');
+    const res = await fetch('/api/cms?action=get_section&section_key=departments', { cache: 'no-store' });
     if (res.ok) {
       const apiData = await res.json();
-      if (apiData && Array.isArray(apiData.section_data) && apiData.section_data.length > 0) {
+      if (apiData && Array.isArray(apiData.section_data)) {
         clinicList = apiData.section_data;
         try { localStorage.setItem('ksp_cms_v1_departments', JSON.stringify(clinicList)); } catch (e) {}
       }

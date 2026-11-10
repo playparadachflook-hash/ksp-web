@@ -401,16 +401,10 @@ const DEPARTMENTS_LIST = (function () {
     const saved = localStorage.getItem('ksp_cms_v1_departments');
     if (saved) {
       const parsed = JSON.parse(saved);
-      // หากข้อมูลเดิมมีข้อความ mock 'มะเร็ง' หรือรายการน้อยกว่า 13 หรือยังไม่มี detail ให้เปลี่ยนเป็นข้อมูลคลินิกใหม่ที่มีรายละเอียดครบถ้วน
-      const needUpgrade = !Array.isArray(parsed) || parsed.length < 13 || parsed.some(d => d.title === 'มะเร็ง' || !d.detail);
-      if (!needUpgrade) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }
-  } catch (e) {}
-  // บันทึกชุดคลินิกใหม่ลง localStorage เพื่อซิงก์ตรงกัน
-  try {
-    localStorage.setItem('ksp_cms_v1_departments', JSON.stringify(DEFAULT_DEPARTMENTS_LIST));
   } catch (e) {}
   return DEFAULT_DEPARTMENTS_LIST;
 })();
@@ -493,10 +487,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // ดึงข้อมูลล่าสุดจาก API MySQL เพื่ออัปเดตแบบเรียลไทม์
   try {
-    const res = await fetch('/api/cms?action=get_section&section_key=departments');
+    const res = await fetch('/api/cms?action=get_section&section_key=departments', { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
-      if (data && Array.isArray(data.section_data) && data.section_data.length > 0) {
+      if (data && Array.isArray(data.section_data)) {
         localStorage.setItem('ksp_cms_v1_departments', JSON.stringify(data.section_data));
         departmentsPlaceholder.innerHTML = renderDepartmentsHTML(rootPath, data.section_data);
       }

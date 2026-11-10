@@ -20,11 +20,20 @@ const DEFAULT_MEMBERS_LIST = [
   }
 ];
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
   // 1. ตรวจสอบสิทธิ์การเข้าสู่ระบบ
   if (localStorage.getItem('ksp_admin_logged_in') !== 'true') {
     window.location.href = '/login';
     return;
+  }
+
+  // 2. ดึงข้อมูลล่าสุดจากฐานข้อมูล MySQL (Web_Ksp) ทันที เพื่อให้ทุกแท็บแสดงข้อมูลจริงและข้อมูลล่าสุดจากเซิร์ฟเวอร์เสมอ
+  try {
+    if (window.KSP_CMS && typeof window.KSP_CMS.syncWithServer === 'function') {
+      await window.KSP_CMS.syncWithServer();
+    }
+  } catch (syncErr) {
+    console.warn('[Admin Init] ไม่สามารถซิงค์ข้อมูลล่าสุดกับเซิร์ฟเวอร์ได้ ใช้ข้อมูลจากแคชในเครื่อง:', syncErr);
   }
 
   const currentUser = localStorage.getItem('ksp_admin_user') || 'ผู้ดูแลระบบ';
@@ -1847,11 +1856,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // เมนูที่ 7: จัดการแผนกและคลินิก (รองรับ บันทึก / แก้ไข / ลบ พร้อมระบบอัปโหลดรูปภาพ)
   // =========================================================================
   let deptsData = window.KSP_CMS.getSection('departments', DEFAULT_DEPARTMENTS_LIST);
-  // อัปเกรดข้อมูลคลินิกอัตโนมัติหากยังเป็นชุด Mock เดิม (มีคำว่า มะเร็ง หรือมีน้อยกว่า 13 รายการ)
-  if (!Array.isArray(deptsData) || deptsData.some(d => d.title === 'มะเร็ง') || deptsData.length < 13) {
-    deptsData = JSON.parse(JSON.stringify(DEFAULT_DEPARTMENTS_LIST));
-    window.KSP_CMS.saveSection('departments', 'แผนกและคลินิก', deptsData, '../').catch(() => {});
-  }
   const deptsListEl = document.getElementById('admin-depts-list');
   const deptForm = document.getElementById('form-add-dept');
   const deptFormTitle = document.getElementById('dept-form-title');
@@ -2148,18 +2152,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // =========================================================================
   // เมนูที่ 8: จัดการเว็บไซต์ภายใน (รองรับ บันทึก / แก้ไข / ลบ ตามรูปแบบราชการสะดวก)
   // =========================================================================
-  let intranetData = (function () {
-    const sec = window.KSP_CMS.getSection('intranet', DEFAULT_INTERNAL_WEBSITES);
-    if (Array.isArray(sec) && sec.length > 0) {
-      const hasDummy = sec.some(function (item) {
-        return item.title && (item.title.includes('Anti Drugs') || item.title.includes('30 บาทรักษาทุกที่'));
-      });
-      if (!hasDummy) {
-        return sec;
-      }
-    }
-    return DEFAULT_INTERNAL_WEBSITES;
-  })();
+  let intranetData = window.KSP_CMS.getSection('intranet', DEFAULT_INTERNAL_WEBSITES);
   const intranetListEl = document.getElementById('admin-intranet-list');
   const intraForm = document.getElementById('form-add-intranet');
   const intraFormTitle = document.getElementById('intra-form-title');

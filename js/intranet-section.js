@@ -169,14 +169,8 @@ const INTERNAL_WEBSITES = (function () {
     const saved = localStorage.getItem('ksp_cms_v1_intranet');
     if (saved) {
       const parsed = JSON.parse(saved);
-      // หากพบข้อมูลตัวอย่างภายนอกเดิม ให้ล้างออกแล้วใช้ข้อมูลระบบงานจริงของโรงพยาบาล
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        const hasDummy = parsed.some(function (item) {
-          return item.title && (item.title.includes('Anti Drugs') || item.title.includes('30 บาทรักษาทุกที่'));
-        });
-        if (!hasDummy) {
-          return parsed;
-        }
+      if (Array.isArray(parsed)) {
+        return parsed;
       }
     }
   } catch (e) {}

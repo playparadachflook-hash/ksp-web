@@ -67,13 +67,10 @@ function resolveNewsImg(rootPath, imgPath) {
  */
 function renderNewsSectionHTML(rootPath) {
   const cardsMarkup = NEWS_LIST.map(function (item, idx) {
-    const galleryArr = Array.isArray(item.gallery) && item.gallery.length > 0 ? item.gallery : [item.image];
-    const hasFile = Boolean(item.fileName && item.fileDataUrl);
     return `
       <article class="news-card">
         <div class="news-card-image-wrap" data-open-news="${idx}" role="button" tabindex="0" aria-label="ดูรายละเอียดและภาพงาน: ${item.title}">
           <img src="${resolveNewsImg(rootPath, item.image)}" alt="${item.title}" class="news-card-image" loading="lazy" />
-          <span class="news-gallery-count">ภาพงานทั้งหมด ${galleryArr.length} ภาพ${hasFile ? ' • 📎 มีไฟล์แนบ' : ''}</span>
         </div>
         <h3 class="news-card-title">${item.title}</h3>
         <p class="news-card-excerpt">${item.excerpt}</p>

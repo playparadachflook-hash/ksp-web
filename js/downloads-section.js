@@ -67,13 +67,17 @@ const DEFAULT_DOWNLOAD_ITEMS = [
   }
 ];
 
-const DOWNLOAD_ITEMS = (function () {
+function getLatestDownloadItems() {
   try {
     const saved = localStorage.getItem('ksp_cms_v1_downloads');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (e) {}
   return DEFAULT_DOWNLOAD_ITEMS;
-})();
+}
+let DOWNLOAD_ITEMS = getLatestDownloadItems();
 
 const DOWNLOAD_CATEGORIES = [
   'ทั้งหมด',
@@ -172,22 +176,33 @@ document.addEventListener('DOMContentLoaded', function () {
   const downloadsPlaceholder = document.getElementById('downloads-placeholder');
   if (!downloadsPlaceholder) return;
 
-  downloadsPlaceholder.innerHTML = renderDownloadsSectionHTML(rootPath);
+  function mountDownloads() {
+    DOWNLOAD_ITEMS = getLatestDownloadItems();
+    downloadsPlaceholder.innerHTML = renderDownloadsSectionHTML(rootPath);
 
-  const tabBtns = downloadsPlaceholder.querySelectorAll('.download-tab-btn');
-  const gridEl = document.getElementById('downloads-grid');
+    const tabBtns = downloadsPlaceholder.querySelectorAll('.download-tab-btn');
+    const gridEl = document.getElementById('downloads-grid');
 
-  tabBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const selectedCat = btn.getAttribute('data-category');
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const selectedCat = btn.getAttribute('data-category');
 
-      tabBtns.forEach(function (b) {
-        b.classList.toggle('is-active', b === btn);
+        tabBtns.forEach(function (b) {
+          b.classList.toggle('is-active', b === btn);
+        });
+
+        if (gridEl) {
+          gridEl.innerHTML = renderDownloadCardsMarkup(rootPath, selectedCat);
+        }
       });
-
-      if (gridEl) {
-        gridEl.innerHTML = renderDownloadCardsMarkup(rootPath, selectedCat);
-      }
     });
+  }
+
+  mountDownloads();
+
+  window.addEventListener('ksp:cms-synced', function (e) {
+    if (e.detail && e.detail.hasChanges) {
+      mountDownloads();
+    }
   });
 });

@@ -24,13 +24,14 @@ const DEFAULT_CONTACT_DATA = {
     'https://www.google.com/maps?q=%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%9A%E0%B8%B2%E0%B8%A5%E0%B9%82%E0%B8%84%E0%B8%81%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%B8%E0%B8%9E%E0%B8%A3%E0%B8%A3%E0%B8%93+76+%E0%B8%95%E0%B8%B3%E0%B8%9A%E0%B8%A5+%E0%B8%95%E0%B8%AD%E0%B8%87%E0%B9%82%E0%B8%82%E0%B8%9A+%E0%B8%AD%E0%B8%B3%E0%B9%80%E0%B8%A0%E0%B8%AD+%E0%B9%82%E0%B8%84%E0%B8%81%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%B8%E0%B8%9E%E0%B8%A3%E0%B8%A3%E0%B8%93+%E0%B8%AA%E0%B8%81%E0%B8%A5%E0%B8%99%E0%B8%84%E0%B8%A3+47280&hl=th&z=16&output=embed'
 };
 
-const CONTACT_DATA = (function () {
+function getLatestContactData() {
   try {
     const saved = localStorage.getItem('ksp_cms_v1_contact');
     if (saved) return Object.assign({}, DEFAULT_CONTACT_DATA, JSON.parse(saved));
   } catch (e) {}
   return DEFAULT_CONTACT_DATA;
-})();
+}
+let CONTACT_DATA = getLatestContactData();
 
 /**
  * ฟังก์ชันสร้างโครงสร้าง HTML ส่วนติดต่อเราและแผนที่
@@ -122,5 +123,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const contactPlaceholder = document.getElementById('contact-placeholder');
   if (!contactPlaceholder) return;
 
-  contactPlaceholder.innerHTML = renderContactSectionHTML();
+  function mountContact() {
+    CONTACT_DATA = getLatestContactData();
+    contactPlaceholder.innerHTML = renderContactSectionHTML();
+  }
+
+  mountContact();
+
+  window.addEventListener('ksp:cms-synced', function (e) {
+    if (e.detail && e.detail.hasChanges) {
+      mountContact();
+    }
+  });
 });

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/tokens.css" />
-  <link rel="stylesheet" href="/css/header.css" />
-  <link rel="stylesheet" href="/css/policy-section.css" />
-  <link rel="stylesheet" href="/css/footer.css" />
+  <link rel="stylesheet" href="/css/tokens.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/header.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/policy-section.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/footer.css?v=<%= v %>" />
 </head>
 <body>
 
@@ -25,8 +25,9 @@
   <!-- แถบส่วนท้ายเว็บไซต์ (Footer Bar) ดึงจาก /js/footer.js -->
   <div id="footer-placeholder"></div>
 
-  <script src="/js/header.js"></script>
-  <script src="/js/policy-section.js"></script>
+  <script src="/js/data/cms-store.js?v=<%= v %>"></script>
+  <script src="/js/header.js?v=<%= v %>"></script>
+  <script src="/js/policy-section.js?v=<%= v %>"></script>
 </body>
 </html>
 

@@ -164,7 +164,7 @@ const DEFAULT_INTERNAL_WEBSITES = [
   }
 ];
 
-const INTERNAL_WEBSITES = (function () {
+function getLatestIntranetList() {
   try {
     const saved = localStorage.getItem('ksp_cms_v1_intranet');
     if (saved) {
@@ -175,7 +175,8 @@ const INTERNAL_WEBSITES = (function () {
     }
   } catch (e) {}
   return DEFAULT_INTERNAL_WEBSITES;
-})();
+}
+let INTERNAL_WEBSITES = getLatestIntranetList();
 
 function resolveIntranetUrl(rootPath, url) {
   if (!url) return '#';
@@ -253,5 +254,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const intranetPlaceholder = document.getElementById('intranet-placeholder');
   if (!intranetPlaceholder) return;
 
-  intranetPlaceholder.innerHTML = renderIntranetSectionHTML(rootPath);
+  function mountIntranet() {
+    INTERNAL_WEBSITES = getLatestIntranetList();
+    intranetPlaceholder.innerHTML = renderIntranetSectionHTML(rootPath);
+  }
+
+  mountIntranet();
+
+  window.addEventListener('ksp:cms-synced', function (e) {
+    if (e.detail && e.detail.hasChanges) {
+      mountIntranet();
+    }
+  });
 });

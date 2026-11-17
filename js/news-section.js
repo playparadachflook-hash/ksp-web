@@ -42,13 +42,17 @@ const DEFAULT_NEWS_LIST = [
   }
 ];
 
-const NEWS_LIST = (function () {
+function getLatestNewsList() {
   try {
     const saved = localStorage.getItem('ksp_cms_v1_news');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (e) {}
   return DEFAULT_NEWS_LIST;
-})();
+}
+let NEWS_LIST = getLatestNewsList();
 
 const TOTAL_NEWS_PAGES = 7;
 
@@ -143,7 +147,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const newsPlaceholder = document.getElementById('news-placeholder');
   if (!newsPlaceholder) return;
 
-  newsPlaceholder.innerHTML = renderNewsSectionHTML(rootPath);
+  function mountNews() {
+    NEWS_LIST = getLatestNewsList();
+    newsPlaceholder.innerHTML = renderNewsSectionHTML(rootPath);
 
   // เปิด Modal แสดงภาพปกและภาพงานทั้งหมดเมื่อกด "อ่านทั้งหมด" หรือกดที่รูปปกข่าว
   const modalBackdrop = document.getElementById('news-modal-backdrop');
@@ -223,5 +229,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 160);
       }
     });
+  });
+  } // end mountNews
+
+  mountNews();
+
+  window.addEventListener('ksp:cms-synced', function (e) {
+    if (e.detail && e.detail.hasChanges) {
+      mountNews();
+    }
   });
 });

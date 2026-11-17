@@ -11,10 +11,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- เชื่อมต่อไฟล์ CSS -->
-  <link rel="stylesheet" href="/css/tokens.css" />
-  <link rel="stylesheet" href="/css/header.css" />
-  <link rel="stylesheet" href="/css/department-detail.css" />
-  <link rel="stylesheet" href="/css/footer.css" />
+  <link rel="stylesheet" href="/css/tokens.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/header.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/department-detail.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/footer.css?v=<%= v %>" />
 </head>
 <body>
 
@@ -242,9 +242,10 @@
   <div id="footer-placeholder"></div>
 
   <!-- สคริปต์ทำงาน -->
-  <script src="/js/header.js"></script>
-  <script src="/js/departments.js"></script>
-  <script src="/js/department-detail.js"></script>
-  <script src="/js/footer.js"></script>
+  <script src="/js/data/cms-store.js?v=<%= v %>"></script>
+  <script src="/js/header.js?v=<%= v %>"></script>
+  <script src="/js/departments.js?v=<%= v %>"></script>
+  <script src="/js/department-detail.js?v=<%= v %>"></script>
+  <script src="/js/footer.js?v=<%= v %>"></script>
 </body>
 </html>

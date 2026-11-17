@@ -74,13 +74,17 @@ const DEFAULT_POLICY_ANNOUNCEMENTS = [
   }
 ];
 
-const POLICY_ANNOUNCEMENTS = (function () {
+function getLatestPolicyList() {
   try {
     const saved = localStorage.getItem('ksp_cms_v1_policies');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (e) {}
   return DEFAULT_POLICY_ANNOUNCEMENTS;
-})();
+}
+let POLICY_ANNOUNCEMENTS = getLatestPolicyList();
 
 /**
  * ฟังก์ชันสร้างรูปภาพใบประกาศนโยบายโรงพยาบาล (.PNG ความละเอียดสูง 1200x820 px) ด้วย JavaScript Canvas
@@ -309,7 +313,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const policyPlaceholder = document.getElementById('policy-placeholder');
   if (!policyPlaceholder) return;
 
-  policyPlaceholder.innerHTML = renderPolicySectionHTML(rootPath);
+  function mountPolicy() {
+    POLICY_ANNOUNCEMENTS = getLatestPolicyList();
+    policyPlaceholder.innerHTML = renderPolicySectionHTML(rootPath);
 
   const modalBackdrop = document.getElementById('policy-modal-backdrop');
   const modalBadge = document.getElementById('policy-modal-badge');
@@ -411,4 +417,13 @@ document.addEventListener('DOMContentLoaded', function () {
       if (e.target === modalBackdrop) closePolicyModal();
     });
   }
+  } // end mountPolicy
+
+  mountPolicy();
+
+  window.addEventListener('ksp:cms-synced', function (e) {
+    if (e.detail && e.detail.hasChanges) {
+      mountPolicy();
+    }
+  });
 });

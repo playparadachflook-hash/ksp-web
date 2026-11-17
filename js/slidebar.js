@@ -33,13 +33,17 @@ const DEFAULT_SLIDE_ITEMS = [
 ];
 
 // ดึงข้อมูลจากระบบหลังบ้าน (ถ้าแอดมินเคยแก้ไขไว้) หรือใช้ค่าเริ่มต้น
-const SLIDE_ITEMS = (function () {
+function getLatestSlideItems() {
   try {
     const saved = localStorage.getItem('ksp_cms_v1_slides');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (e) {}
   return DEFAULT_SLIDE_ITEMS;
-})();
+}
+let SLIDE_ITEMS = getLatestSlideItems();
 
 function resolveSlideImgPath(rootPath, imgPath) {
   if (!imgPath) return '';
@@ -122,7 +126,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const slidebarPlaceholder = document.getElementById('slidebar-placeholder');
   if (!slidebarPlaceholder) return;
 
-  slidebarPlaceholder.innerHTML = renderSlidebarHTML(rootPath);
+  let activeAutoPlayTimer = null;
+
+  function mountSlidebar() {
+    if (activeAutoPlayTimer) {
+      clearInterval(activeAutoPlayTimer);
+      activeAutoPlayTimer = null;
+    }
+
+    SLIDE_ITEMS = getLatestSlideItems();
+    slidebarPlaceholder.innerHTML = renderSlidebarHTML(rootPath);
 
   // ดึง Element ที่ใช้ควบคุมการเลื่อนสไลด์และปรับขนาดรูปภาพ
   const viewport = document.getElementById('slidebar-viewport');
@@ -245,15 +258,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // ระบบเลื่อนสไลด์อัตโนมัติทุกๆ 5.5 วินาที
   function startAutoPlay() {
     stopAutoPlay();
-    autoPlayTimer = setInterval(function () {
+    activeAutoPlayTimer = setInterval(function () {
       goToSlide(currentIndex + 1);
     }, 5500);
   }
 
   function stopAutoPlay() {
-    if (autoPlayTimer) {
-      clearInterval(autoPlayTimer);
-      autoPlayTimer = null;
+    if (activeAutoPlayTimer) {
+      clearInterval(activeAutoPlayTimer);
+      activeAutoPlayTimer = null;
     }
   }
 
@@ -270,4 +283,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // เริ่มทำงานอัตโนมัติ
   startAutoPlay();
+  } // end mountSlidebar
+
+  mountSlidebar();
+
+  // อัปเดตสไลด์ทันทีเมื่อดึงข้อมูลล่าสุดจาก MySQL เสร็จ
+  window.addEventListener('ksp:cms-synced', function (e) {
+    if (e.detail && e.detail.hasChanges) {
+      mountSlidebar();
+    }
+  });
 });

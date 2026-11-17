@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/tokens.css" />
-  <link rel="stylesheet" href="/css/header.css" />
-  <link rel="stylesheet" href="/css/login.css" />
-  <link rel="stylesheet" href="/css/footer.css" />
+  <link rel="stylesheet" href="/css/tokens.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/header.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/login.css?v=<%= v %>" />
+  <link rel="stylesheet" href="/css/footer.css?v=<%= v %>" />
 </head>
 <body>
 
@@ -97,8 +97,9 @@
   <!-- ดึง Footer Bar ตัวเดียวกันจาก /js/footer.js -->
   <div id="footer-placeholder"></div>
 
-  <script src="/js/header.js"></script>
-  <script src="/js/login.js"></script>
-  <script src="/js/footer.js"></script>
+  <script src="/js/data/cms-store.js?v=<%= v %>"></script>
+  <script src="/js/header.js?v=<%= v %>"></script>
+  <script src="/js/login.js?v=<%= v %>"></script>
+  <script src="/js/footer.js?v=<%= v %>"></script>
 </body>
 </html>

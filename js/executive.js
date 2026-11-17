@@ -55,7 +55,7 @@ const DEFAULT_EXECUTIVE_DATA = {
   ]
 };
 
-const EXECUTIVE_DATA = (function () {
+function getLatestExecutiveData() {
   try {
     const saved = localStorage.getItem('ksp_cms_v1_executive');
     if (saved) {
@@ -67,7 +67,8 @@ const EXECUTIVE_DATA = (function () {
     }
   } catch (e) {}
   return DEFAULT_EXECUTIVE_DATA;
-})();
+}
+let EXECUTIVE_DATA = getLatestExecutiveData();
 
 function resolveExecPhoto(rootPath, imgPath) {
   if (!imgPath) return '';
@@ -179,7 +180,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const executivePlaceholder = document.getElementById('executive-placeholder');
   if (!executivePlaceholder) return;
 
-  executivePlaceholder.innerHTML = renderExecutiveHTML(rootPath);
+  function mountExecutive() {
+    EXECUTIVE_DATA = getLatestExecutiveData();
+    executivePlaceholder.innerHTML = renderExecutiveHTML(rootPath);
 
   // ควบคุมการเปิด-ปิดหน้าต่าง Modal ของ วิสัยทัศน์ / พันธกิจ / ค่านิยมหลัก
   const modalBackdrop = document.getElementById('vision-modal-backdrop');
@@ -232,5 +235,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closePillarModal();
+  });
+  } // end mountExecutive
+
+  mountExecutive();
+
+  window.addEventListener('ksp:cms-synced', function (e) {
+    if (e.detail && e.detail.hasChanges) {
+      mountExecutive();
+    }
   });
 });

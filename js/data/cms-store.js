@@ -7,6 +7,19 @@
    ========================================================================== */
 
 const KSP_STORAGE_PREFIX = 'ksp_cms_v1_';
+const KSP_CMS_SCHEMA_VERSION = '20261117_v2';
+
+// ตรวจสอบเวอร์ชันแคชในเครื่องลูกข่าย: ถ้าเป็นเวอร์ชันเก่า ให้ล้างแคช CMS เดิมเพื่อบังคับรับข้อมูลล่าสุดจาก MySQL
+try {
+  if (localStorage.getItem('ksp_cms_schema_version') !== KSP_CMS_SCHEMA_VERSION) {
+    Object.keys(localStorage).forEach(function (k) {
+      if (k.startsWith(KSP_STORAGE_PREFIX)) {
+        localStorage.removeItem(k);
+      }
+    });
+    localStorage.setItem('ksp_cms_schema_version', KSP_CMS_SCHEMA_VERSION);
+  }
+} catch (e) {}
 
 window.KSP_CMS = {
   /**
@@ -72,7 +85,9 @@ window.KSP_CMS = {
 
   /**
    * ซิงค์ข้อมูลล่าสุดจากฐานข้อมูล MySQL (Web_Ksp) ลงสู่เบราว์เซอร์อัตโนมัติ
+   * และแจ้งเตือนทุกส่วนของหน้าเว็บให้ re-render ทันทีเมื่อมีข้อมูลใหม่
    */
+  isSynced: false,
   syncWithServer: async function () {
     if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
       try {
@@ -92,6 +107,10 @@ window.KSP_CMS = {
                 }
               }
             }
+            window.KSP_CMS.isSynced = true;
+            window.dispatchEvent(new CustomEvent('ksp:cms-synced', {
+              detail: { hasChanges: hasChanges, data: json.data }
+            }));
             return hasChanges;
           }
         }

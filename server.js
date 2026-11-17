@@ -122,6 +122,10 @@ try {
 if (useExpress) {
   const app = express();
 
+  // ปิด ETag และกำหนดเวอร์ชัน Asset อัตโนมัติทุกครั้งที่รันเซิร์ฟเวอร์ เพื่อป้องกันเบราว์เซอร์จำแคชเก่า
+  app.set('etag', false);
+  app.locals.v = Date.now().toString(36);
+
   app.set('view engine', 'ejs');
   app.set('views', VIEWS_DIR);
 
@@ -129,9 +133,12 @@ if (useExpress) {
   app.use(express.json({ limit: '25mb' }));
   app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
-  // 1. ตรวจสอบความปลอดภัย URL: ไม่ให้มี .html เด็ดขาด
+  // 1. ตรวจสอบความปลอดภัย URL: ไม่ให้มี .html เด็ดขาด และบังคับไม่ให้แคช HTML
   app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    res.set('Surrogate-Control', 'no-store');
 
     const reqUrl = req.url;
     const [pathname, search] = reqUrl.split('?');
@@ -152,10 +159,14 @@ if (useExpress) {
     next();
   });
 
-  // 2. เสิร์ฟเฉพาะไฟล์ Static ที่จำเป็น
+  // 2. เสิร์ฟเฉพาะไฟล์ Static ที่จำเป็น (ปิดแคชและ ETag เพื่อให้ทุกเครื่องได้เวอร์ชันล่าสุดเสมอ)
   const staticOptions = {
+    etag: false,
+    lastModified: false,
     setHeaders: (res) => {
       res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
     }
   };
   app.use('/css', express.static(path.join(ROOT_DIR, 'css'), staticOptions));

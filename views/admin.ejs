@@ -17,7 +17,42 @@
   <!-- แถบเมนูด้านบน (Header Bar) -->
   <div id="header-placeholder"></div>
 
-  <main id="page-content">
+  <!-- =========================================================================
+       Modal ยืนยันตัวตนเข้าสู่ระบบหลังบ้าน (เด้งขึ้นมาทุกครั้งที่เข้าหน้า /admin)
+       ========================================================================= -->
+  <div id="admin-auth-modal" style="position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#ffffff;width:100%;max-width:420px;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,0.28);padding:28px 26px;border:1px solid #e2e8f0;animation:adminModalPop 0.22s ease-out;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <img src="/assets/images/logo-ksp.png" alt="โรงพยาบาลโคกศรีสุพรรณ" style="height:56px;width:auto;margin-bottom:10px;" />
+        <h2 style="margin:0 0 6px;font-size:1.25rem;color:#0f4c42;font-weight:700;">ยืนยันตัวตนเข้าสู่ระบบหลังบ้าน</h2>
+        <p style="margin:0;font-size:0.88rem;color:#64748b;">เพื่อความปลอดภัย กรุณาเข้าสู่ระบบใหม่ทุกครั้งก่อนจัดการข้อมูล</p>
+      </div>
+
+      <form id="admin-modal-login-form" autocomplete="off">
+        <div style="margin-bottom:14px;">
+          <label for="admin-modal-username" style="display:block;font-size:0.9rem;font-weight:600;color:#1e293b;margin-bottom:6px;">ชื่อผู้ใช้งาน (Username)</label>
+          <input type="text" id="admin-modal-username" placeholder="กรอกชื่อผู้ใช้งาน" required autofocus style="width:100%;box-sizing:border-box;padding:11px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:0.95rem;font-family:inherit;outline:none;" />
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label for="admin-modal-password" style="display:block;font-size:0.9rem;font-weight:600;color:#1e293b;margin-bottom:6px;">รหัสผ่าน (Password)</label>
+          <input type="password" id="admin-modal-password" placeholder="กรอกรหัสผ่าน" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:0.95rem;font-family:inherit;outline:none;" />
+        </div>
+
+        <div id="admin-modal-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;font-size:0.86rem;padding:9px 12px;border-radius:8px;margin-bottom:14px;text-align:center;"></div>
+
+        <button type="submit" id="admin-modal-submit-btn" class="admin-btn admin-btn-primary" style="width:100%;padding:12px;font-size:1rem;font-weight:600;border-radius:10px;cursor:pointer;">
+          เข้าสู่ระบบจัดการหลังบ้าน
+        </button>
+      </form>
+
+      <div style="text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid #f1f5f9;">
+        <a href="/" style="font-size:0.88rem;color:#0f766e;text-decoration:none;font-weight:500;">&larr; กลับสู่หน้าแรกเว็บไซต์</a>
+      </div>
+    </div>
+  </div>
+
+  <main id="page-content" style="display:none;">
     <div class="admin-wrapper">
 
       <!-- แถบควบคุมระบบหลังบ้านด้านบน -->

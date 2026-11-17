@@ -20,13 +20,112 @@ const DEFAULT_MEMBERS_LIST = [
   }
 ];
 
-document.addEventListener('DOMContentLoaded', async function () {
-  // 1. ตรวจสอบสิทธิ์การเข้าสู่ระบบ
-  if (localStorage.getItem('ksp_admin_logged_in') !== 'true') {
-    window.location.href = '/login';
-    return;
+document.addEventListener('DOMContentLoaded', function () {
+  // 1. บังคับยืนยันตัวตนใหม่ทุกครั้งที่เปิดหน้า /admin (ไม่จำสถานะล็อกอินค้างไว้ข้ามการโหลดหน้า)
+  localStorage.removeItem('ksp_admin_logged_in');
+
+  const authModal = document.getElementById('admin-auth-modal');
+  const authForm = document.getElementById('admin-modal-login-form');
+  const authUserInput = document.getElementById('admin-modal-username');
+  const authPassInput = document.getElementById('admin-modal-password');
+  const authErrEl = document.getElementById('admin-modal-error');
+  const authSubmitBtn = document.getElementById('admin-modal-submit-btn');
+  const pageContentEl = document.getElementById('page-content');
+
+  function showAuthError(msg) {
+    if (authErrEl) {
+      authErrEl.textContent = msg;
+      authErrEl.style.display = 'block';
+    }
   }
 
+  if (authModal) authModal.style.display = 'flex';
+  if (pageContentEl) pageContentEl.style.display = 'none';
+  if (authUserInput) authUserInput.focus();
+
+  if (authForm) {
+    authForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (authErrEl) authErrEl.style.display = 'none';
+
+      const username = authUserInput ? authUserInput.value.trim() : '';
+      const password = authPassInput ? authPassInput.value.trim() : '';
+      if (!username || !password) {
+        showAuthError('กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน');
+        return;
+      }
+
+      if (authSubmitBtn) {
+        authSubmitBtn.disabled = true;
+        authSubmitBtn.textContent = 'กำลังตรวจสอบสิทธิ์...';
+      }
+
+      let authenticatedUser = null;
+      let serverErrorMessage = '';
+
+      // ตรวจสอบสิทธิ์ผ่าน Node.js API (MySQL Web_Ksp.users)
+      try {
+        const res = await fetch('/api/cms?action=login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: username, password: password })
+        });
+        const json = await res.json();
+        if (res.ok && json.status === 'ok' && json.user) {
+          authenticatedUser = json.user;
+        } else {
+          serverErrorMessage = json.message || 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง';
+        }
+      } catch (netErr) {
+        // กรณีออฟไลน์ ใช้ข้อมูลสมาชิกสำรองในเครื่อง
+        let localMembers = DEFAULT_MEMBERS_LIST;
+        try {
+          const savedRaw = localStorage.getItem('ksp_cms_v1_members');
+          if (savedRaw) {
+            const parsed = JSON.parse(savedRaw);
+            if (Array.isArray(parsed) && parsed.length > 0) localMembers = parsed;
+          }
+        } catch (err) {}
+        const found = localMembers.find(function (m) {
+          return m.username === username && m.password === password;
+        });
+        if (found) {
+          authenticatedUser = {
+            username: found.username,
+            full_name: found.fullName || found.username,
+            role: found.role || 'ผู้ดูแลระบบ'
+          };
+        } else {
+          serverErrorMessage = 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง';
+        }
+      }
+
+      if (!authenticatedUser) {
+        if (authSubmitBtn) {
+          authSubmitBtn.disabled = false;
+          authSubmitBtn.textContent = 'เข้าสู่ระบบจัดการหลังบ้าน';
+        }
+        showAuthError(serverErrorMessage || 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
+        if (authPassInput) {
+          authPassInput.value = '';
+          authPassInput.focus();
+        }
+        return;
+      }
+
+      // ยืนยันตัวตนสำเร็จ: ปิด Modal Login, ซิงค์ข้อมูลล่าสุดจาก MySQL แล้วเปิดหน้า Admin
+      const displayUser = `${authenticatedUser.full_name || authenticatedUser.username} (${authenticatedUser.role || 'ผู้ดูแลระบบ'})`;
+      localStorage.setItem('ksp_admin_user', displayUser);
+
+      if (authModal) authModal.style.display = 'none';
+      if (pageContentEl) pageContentEl.style.display = 'block';
+
+      await initAdminWorkspace(displayUser);
+    });
+  }
+});
+
+async function initAdminWorkspace(currentUser) {
   // 2. ดึงข้อมูลล่าสุดจากฐานข้อมูล MySQL (Web_Ksp) ทันที เพื่อให้ทุกแท็บแสดงข้อมูลจริงและข้อมูลล่าสุดจากเซิร์ฟเวอร์เสมอ
   try {
     if (window.KSP_CMS && typeof window.KSP_CMS.syncWithServer === 'function') {
@@ -36,10 +135,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.warn('[Admin Init] ไม่สามารถซิงค์ข้อมูลล่าสุดกับเซิร์ฟเวอร์ได้ ใช้ข้อมูลจากแคชในเครื่อง:', syncErr);
   }
 
-  const currentUser = localStorage.getItem('ksp_admin_user') || 'ผู้ดูแลระบบ';
   const welcomeEl = document.getElementById('admin-welcome-user');
   if (welcomeEl) {
-    welcomeEl.textContent = 'ผู้เข้าใช้งานปัจจุบัน: ' + currentUser;
+    welcomeEl.textContent = 'ผู้เข้าใช้งานปัจจุบัน: ' + (currentUser || 'ผู้ดูแลระบบ');
   }
 
   // =========================================================================
@@ -449,7 +547,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function () {
       localStorage.removeItem('ksp_admin_logged_in');
-      window.location.href = '/login';
+      localStorage.removeItem('ksp_admin_user');
+      window.location.reload();
     });
   }
 
@@ -2631,4 +2730,4 @@ document.addEventListener('DOMContentLoaded', async function () {
       });
     });
   }
-});
+}

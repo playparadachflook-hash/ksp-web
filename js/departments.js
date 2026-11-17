@@ -462,7 +462,7 @@ function renderDepartmentsHTML(rootPath, list) {
         ${!isAllDeptsPage ? `
         <div class="departments-footer">
           <a href="${rootPath}/departments" class="departments-view-all">
-            <span>ดูคลินิกทั้งหมด (13 คลินิก)</span>
+            <span>ดูคลินิกทั้งหมด (${currentList.length} คลินิก)</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>

@@ -276,7 +276,7 @@ function renderPolicySectionHTML(rootPath) {
     <section class="policy-section" aria-labelledby="policy-heading">
       <div class="policy-container">
         <div class="policy-header">
-          <h2 class="policy-title" id="policy-heading">ประกาศนโยบายโรงพยาบาลบาล</h2>
+          <h2 class="policy-title" id="policy-heading">ประกาศนโยบายโรงพยาบาล</h2>
           <div class="policy-underline"></div>
         </div>
 

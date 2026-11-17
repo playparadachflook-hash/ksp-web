@@ -60,7 +60,7 @@ function getLatestExecutiveData() {
     const saved = localStorage.getItem('ksp_cms_v1_executive');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (!parsed.pillars || !parsed.pillars[0] || !parsed.pillars[0].details) {
+      if (!Array.isArray(parsed.pillars) || parsed.pillars.length < 3) {
         parsed.pillars = DEFAULT_EXECUTIVE_DATA.pillars;
       }
       return Object.assign({}, DEFAULT_EXECUTIVE_DATA, parsed);

@@ -1814,9 +1814,13 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // =========================================================================
-  // เมนูที่ 6: จัดการข้อมูลผู้บริหารและวิสัยทัศน์
+  // เมนูที่ 6: จัดการข้อมูลผู้บริหารและวิสัยทัศน์ (รวมการ์ด Vision / Mission / Core Values)
   // =========================================================================
-  let execData = window.KSP_CMS.getSection('executive', DEFAULT_EXECUTIVE_DATA);
+  let execData = Object.assign({}, DEFAULT_EXECUTIVE_DATA, window.KSP_CMS.getSection('executive', DEFAULT_EXECUTIVE_DATA));
+  if (!Array.isArray(execData.pillars) || execData.pillars.length < 3) {
+    execData.pillars = JSON.parse(JSON.stringify(DEFAULT_EXECUTIVE_DATA.pillars));
+  }
+
   const execForm = document.getElementById('form-edit-executive');
   if (execForm) {
     document.getElementById('exec-name').value = execData.name || '';
@@ -1825,6 +1829,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.getElementById('exec-role').value = execData.role || '';
     document.getElementById('exec-headline').value = execData.visionHeadline || '';
     document.getElementById('exec-quote').value = execData.visionQuote || '';
+
+    // โหลดข้อมูลการ์ดทั้ง 3 ด้าน (0: Vision, 1: Mission, 2: Core Values) ลงในฟอร์ม
+    [0, 1, 2].forEach(function (idx) {
+      const p = execData.pillars[idx] || DEFAULT_EXECUTIVE_DATA.pillars[idx];
+      const labelEl = document.getElementById(`pillar-${idx}-label`);
+      const titleEl = document.getElementById(`pillar-${idx}-title`);
+      const descEl = document.getElementById(`pillar-${idx}-desc`);
+      const detailsEl = document.getElementById(`pillar-${idx}-details`);
+      if (labelEl) labelEl.value = p.label || '';
+      if (titleEl) titleEl.value = p.title || '';
+      if (descEl) descEl.value = p.desc || '';
+      if (detailsEl) {
+        detailsEl.value = Array.isArray(p.details) ? p.details.join('\n') : (p.details || '');
+      }
+    });
 
     execForm.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -1842,12 +1861,28 @@ document.addEventListener('DOMContentLoaded', async function () {
         execData.photo = enhancedPhoto.dataUrl;
       }
 
+      // อ่านค่าการ์ดทั้ง 3 ด้านที่แอดมินแก้ไขแล้วบันทึกลง execData.pillars
+      execData.pillars = [0, 1, 2].map(function (idx) {
+        const labelEl = document.getElementById(`pillar-${idx}-label`);
+        const titleEl = document.getElementById(`pillar-${idx}-title`);
+        const descEl = document.getElementById(`pillar-${idx}-desc`);
+        const detailsEl = document.getElementById(`pillar-${idx}-details`);
+        const rawDetails = detailsEl ? detailsEl.value : '';
+        const detailsArr = rawDetails.split('\n').map(function (line) { return line.trim(); }).filter(Boolean);
+        return {
+          label: labelEl ? labelEl.value.trim() : '',
+          title: titleEl ? titleEl.value.trim() : '',
+          desc: descEl ? descEl.value.trim() : '',
+          details: detailsArr
+        };
+      });
+
       await window.KSP_CMS.saveSection('executive', 'ผู้บริหารและวิสัยทัศน์', execData, '../');
 
       notify({
         type: 'success',
-        title: 'บันทึกข้อมูลผู้บริหารสำเร็จ!',
-        message: 'อัปเดตข้อมูลผู้บริหารและวิสัยทัศน์โรงพยาบาลเรียบร้อยแล้ว'
+        title: 'บันทึกข้อมูลผู้บริหารและวิสัยทัศน์สำเร็จ!',
+        message: 'อัปเดตข้อมูลผู้บริหารและการ์ด Vision / Mission / Core Values เรียบร้อยแล้ว'
       });
     });
   }

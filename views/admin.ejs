@@ -354,6 +354,83 @@
                   <label for="exec-quote">คำกล่าววิสัยทัศน์</label>
                   <textarea id="exec-quote" rows="3" required></textarea>
                 </div>
+
+                <!-- ===========================================================
+                     ส่วนแก้ไขการ์ด 3 ด้าน: วิสัยทัศน์ / พันธกิจ / ค่านิยมหลัก
+                     =========================================================== -->
+                <div class="admin-field is-full" style="margin-top: 12px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                  <h3 style="margin: 0 0 6px; color: #0f4c42; font-size: 1.05rem;">จัดการการ์ด 3 ด้าน (วิสัยทัศน์ / พันธกิจ / ค่านิยมหลัก)</h3>
+                  <p style="margin: 0; color: #64748b; font-size: 0.88rem;">แก้ไขข้อความบนการ์ดทั้ง 3 ใบ และรายละเอียดที่จะแสดงในหน้าต่างป๊อปอัปเมื่อผู้ใช้กด "กดอ่านรายละเอียด &rarr;"</p>
+                </div>
+
+                <!-- การ์ดที่ 1: VISION -->
+                <div class="admin-field is-full" style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #db2777; border-radius: 10px; padding: 14px;">
+                  <strong style="display: block; margin-bottom: 10px; color: #9d174d;">การ์ดที่ 1: วิสัยทัศน์ (VISION)</strong>
+                  <div class="admin-form-grid">
+                    <div class="admin-field">
+                      <label for="pillar-0-label">ป้ายกำกับด้านบน (เช่น VISION)</label>
+                      <input type="text" id="pillar-0-label" required />
+                    </div>
+                    <div class="admin-field">
+                      <label for="pillar-0-title">หัวข้อการ์ด</label>
+                      <input type="text" id="pillar-0-title" required />
+                    </div>
+                    <div class="admin-field is-full">
+                      <label for="pillar-0-desc">ข้อความสรุปบนการ์ด</label>
+                      <textarea id="pillar-0-desc" rows="2" required></textarea>
+                    </div>
+                    <div class="admin-field is-full">
+                      <label for="pillar-0-details">รายละเอียดฉบับเต็มเมื่อกด "อ่านรายละเอียด" (ขึ้นบรรทัดใหม่ = 1 ข้อ)</label>
+                      <textarea id="pillar-0-details" rows="3" placeholder="พิมพ์รายการข้อย่อย บรรทัดละ 1 ข้อ"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- การ์ดที่ 2: MISSION -->
+                <div class="admin-field is-full" style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0284c7; border-radius: 10px; padding: 14px;">
+                  <strong style="display: block; margin-bottom: 10px; color: #0369a1;">การ์ดที่ 2: พันธกิจ (MISSION)</strong>
+                  <div class="admin-form-grid">
+                    <div class="admin-field">
+                      <label for="pillar-1-label">ป้ายกำกับด้านบน (เช่น MISSION)</label>
+                      <input type="text" id="pillar-1-label" required />
+                    </div>
+                    <div class="admin-field">
+                      <label for="pillar-1-title">หัวข้อการ์ด</label>
+                      <input type="text" id="pillar-1-title" required />
+                    </div>
+                    <div class="admin-field is-full">
+                      <label for="pillar-1-desc">ข้อความสรุปบนการ์ด</label>
+                      <textarea id="pillar-1-desc" rows="2" required></textarea>
+                    </div>
+                    <div class="admin-field is-full">
+                      <label for="pillar-1-details">รายละเอียดฉบับเต็มเมื่อกด "อ่านรายละเอียด" (ขึ้นบรรทัดใหม่ = 1 ข้อ)</label>
+                      <textarea id="pillar-1-details" rows="4" placeholder="พิมพ์รายการข้อย่อย บรรทัดละ 1 ข้อ"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- การ์ดที่ 3: CORE VALUES -->
+                <div class="admin-field is-full" style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #ea580c; border-radius: 10px; padding: 14px;">
+                  <strong style="display: block; margin-bottom: 10px; color: #c2410c;">การ์ดที่ 3: ค่านิยมหลัก (CORE VALUES)</strong>
+                  <div class="admin-form-grid">
+                    <div class="admin-field">
+                      <label for="pillar-2-label">ป้ายกำกับด้านบน (เช่น CORE VALUES)</label>
+                      <input type="text" id="pillar-2-label" required />
+                    </div>
+                    <div class="admin-field">
+                      <label for="pillar-2-title">หัวข้อการ์ด</label>
+                      <input type="text" id="pillar-2-title" required />
+                    </div>
+                    <div class="admin-field is-full">
+                      <label for="pillar-2-desc">ข้อความสรุปบนการ์ด</label>
+                      <textarea id="pillar-2-desc" rows="2" required></textarea>
+                    </div>
+                    <div class="admin-field is-full">
+                      <label for="pillar-2-details">รายละเอียดฉบับเต็มเมื่อกด "อ่านรายละเอียด" (ขึ้นบรรทัดใหม่ = 1 ข้อ)</label>
+                      <textarea id="pillar-2-details" rows="4" placeholder="พิมพ์รายการข้อย่อย บรรทัดละ 1 ข้อ"></textarea>
+                    </div>
+                  </div>
+                </div>
               </div>
               <button type="submit" class="admin-btn admin-btn-primary">บันทึกข้อมูลผู้บริหารและวิสัยทัศน์</button>
             </form>

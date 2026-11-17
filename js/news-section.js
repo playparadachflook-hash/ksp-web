@@ -68,11 +68,12 @@ function resolveNewsImg(rootPath, imgPath) {
 function renderNewsSectionHTML(rootPath) {
   const cardsMarkup = NEWS_LIST.map(function (item, idx) {
     const galleryArr = Array.isArray(item.gallery) && item.gallery.length > 0 ? item.gallery : [item.image];
+    const hasFile = Boolean(item.fileName && item.fileDataUrl);
     return `
       <article class="news-card">
         <div class="news-card-image-wrap" data-open-news="${idx}" role="button" tabindex="0" aria-label="ดูรายละเอียดและภาพงาน: ${item.title}">
           <img src="${resolveNewsImg(rootPath, item.image)}" alt="${item.title}" class="news-card-image" loading="lazy" />
-          <span class="news-gallery-count">ภาพงานทั้งหมด ${galleryArr.length} ภาพ</span>
+          <span class="news-gallery-count">ภาพงานทั้งหมด ${galleryArr.length} ภาพ${hasFile ? ' • 📎 มีไฟล์แนบ' : ''}</span>
         </div>
         <h3 class="news-card-title">${item.title}</h3>
         <p class="news-card-excerpt">${item.excerpt}</p>
@@ -171,9 +172,21 @@ document.addEventListener('DOMContentLoaded', function () {
       return `<img src="${resolvedUrl}" data-select-news-img="${resolvedUrl}" alt="ภาพบรรยากาศงานที่ ${gIdx + 1}" class="news-modal-gallery-img" style="cursor:pointer;" title="คลิกเพื่อดูภาพนี้ขนาดใหญ่" />`;
     }).join('');
 
+    const attachMarkup = (item.fileName && item.fileDataUrl) ? `
+      <div style="margin: 14px 0 18px; padding: 12px 16px; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;">
+        <div style="font-size: 0.92rem; color: #115e59; font-weight: 500;">
+          📎 ไฟล์แนบเอกสาร: <strong>${item.fileName}</strong>${item.fileSize ? ` (${item.fileSize})` : ''}
+        </div>
+        <a href="${item.fileDataUrl}" download="${item.fileName}" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: #0f766e; color: #ffffff; border-radius: 8px; text-decoration: none; font-size: 0.88rem; font-weight: 500;">
+          ⬇ ดาวน์โหลดไฟล์แนบ
+        </a>
+      </div>
+    ` : '';
+
     modalBody.innerHTML = `
       <img id="news-modal-main-cover" src="${coverSrc}" alt="${item.title}" class="news-modal-cover" />
       <p>${item.excerpt}</p>
+      ${attachMarkup}
       <h4 class="news-modal-gallery-title">อัลบั้มภาพงานทั้งหมด (${galleryArr.length} ภาพ — คลิกที่รูปเพื่อขยายดูด้านบน)</h4>
       <div class="news-modal-gallery-grid">
         ${galleryImgsMarkup}

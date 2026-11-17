@@ -95,10 +95,26 @@ try {
     charset: 'utf8mb4'
   });
 
-  // ทดสอบการเชื่อมต่อ
-  dbPool.getConnection().then((conn) => {
+  // ทดสอบการเชื่อมต่อและตรวจสอบคอลัมน์ที่จำเป็นของตารางข่าวสาร (news)
+  dbPool.getConnection().then(async (conn) => {
     isDbConnected = true;
     console.log('[MySQL] เชื่อมต่อฐานข้อมูล MySQL (Web_Ksp) สำเร็จเรียบร้อย!');
+    try {
+      const neededCols = [
+        { name: 'file_name', sql: 'ALTER TABLE news ADD COLUMN file_name VARCHAR(255) NULL AFTER gallery' },
+        { name: 'file_size', sql: 'ALTER TABLE news ADD COLUMN file_size VARCHAR(50) NULL AFTER file_name' },
+        { name: 'file_data_url', sql: 'ALTER TABLE news ADD COLUMN file_data_url LONGTEXT NULL AFTER file_size' }
+      ];
+      for (const col of neededCols) {
+        const [rows] = await conn.query('SHOW COLUMNS FROM news LIKE ?', [col.name]);
+        if (rows.length === 0) {
+          await conn.query(col.sql);
+          console.log(`[MySQL Migration] เพิ่มคอลัมน์ ${col.name} ในตาราง Web_Ksp.news สำเร็จ!`);
+        }
+      }
+    } catch (migErr) {
+      console.warn('[MySQL Migration Warning]:', migErr.message);
+    }
     conn.release();
   }).catch((err) => {
     isDbConnected = false;
@@ -217,9 +233,18 @@ if (useExpress) {
         for (const n of sectionData) {
           const galleryJson = Array.isArray(n.gallery) ? JSON.stringify(n.gallery) : null;
           await dbPool.execute(`
-            INSERT INTO news (title, excerpt, image, gallery, link)
-            VALUES (?, ?, ?, ?, ?)
-          `, [n.title || '', n.excerpt || '', n.image || '', galleryJson, n.link || '/news']);
+            INSERT INTO news (title, excerpt, image, gallery, file_name, file_size, file_data_url, link)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
+            n.title || '',
+            n.excerpt || '',
+            n.image || '',
+            galleryJson,
+            n.fileName || n.file_name || null,
+            n.fileSize || n.file_size || null,
+            n.fileDataUrl || n.file_data_url || null,
+            n.link || '/news'
+          ]);
         }
         console.log(`[MySQL Sync] ซิงค์ข้อมูลข่าวสาร ${sectionData.length} รายการลงตาราง Web_Ksp.news สำเร็จ!`);
       } else if (sectionKey === 'policies' && Array.isArray(sectionData)) {

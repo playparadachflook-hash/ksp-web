@@ -793,9 +793,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   let newsData = window.KSP_CMS.getSection('news', DEFAULT_NEWS_LIST);
   const newsListEl = document.getElementById('admin-news-list');
 
-  // ตัวแปรเก็บภาพปกและภาพงานที่ผ่านการปรับความคมชัดด้วย JS แล้ว
+  // ตัวแปรเก็บภาพปก ภาพงาน และไฟล์แนบเอกสาร
   let pendingEnhancedCoverUrl = null;
   let pendingEnhancedGalleryUrls = [];
+  let pendingNewsAttach = null;
 
   const newsCoverInput = document.getElementById('news-cover-file');
   const newsCoverPreviewBox = document.getElementById('news-cover-preview-box');
@@ -806,6 +807,40 @@ document.addEventListener('DOMContentLoaded', async function () {
   const newsGalleryPreviewBox = document.getElementById('news-gallery-preview-box');
   const newsGalleryPreviewGrid = document.getElementById('news-gallery-preview-grid');
   const newsGalleryStatus = document.getElementById('news-gallery-status');
+
+  const newsAttachInput = document.getElementById('news-attach-file');
+  const newsAttachPreviewBox = document.getElementById('news-attach-preview-box');
+  const newsAttachStatus = document.getElementById('news-attach-status');
+  const newsAttachClearBtn = document.getElementById('news-attach-clear-btn');
+
+  if (newsAttachInput) {
+    newsAttachInput.addEventListener('change', async function () {
+      const f = newsAttachInput.files && newsAttachInput.files[0];
+      if (!f) {
+        pendingNewsAttach = null;
+        if (newsAttachPreviewBox) newsAttachPreviewBox.style.display = 'none';
+        return;
+      }
+      const dataUrl = await readFileAsDataURL(newsAttachInput);
+      if (dataUrl) {
+        pendingNewsAttach = {
+          fileName: f.name,
+          fileSize: formatFileSize(f.size),
+          fileDataUrl: dataUrl
+        };
+        if (newsAttachStatus) newsAttachStatus.textContent = `📎 ไฟล์แนบที่เลือก: ${f.name} (${pendingNewsAttach.fileSize})`;
+        if (newsAttachPreviewBox) newsAttachPreviewBox.style.display = 'flex';
+      }
+    });
+  }
+
+  if (newsAttachClearBtn) {
+    newsAttachClearBtn.addEventListener('click', function () {
+      pendingNewsAttach = null;
+      if (newsAttachInput) newsAttachInput.value = '';
+      if (newsAttachPreviewBox) newsAttachPreviewBox.style.display = 'none';
+    });
+  }
 
   // เมื่อเลือก "ภาพปกข่าว": ใช้ JavaScript ปรับขนาดเป็น 1200x750 HD และเพิ่มความคมชัดทันที + คลิกดูภาพได้
   if (newsCoverInput) {
@@ -922,12 +957,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
     pendingEnhancedCoverUrl = null;
     pendingEnhancedGalleryUrls = [];
+    pendingNewsAttach = null;
     if (newsEditIndexInput) newsEditIndexInput.value = '';
     if (newsFormTitle) newsFormTitle.textContent = '+ เพิ่มข่าวสาร/กิจกรรมใหม่';
     if (newsSubmitBtn) newsSubmitBtn.textContent = 'บันทึกข่าวสารพร้อมอัลบั้มภาพงาน';
     if (newsCancelBtn) newsCancelBtn.style.display = 'none';
     if (newsCoverPreviewBox) newsCoverPreviewBox.style.display = 'none';
     if (newsGalleryPreviewBox) newsGalleryPreviewBox.style.display = 'none';
+    if (newsAttachPreviewBox) newsAttachPreviewBox.style.display = 'none';
   }
 
   if (newsCancelBtn) {
@@ -952,6 +989,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     newsListEl.innerHTML = newsData.map(function (item, idx) {
       const thumbSrc = resolveAdminImgPath(item.image);
       const galleryCount = Array.isArray(item.gallery) ? item.gallery.length : 1;
+      const attachBadge = item.fileName ? ` | 📎 ไฟล์แนบ: ${item.fileName}` : '';
       return `
         <div class="admin-list-row">
           <div class="admin-list-info">
@@ -964,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             />
             <div class="admin-list-text">
               <p class="admin-list-title">${item.title}</p>
-              <p class="admin-list-sub">ภาพปก HD 1 ภาพ | ภาพงานทั้งหมด ${galleryCount} ภาพ — ${(item.excerpt || '').substring(0, 65)}...</p>
+              <p class="admin-list-sub">ภาพปก HD 1 ภาพ | ภาพงานทั้งหมด ${galleryCount} ภาพ${attachBadge} — ${(item.excerpt || '').substring(0, 65)}...</p>
             </div>
           </div>
           <div class="admin-list-actions" style="display:flex;gap:6px;align-items:center;">
@@ -1019,6 +1057,20 @@ document.addEventListener('DOMContentLoaded', async function () {
             `;
           }).join('');
           newsGalleryPreviewBox.style.display = 'block';
+        }
+
+        // โหลดไฟล์แนบเดิม (ถ้ามี)
+        if (item.fileName && item.fileDataUrl) {
+          pendingNewsAttach = {
+            fileName: item.fileName,
+            fileSize: item.fileSize || '',
+            fileDataUrl: item.fileDataUrl
+          };
+          if (newsAttachStatus) newsAttachStatus.textContent = `📎 ไฟล์แนบปัจจุบัน: ${item.fileName}${item.fileSize ? ' (' + item.fileSize + ')' : ''}`;
+          if (newsAttachPreviewBox) newsAttachPreviewBox.style.display = 'flex';
+        } else {
+          pendingNewsAttach = null;
+          if (newsAttachPreviewBox) newsAttachPreviewBox.style.display = 'none';
         }
 
         if (newsFormTitle) newsFormTitle.textContent = `✎ แก้ไขข่าวสาร: ${item.title}`;
@@ -1085,6 +1137,25 @@ document.addEventListener('DOMContentLoaded', async function () {
       const finalCover = pendingEnhancedCoverUrl || (pendingEnhancedGalleryUrls[0] || 'assets/images/news/news-1.png');
       const finalGallery = pendingEnhancedGalleryUrls.length > 0 ? pendingEnhancedGalleryUrls : [finalCover];
 
+      // อ่านไฟล์แนบกรณีเลือกไฟล์ใหม่ไว้แต่ event change ยังไม่อัปเดต
+      if (!pendingNewsAttach && newsAttachInput && newsAttachInput.files && newsAttachInput.files[0]) {
+        const f = newsAttachInput.files[0];
+        const dataUrl = await readFileAsDataURL(newsAttachInput);
+        if (dataUrl) {
+          pendingNewsAttach = {
+            fileName: f.name,
+            fileSize: formatFileSize(f.size),
+            fileDataUrl: dataUrl
+          };
+        }
+      }
+
+      const attachPayload = pendingNewsAttach ? {
+        fileName: pendingNewsAttach.fileName,
+        fileSize: pendingNewsAttach.fileSize,
+        fileDataUrl: pendingNewsAttach.fileDataUrl
+      } : { fileName: '', fileSize: '', fileDataUrl: '' };
+
       if (editIdxStr !== '') {
         // --- กรณีบันทึกการแก้ไขข่าวสารเดิม ---
         const editIdx = Number(editIdxStr);
@@ -1093,6 +1164,9 @@ document.addEventListener('DOMContentLoaded', async function () {
           gallery: finalGallery,
           title: title,
           excerpt: excerpt,
+          fileName: attachPayload.fileName,
+          fileSize: attachPayload.fileSize,
+          fileDataUrl: attachPayload.fileDataUrl,
           link: '/news'
         };
 
@@ -1112,6 +1186,9 @@ document.addEventListener('DOMContentLoaded', async function () {
           gallery: finalGallery,
           title: title,
           excerpt: excerpt,
+          fileName: attachPayload.fileName,
+          fileSize: attachPayload.fileSize,
+          fileDataUrl: attachPayload.fileDataUrl,
           link: '/news'
         });
 

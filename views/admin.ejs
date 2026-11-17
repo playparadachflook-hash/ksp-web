@@ -153,6 +153,14 @@
                   </div>
                 </div>
                 <div class="admin-field is-full">
+                  <label for="news-attach-file">3. อัปโหลดไฟล์แนบเอกสาร (PDF / Word / Excel / รูปภาพเพิ่มเติม — ไม่บังคับ)</label>
+                  <input type="file" id="news-attach-file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.png,.jpg,.jpeg" />
+                  <div class="admin-img-preview-box" id="news-attach-preview-box" style="display:none;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;">
+                    <span id="news-attach-status" style="font-size:0.9rem;color:#0f4c42;font-weight:500;">📎 ไฟล์แนบ: -</span>
+                    <button type="button" class="admin-btn admin-btn-outline" id="news-attach-clear-btn" style="padding:4px 10px;font-size:0.82rem;">ลบไฟล์แนบ</button>
+                  </div>
+                </div>
+                <div class="admin-field is-full">
                   <label for="news-excerpt">รายละเอียดเนื้อหาข่าว</label>
                   <textarea id="news-excerpt" rows="3" placeholder="กรอกรายละเอียดเนื้อหาข่าวสารและกิจกรรม" required></textarea>
                 </div>

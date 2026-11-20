@@ -267,12 +267,11 @@ function renderIntranetSectionHTML(rootPath) {
   }).join('');
 
   return `
-    <section class="intranet-convenience-section" aria-labelledby="intranet-heading">
+    <section class="intranet-convenience-section" aria-label="ระบบงานภายใน โรงพยาบาลโคกศรีสุพรรณ">
       <div class="intranet-convenience-container">
         <!-- ส่วนหัวดีไซน์เฉพาะของโรงพยาบาลโคกศรีสุพรรณ -->
         <div class="intranet-convenience-header">
           <span class="intranet-convenience-badge">SMART HOSPITAL PORTAL • ระบบงานภายใน</span>
-          <h2 class="intranet-convenience-title" id="intranet-heading">ระบบราชการสะดวก โรงพยาบาลโคกศรีสุพรรณ</h2>
         </div>
 
         <!-- ตารางการ์ด Grid 5 คอลัมน์ต่อแถว (ใหญ่ขึ้น +10% และ Responsive ลงตามขนาดจอ) -->

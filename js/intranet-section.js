@@ -64,7 +64,19 @@ const INTRANET_ICONS = {
   userplus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>`,
   dollar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="6" x2="12" y2="18"></line><path d="M14.5 9h-4a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3h-4"></path></svg>`,
   server: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect><rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>`,
-  mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>`
+  mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>`,
+  bed: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8v11"></path><path d="M2 15h20v4"></path><path d="M6 15v-4a2 2 0 0 1 2-2h10a4 4 0 0 1 4 4v2"></path><circle cx="6" cy="11" r="1.5"></circle></svg>`,
+  wrench: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.7-3.7a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9l-3.7 3.7z"></path></svg>`,
+  barchart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg>`,
+  calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`,
+  monitor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`,
+  packagebox: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><polyline points="3.3 7 12 12 20.7 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>`,
+  stethoscope: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 3v6a4.5 4.5 0 0 0 9 0V3"></path><path d="M9 13.5V16a4 4 0 0 0 8 0v-3"></path><circle cx="19" cy="11" r="2"></circle></svg>`,
+  handheart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10.5c-.8-1.3-2.5-1.5-3.5-.3-1 1.2-.5 3 3.5 5.3 4-2.3 4.5-4.1 3.5-5.3-1-1.2-2.7-1-3.5.3Z"></path><path d="M3 15h4l3 3h6a2 2 0 0 1 0 4H8l-5-3Z"></path></svg>`,
+  nursing: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h18l-2-7H5l-2 7Z"></path><path d="M5 14v3a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-3"></path><path d="M12 8.5v3M10.5 10h3"></path></svg>`,
+  palette: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="9" cy="9" r="1.2"></circle><circle cx="14.5" cy="9" r="1.2"></circle><circle cx="8.5" cy="13.5" r="1.2"></circle><circle cx="15" cy="14" r="1.5"></circle></svg>`,
+  flask: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v5l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"></path><line x1="7.5" y1="15" x2="16.5" y2="15"></line></svg>`,
+  medbook: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5Z"></path><path d="M12 8v6M9 11h6"></path></svg>`
 };
 
 /**
@@ -189,7 +201,30 @@ function resolveIntranetUrl(rootPath, url) {
 }
 
 /**
- * ฟังก์ชันสร้างโครงสร้าง HTML ส่วนเว็บไซต์ภายในตามแบบระบบราชการสะดวก สสจ.สกลนคร
+ * จับคู่โลโก้/ไอคอน SVG ให้ตรงกับชื่อระบบของแต่ละช่องโดยอัตโนมัติ
+ */
+function resolveSmartIntranetIconKey(item) {
+  const title = (item.title || '').toLowerCase();
+  if (title.includes('บุคลากร') || title.includes('hr')) return 'idcard';
+  if (title.includes('ผู้ป่วยใน') || title.includes('ipd') || title.includes('ภาระงาน')) return 'bed';
+  if (title.includes('ครุภัณฑ์ทางการแพทย์') || title.includes('เครื่องมือแพทย์')) return 'stethoscope';
+  if (title.includes('ซ่อมบำรุง') || title.includes('ช่าง')) return 'wrench';
+  if (title.includes('รายงาน') || title.includes('report')) return 'barchart';
+  if (title.includes('รถ') || title.includes('car')) return 'car';
+  if (title.includes('ประชุม') || title.includes('meeting')) return 'calendar';
+  if (title.includes('คอมพิวเตอร์') || title.includes('it') || title.includes('เซอร์วิส')) return 'monitor';
+  if (title.includes('ยืมครุภัณฑ์') || title.includes('ครุภัณฑ์')) return 'packagebox';
+  if (title.includes('palliative')) return 'handheart';
+  if (title.includes('long term') || title.includes('ltc')) return 'homeheart';
+  if (title.includes('พยาบาล') || title.includes('nurs')) return 'nursing';
+  if (title.includes('ผลิตสื่อ') || title.includes('ออกแบบ') || title.includes('ป้าย')) return 'palette';
+  if (title.includes('lab') || title.includes('แล็บ')) return 'flask';
+  if (title.includes('cpg') || title.includes('cup')) return 'medbook';
+  return item.icon || 'globe';
+}
+
+/**
+ * ฟังก์ชันสร้างโครงสร้าง HTML ส่วนเว็บไซต์ภายในสไตล์ Smart Hospital Bento Cards
  */
 function renderIntranetSectionHTML(rootPath) {
   const cardsMarkup = INTERNAL_WEBSITES.map(function (item, idx) {
@@ -200,9 +235,11 @@ function renderIntranetSectionHTML(rootPath) {
     // เลือกธีมสีตามการ์ด
     const themeKey = item.theme || (idx % 2 === 0 ? 'white' : 'peach');
     const theme = INTRANET_THEMES[themeKey] || INTRANET_THEMES.white;
+    const isDarkTheme = ['purple', 'forest', 'magenta', 'maroon'].includes(themeKey);
 
-    // เลือกไอคอน
-    let iconMarkup = INTRANET_ICONS[item.icon] || INTRANET_ICONS.globe;
+    // เลือกไอคอนตามช่องนั้นๆ (หากมีอัปโหลดรูปโลโก้เองให้ใช้รูปที่อัปโหลด)
+    const smartIconKey = resolveSmartIntranetIconKey(item);
+    let iconMarkup = INTRANET_ICONS[smartIconKey] || INTRANET_ICONS[item.icon] || INTRANET_ICONS.globe;
     if (item.logo && (item.logo.startsWith('data:') || item.logo.startsWith('http') || item.logo.includes('/'))) {
       iconMarkup = `<img src="${item.logo.startsWith('http') || item.logo.startsWith('data:') ? item.logo : rootPath + item.logo}" alt="${item.title}" class="intranet-card-logo-img" />`;
     }
@@ -217,14 +254,14 @@ function renderIntranetSectionHTML(rootPath) {
     }
 
     return `
-      <a href="${targetUrl}" class="intranet-convenience-card theme-${themeKey}" ${targetAttr} style="background-color:${theme.bg}; color:${theme.color}; border-color:${theme.border};" title="${item.title}">
+      <a href="${targetUrl}" class="intranet-convenience-card theme-${themeKey} ${isDarkTheme ? 'is-dark-card' : ''}" ${targetAttr} style="background-color:${theme.bg}; color:${theme.color}; border-color:${theme.border};" title="${item.title}">
         <div class="intranet-card-icon-wrap">
           ${iconMarkup}
         </div>
         <div class="intranet-card-title-wrap">
           <span class="intranet-card-title-text">${item.title}</span>
         </div>
-        ${actionText ? `<span class="intranet-pill-btn ${btnClass}">${actionText}</span>` : ''}
+        ${actionText ? `<span class="intranet-pill-btn ${btnClass}">${actionText} &rarr;</span>` : ''}
       </a>
     `;
   }).join('');
@@ -232,12 +269,13 @@ function renderIntranetSectionHTML(rootPath) {
   return `
     <section class="intranet-convenience-section" aria-labelledby="intranet-heading">
       <div class="intranet-convenience-container">
-        <!-- แถบหัวข้อตัวหนาสีเขียวตรงตามแบบราชการสะดวก -->
+        <!-- ส่วนหัวดีไซน์เฉพาะของโรงพยาบาลโคกศรีสุพรรณ -->
         <div class="intranet-convenience-header">
+          <span class="intranet-convenience-badge">SMART HOSPITAL PORTAL • ระบบงานภายใน</span>
           <h2 class="intranet-convenience-title" id="intranet-heading">ระบบราชการสะดวก โรงพยาบาลโคกศรีสุพรรณ</h2>
         </div>
 
-        <!-- ตารางการ์ด Grid 6 คอลัมน์ต่อแถว (Responsive ลงตามขนาดจอ) -->
+        <!-- ตารางการ์ด Grid 5 คอลัมน์ต่อแถว (ใหญ่ขึ้น +10% และ Responsive ลงตามขนาดจอ) -->
         <div class="intranet-convenience-grid">
           ${cardsMarkup}
         </div>

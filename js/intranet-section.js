@@ -224,44 +224,65 @@ function resolveSmartIntranetIconKey(item) {
 }
 
 /**
- * ฟังก์ชันสร้างโครงสร้าง HTML ส่วนเว็บไซต์ภายในสไตล์ Smart Hospital Bento Cards
+ * สร้างคำอธิบายรายละเอียดระบบอัตโนมัติ (กรณีในฐานข้อมูลยังไม่ได้กรอก description)
+ */
+function resolveSmartIntranetDesc(item) {
+  const rawDesc = (item.description || '').trim();
+  if (rawDesc && rawDesc.length > 8) return rawDesc;
+
+  const title = (item.title || '').toLowerCase();
+  if (title.includes('บุคลากร')) return 'ระบบจัดการข้อมูลบุคลากร การลาป่วย ลากิจ ลาพักผ่อน และทะเบียนประวัติเจ้าหน้าที่โรงพยาบาลโคกศรีสุพรรณ';
+  if (title.includes('ผู้ป่วยใน')) return 'ระบบบันทึกภาระงานทางการพยาบาล การประเมินระดับความรุนแรง และสถิติการดูแลผู้ป่วยในประจำวัน';
+  if (title.includes('ซ่อมบำรุง')) return 'ระบบแจ้งซ่อมอาคารสถานที่ ระบบไฟฟ้า ประปา และสาธารณูปโภคออนไลน์ พร้อมติดตามสถานะงานช่างแบบเรียลไทม์';
+  if (title.includes('รายงาน')) return 'ระบบยื่นคำขอรายงานข้อมูลสถิติจากฐานข้อมูล HOSxP สำหรับหน่วยงานภายในเพื่อใช้พัฒนาคุณภาพบริการ';
+  if (title.includes('รถ')) return 'ระบบขออนุญาตใช้รถยนต์ส่วนกลางและรถพยาบาลออนไลน์ พร้อมตรวจสอบตารางเดินรถและสถานะการอนุมัติ';
+  if (title.includes('ประชุม')) return 'ระบบตรวจสอบตารางว่างและจองห้องประชุมออนไลน์ พร้อมจัดเตรียมโสตทัศนูปกรณ์ของโรงพยาบาล';
+  if (title.includes('คอมพิวเตอร์')) return 'ระบบแจ้งปัญหาด้านคอมพิวเตอร์ เครือข่ายอินเทอร์เน็ต โปรแกรมโรงพยาบาล และขอรับบริการจากทีมไอที';
+  if (title.includes('ยืมครุภัณฑ์')) return 'ระบบบันทึกการยืม-คืนครุภัณฑ์และวัสดุอุปกรณ์ภายในโรงพยาบาล เพื่อควบคุมและติดตามการใช้งานอย่างเป็นระบบ';
+  if (title.includes('ทางการแพทย์')) return 'ระบบแจ้งซ่อมและบำรุงรักษาเครื่องมือแพทย์ออนไลน์ เพื่อความพร้อมและความปลอดภัยในการดูแลรักษาผู้ป่วย';
+  if (title.includes('palliative')) return 'ระบบติดตามและประสานงานการดูแลผู้ป่วยแบบประคับประคอง (Palliative Care) ต่อเนื่องทั้งในโรงพยาบาลและที่บ้าน';
+  if (title.includes('long term')) return 'ระบบข้อมูลและวางแผนการดูแลผู้สูงอายุและผู้ป่วยที่มีภาวะพึ่งพิงระยะยาว (LTC) ร่วมกับเครือข่ายชุมชน';
+  if (title.includes('พยาบาล')) return 'ศูนย์กลางข้อมูล ข่าวสาร มาตรฐานวิชาชีพ และระบบงานบริหารจัดการของกลุ่มการพยาบาล โรงพยาบาลโคกศรีสุพรรณ';
+  if (title.includes('ผลิตสื่อ')) return 'ระบบขอรับบริการออกแบบสื่อประชาสัมพันธ์ ป้ายไวนิล โปสเตอร์ และสื่อให้ความรู้ด้านสุขภาพออนไลน์';
+  if (title.includes('lab')) return 'ระบบสืบค้นและติดตามผลการตรวจทางห้องปฏิบัติการ (LAB) ออนไลน์ สำหรับแพทย์และบุคลากรทางการแพทย์';
+  if (title.includes('cpg')) return 'คลังแนวทางเวชปฏิบัติทางคลินิก (Clinical Practice Guidelines) สำหรับเครือข่ายบริการสุขภาพอำเภอโคกศรีสุพรรณ';
+  return 'ระบบสารสนเทศและบริการงานภายในสำหรับบุคลากร โรงพยาบาลโคกศรีสุพรรณ เพื่อความสะดวก รวดเร็ว และมีประสิทธิภาพ';
+}
+
+/**
+ * ฟังก์ชันสร้างโครงสร้าง HTML ส่วนเว็บไซต์ภายในตามภาพต้นแบบ (1=Logo, 2=รหัส/ชื่อระบบ, 3=ชื่อระบบ, 4=รายละเอียด)
  */
 function renderIntranetSectionHTML(rootPath) {
-  const cardsMarkup = INTERNAL_WEBSITES.map(function (item, idx) {
+  const cardsMarkup = INTERNAL_WEBSITES.map(function (item) {
     const targetUrl = resolveIntranetUrl(rootPath, item.url);
     const isExternal = /^(?:[a-z+]+:)?\/\//i.test(targetUrl);
     const targetAttr = isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
 
-    // เลือกธีมสีตามการ์ด
-    const themeKey = item.theme || (idx % 2 === 0 ? 'white' : 'peach');
-    const theme = INTRANET_THEMES[themeKey] || INTRANET_THEMES.white;
-    const isDarkTheme = ['purple', 'forest', 'magenta', 'maroon'].includes(themeKey);
-
-    // เลือกไอคอนตามช่องนั้นๆ (หากมีอัปโหลดรูปโลโก้เองให้ใช้รูปที่อัปโหลด)
+    // 1. Logo (วงกลมมุมซ้ายบน)
     const smartIconKey = resolveSmartIntranetIconKey(item);
     let iconMarkup = INTRANET_ICONS[smartIconKey] || INTRANET_ICONS[item.icon] || INTRANET_ICONS.globe;
     if (item.logo && (item.logo.startsWith('data:') || item.logo.startsWith('http') || item.logo.includes('/'))) {
       iconMarkup = `<img src="${item.logo.startsWith('http') || item.logo.startsWith('data:') ? item.logo : rootPath + item.logo}" alt="${item.title}" class="intranet-card-logo-img" />`;
     }
 
-    // ข้อความและสีปุ่มแคปซูลด้านล่าง
-    const actionText = item.actionText || 'สมัครใช้งาน';
-    let btnClass = 'intranet-pill-green';
-    if (item.btnStyle === 'yellow' || actionText.includes('รอ')) {
-      btnClass = 'intranet-pill-yellow';
-    } else if (item.btnStyle === 'transparent' || item.btnStyle === 'none') {
-      btnClass = 'intranet-pill-ghost';
-    }
+    // 2. ชื่อระบบ / รหัสระบบด้านขวา Logo
+    const systemTag = (item.code && item.code.trim()) ? item.code.trim() : 'KSP SYSTEM';
+
+    // 3. ชื่อระบบหลัก และ 4. รายละเอียดของระบบ
+    const systemDesc = resolveSmartIntranetDesc(item);
 
     return `
-      <a href="${targetUrl}" class="intranet-convenience-card theme-${themeKey} ${isDarkTheme ? 'is-dark-card' : ''}" ${targetAttr} style="background-color:${theme.bg}; color:${theme.color}; border-color:${theme.border};" title="${item.title}">
-        <div class="intranet-card-icon-wrap">
-          ${iconMarkup}
+      <a href="${targetUrl}" class="intranet-convenience-card" ${targetAttr} title="${item.title}">
+        <div class="intranet-card-top-row">
+          <div class="intranet-card-icon-wrap">
+            ${iconMarkup}
+          </div>
+          <div class="intranet-card-code-wrap">
+            <span class="intranet-card-code-badge">${systemTag}</span>
+          </div>
         </div>
-        <div class="intranet-card-title-wrap">
-          <span class="intranet-card-title-text">${item.title}</span>
-        </div>
-        ${actionText ? `<span class="intranet-pill-btn ${btnClass}">${actionText} &rarr;</span>` : ''}
+        <h3 class="intranet-card-title-text">${item.title}</h3>
+        <p class="intranet-card-desc-text">${systemDesc}</p>
       </a>
     `;
   }).join('');
@@ -269,12 +290,10 @@ function renderIntranetSectionHTML(rootPath) {
   return `
     <section class="intranet-convenience-section" aria-label="ระบบงานภายใน โรงพยาบาลโคกศรีสุพรรณ">
       <div class="intranet-convenience-container">
-        <!-- ส่วนหัวดีไซน์เฉพาะของโรงพยาบาลโคกศรีสุพรรณ -->
         <div class="intranet-convenience-header">
           <span class="intranet-convenience-badge">SMART HOSPITAL PORTAL • ระบบงานภายใน</span>
         </div>
 
-        <!-- ตารางการ์ด Grid 5 คอลัมน์ต่อแถว (ใหญ่ขึ้น +10% และ Responsive ลงตามขนาดจอ) -->
         <div class="intranet-convenience-grid">
           ${cardsMarkup}
         </div>

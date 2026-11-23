@@ -1,19 +1,22 @@
 /* ==========================================================================
    ไฟล์: css/intranet-section.css
-   หน้าที่: สไตล์ส่วนเว็บไซต์ภายใน โรงพยาบาลโคกศรีสุพรรณ (Clean Editorial Cards)
-   โครงสร้างตามภาพต้นแบบ:
-     - 1. วงกลม Logo มุมซ้ายบน
-     - 2. ป้ายชื่อระบบ/หมวดหมู่ ข้าง Logo
-     - 3. ชื่อระบบหลัก (ตัวหนา สีกรมท่าเข้ม)
-     - 4. รายละเอียดของระบบด้านล่าง
+   หน้าที่: สไตล์ส่วนเว็บไซต์ภายใน โรงพยาบาลโคกศรีสุพรรณ (Decorated Smart Portal)
+   โครงสร้างการ์ด:
+     1. วงกลม Logo สีประจำหมวดหมู่ มุมซ้ายบน
+     2. ป้ายชื่อ/รหัสระบบ ข้าง Logo
+     3. ชื่อระบบหลัก (ตัวหนา สีกรมท่าเข้ม)
+     4. รายละเอียดของระบบ + ปุ่ม "เปิดใช้งานระบบ →" ด้านล่าง
    ========================================================================== */
 
 .intranet-convenience-section {
   width: 100%;
-  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-  border-top: 1px solid #e2e8f0;
+  background:
+    radial-gradient(circle at 12% 15%, rgba(15, 118, 110, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 88% 85%, rgba(3, 105, 161, 0.06) 0%, transparent 45%),
+    linear-gradient(180deg, #f4faf8 0%, #f8fafc 50%, #ffffff 100%);
+  border-top: 1px solid rgba(15, 118, 110, 0.10);
   border-bottom: 1px solid #e2e8f0;
-  padding: 48px 0 68px;
+  padding: 50px 0 72px;
 }
 
 .intranet-convenience-container {
@@ -23,31 +26,52 @@
   padding: 0 24px;
 }
 
-/* ส่วนหัว Badge ด้านบน */
+/* ส่วนหัว Badge & ตัวนับจำนวนระบบ */
 .intranet-convenience-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 24px;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 26px;
 }
 
 .intranet-convenience-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 14px;
+  gap: 8px;
+  padding: 6px 16px;
   border-radius: 999px;
-  background: #f0fdfa;
-  border: 1px solid #ccfbf1;
+  background: #ffffff;
+  border: 1px solid #99f6e4;
+  box-shadow: 0 2px 10px rgba(15, 118, 110, 0.08);
   color: #0f766e;
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
+}
+
+.intranet-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
+}
+
+.intranet-count-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.04);
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 /* ==========================================================================
-   ตารางการ์ด Grid 4 คอลัมน์ต่อแถว (ตามภาพต้นแบบ)
+   ตารางการ์ด Grid 4 คอลัมน์ต่อแถว
    ========================================================================== */
 .intranet-convenience-grid {
   display: grid;
@@ -55,8 +79,13 @@
   gap: 22px;
 }
 
-/* ตัวการ์ด: พื้นหลังขาวสะอาด ขอบมน เงาละมุน จัดข้อความชิดซ้าย */
+/* ตัวการ์ดตกแต่งแบบมีมิติ + แถบสีด้านบน + Glow มุมขวาบน */
 .intranet-convenience-card {
+  --card-accent: #0f766e;
+  --card-soft: #f0fdfa;
+  --card-border: #99f6e4;
+  --card-icon-bg: #ccfbf1;
+
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -64,59 +93,99 @@
   text-align: left;
   background-color: #ffffff;
   color: #1e293b;
-  padding: 26px 24px 24px;
-  border-radius: 18px;
+  padding: 26px 22px 20px;
+  border-radius: 20px;
   border: 1px solid #e2e8f0;
   text-decoration: none;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
-  min-height: 240px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+  min-height: 256px;
   position: relative;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  overflow: hidden;
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+/* แถบคาดสีประจำระบบด้านบนการ์ด */
+.intranet-convenience-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--card-accent);
+  opacity: 0.75;
+  transition: height 0.22s ease, opacity 0.22s ease;
+}
+
+/* แสงฟุ้งจางๆ มุมขวาบนให้การ์ดดูมีมิติ */
+.intranet-convenience-card::after {
+  content: '';
+  position: absolute;
+  top: -36px;
+  right: -36px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: var(--card-soft);
+  opacity: 0.9;
+  pointer-events: none;
+  transition: transform 0.28s ease;
 }
 
 .intranet-convenience-card:hover {
-  transform: translateY(-4px);
-  border-color: #99f6e4;
-  box-shadow: 0 12px 28px rgba(15, 118, 110, 0.10);
+  transform: translateY(-5px);
+  border-color: var(--card-border);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.09);
+}
+
+.intranet-convenience-card:hover::before {
+  height: 5px;
+  opacity: 1;
+}
+
+.intranet-convenience-card:hover::after {
+  transform: scale(1.18);
 }
 
 .intranet-convenience-card:focus-visible {
-  outline: 3px solid #0f766e;
+  outline: 3px solid var(--card-accent);
   outline-offset: 2px;
 }
 
-/* แถวบน: เลข 1 (Logo วงกลม) + เลข 2 (ชื่อระบบ / รหัสระบบ) */
+/* แถวบน: เลข 1 (Logo วงกลม) + เลข 2 (ชื่อระบบ/รหัสระบบ) */
 .intranet-card-top-row {
   display: flex;
   align-items: center;
   gap: 14px;
   width: 100%;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
 }
 
-/* เลข 1: วงกลม Logo ด้านซ้ายบน */
+/* เลข 1: วงกลม Logo สีสันตามหมวดหมู่ */
 .intranet-card-icon-wrap {
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  background-color: #f1f5f9;
-  color: #1e3a5f;
+  background-color: var(--card-icon-bg);
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.07);
+  color: var(--card-accent);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background-color 0.22s ease, transform 0.22s ease;
+  transition: transform 0.24s ease;
 }
 
 .intranet-convenience-card:hover .intranet-card-icon-wrap {
-  background-color: #e6f4f1;
-  color: #0f766e;
-  transform: scale(1.04);
+  transform: scale(1.07);
 }
 
 .intranet-card-icon-wrap svg {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
 }
 
 .intranet-card-logo-img {
@@ -126,7 +195,7 @@
   border-radius: 50%;
 }
 
-/* เลข 2: ชื่อระบบ/หมวดหมู่ ด้านขวา Logo */
+/* เลข 2: ป้ายชื่อระบบ/รหัสระบบ ข้าง Logo */
 .intranet-card-code-wrap {
   flex: 1;
   min-width: 0;
@@ -136,11 +205,11 @@
 
 .intranet-card-code-badge {
   display: inline-block;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  color: #0f766e;
-  background-color: #f0fdfa;
-  border: 1px solid #ccfbf1;
+  color: var(--card-accent);
+  background-color: var(--card-soft);
+  border: 1px solid var(--card-border);
   padding: 5px 12px;
   border-radius: 999px;
   line-height: 1.3;
@@ -150,31 +219,59 @@
   white-space: nowrap;
 }
 
-/* เลข 3: ชื่อระบบหลัก (ตัวหนา สีกรมท่าเข้ม) */
+/* เลข 3: ชื่อระบบหลัก */
 .intranet-card-title-text {
   font-size: 1.08rem;
   font-weight: 700;
   color: #1e3a5f;
   line-height: 1.4;
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   width: 100%;
+  position: relative;
+  z-index: 1;
   word-break: break-word;
 }
 
 /* เลข 4: รายละเอียดของระบบ */
 .intranet-card-desc-text {
-  font-size: 0.90rem;
+  font-size: 0.89rem;
   font-weight: 400;
   color: #475569;
   line-height: 1.65;
-  margin: 0;
+  margin: 0 0 14px;
   width: 100%;
   flex: 1;
+  position: relative;
+  z-index: 1;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
+}
+
+/* ปุ่ม/ลิงก์ด้านล่างการ์ด */
+.intranet-card-footer-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--card-accent);
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.intranet-cta-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.intranet-convenience-card:hover .intranet-cta-arrow {
+  transform: translateX(4px);
 }
 
 /* ==========================================================================
@@ -196,7 +293,7 @@
 
 @media (max-width: 560px) {
   .intranet-convenience-section {
-    padding: 32px 0 48px;
+    padding: 34px 0 48px;
   }
 
   .intranet-convenience-container {
@@ -209,7 +306,7 @@
   }
 
   .intranet-convenience-card {
-    padding: 20px 18px;
-    min-height: 180px;
+    padding: 20px 18px 16px;
+    min-height: 196px;
   }
 }

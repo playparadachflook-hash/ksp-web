@@ -205,23 +205,35 @@ function resolveIntranetUrl(rootPath, url) {
  */
 function resolveSmartIntranetIconKey(item) {
   const title = (item.title || '').toLowerCase();
-  if (title.includes('บุคลากร') || title.includes('hr')) return 'idcard';
+  if (title.includes('palliative')) return 'handheart';
+  if (title.includes('long term') || title.includes('ltc')) return 'homeheart';
+  if (title.includes('บุคลากร') || /\bhr\b/.test(title)) return 'idcard';
   if (title.includes('ผู้ป่วยใน') || title.includes('ipd') || title.includes('ภาระงาน')) return 'bed';
   if (title.includes('ครุภัณฑ์ทางการแพทย์') || title.includes('เครื่องมือแพทย์')) return 'stethoscope';
   if (title.includes('ซ่อมบำรุง') || title.includes('ช่าง')) return 'wrench';
   if (title.includes('รายงาน') || title.includes('report')) return 'barchart';
-  if (title.includes('รถ') || title.includes('car')) return 'car';
+  if (title.includes('รถ') || /\bcar\b/.test(title)) return 'car';
   if (title.includes('ประชุม') || title.includes('meeting')) return 'calendar';
-  if (title.includes('คอมพิวเตอร์') || title.includes('it') || title.includes('เซอร์วิส')) return 'monitor';
+  if (title.includes('คอมพิวเตอร์') || /\bit\b/.test(title) || title.includes('เซอร์วิส')) return 'monitor';
   if (title.includes('ยืมครุภัณฑ์') || title.includes('ครุภัณฑ์')) return 'packagebox';
-  if (title.includes('palliative')) return 'handheart';
-  if (title.includes('long term') || title.includes('ltc')) return 'homeheart';
   if (title.includes('พยาบาล') || title.includes('nurs')) return 'nursing';
   if (title.includes('ผลิตสื่อ') || title.includes('ออกแบบ') || title.includes('ป้าย')) return 'palette';
   if (title.includes('lab') || title.includes('แล็บ')) return 'flask';
   if (title.includes('cpg') || title.includes('cup')) return 'medbook';
   return item.icon || 'globe';
 }
+
+/**
+ * ชุดสีตกแต่งการ์ดแบบ Smart Hospital Portal (สีสุภาพ มีมิติ แยกหมวดจำง่าย)
+ */
+const INTRANET_ACCENT_PALETTE = [
+  { name: 'teal',   accent: '#0f766e', soft: '#f0fdfa', border: '#99f6e4', iconBg: '#ccfbf1' },
+  { name: 'sky',    accent: '#0369a1', soft: '#f0f9ff', border: '#bae6fd', iconBg: '#e0f2fe' },
+  { name: 'indigo', accent: '#4338ca', soft: '#eef2ff', border: '#c7d2fe', iconBg: '#e0e7ff' },
+  { name: 'amber',  accent: '#b45309', soft: '#fffbeb', border: '#fde68a', iconBg: '#fef3c7' },
+  { name: 'rose',   accent: '#be123c', soft: '#fff1f2', border: '#fecdd3', iconBg: '#ffe4e6' },
+  { name: 'emerald',accent: '#15803d', soft: '#f0fdf4', border: '#bbf7d0', iconBg: '#dcfce7' }
+];
 
 /**
  * สร้างคำอธิบายรายละเอียดระบบอัตโนมัติ (กรณีในฐานข้อมูลยังไม่ได้กรอก description)
@@ -253,10 +265,13 @@ function resolveSmartIntranetDesc(item) {
  * ฟังก์ชันสร้างโครงสร้าง HTML ส่วนเว็บไซต์ภายในตามภาพต้นแบบ (1=Logo, 2=รหัส/ชื่อระบบ, 3=ชื่อระบบ, 4=รายละเอียด)
  */
 function renderIntranetSectionHTML(rootPath) {
-  const cardsMarkup = INTERNAL_WEBSITES.map(function (item) {
+  const cardsMarkup = INTERNAL_WEBSITES.map(function (item, idx) {
     const targetUrl = resolveIntranetUrl(rootPath, item.url);
     const isExternal = /^(?:[a-z+]+:)?\/\//i.test(targetUrl);
     const targetAttr = isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
+
+    // เลือกชุดสีตกแต่งเฉพาะของการ์ด
+    const palette = INTRANET_ACCENT_PALETTE[idx % INTRANET_ACCENT_PALETTE.length];
 
     // 1. Logo (วงกลมมุมซ้ายบน)
     const smartIconKey = resolveSmartIntranetIconKey(item);
@@ -272,7 +287,9 @@ function renderIntranetSectionHTML(rootPath) {
     const systemDesc = resolveSmartIntranetDesc(item);
 
     return `
-      <a href="${targetUrl}" class="intranet-convenience-card" ${targetAttr} title="${item.title}">
+      <a href="${targetUrl}" class="intranet-convenience-card" ${targetAttr}
+         style="--card-accent:${palette.accent}; --card-soft:${palette.soft}; --card-border:${palette.border}; --card-icon-bg:${palette.iconBg};"
+         title="${item.title}">
         <div class="intranet-card-top-row">
           <div class="intranet-card-icon-wrap">
             ${iconMarkup}
@@ -283,6 +300,10 @@ function renderIntranetSectionHTML(rootPath) {
         </div>
         <h3 class="intranet-card-title-text">${item.title}</h3>
         <p class="intranet-card-desc-text">${systemDesc}</p>
+        <div class="intranet-card-footer-cta">
+          <span>เปิดใช้งานระบบ</span>
+          <span class="intranet-cta-arrow" aria-hidden="true">&rarr;</span>
+        </div>
       </a>
     `;
   }).join('');
@@ -291,7 +312,11 @@ function renderIntranetSectionHTML(rootPath) {
     <section class="intranet-convenience-section" aria-label="ระบบงานภายใน โรงพยาบาลโคกศรีสุพรรณ">
       <div class="intranet-convenience-container">
         <div class="intranet-convenience-header">
-          <span class="intranet-convenience-badge">SMART HOSPITAL PORTAL • ระบบงานภายใน</span>
+          <span class="intranet-convenience-badge">
+            <span class="intranet-badge-dot" aria-hidden="true"></span>
+            SMART HOSPITAL PORTAL • ระบบงานภายใน
+          </span>
+          <span class="intranet-count-chip">พร้อมใช้งาน ${INTERNAL_WEBSITES.length} ระบบ</span>
         </div>
 
         <div class="intranet-convenience-grid">
